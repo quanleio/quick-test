@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>Letsee WebAR SDK - Card2 PNG</title>
+
+    <script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.123.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <link rel="stylesheet" href="main2.css"/>
+
+        <script src="letsee.js"></script>
+<!--    <script src="https://developer.letsee.io/api/webar?key=598fd5bd3ec4e258d90b37f37e33992a529071e346560189fcc83e31e46b7218"></script>-->
+
+    <style media="place" type="text/css">
+        #container {
+            -letsee-target: uri('card2_front.json');
+            width: 300px;
+            height: 400px;
+        }
+    </style>
+
+    <style>
+        #inner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+        .animateImg {
+            display: flex;
+            align-content: center;
+            align-items: center;
+            background: no-repeat 50%/100%;
+            height: 120%;
+            margin-top: 25%;
+            width: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="container">
+<!--    <img id="myImg" src="png02/Full 2000.png" alt="">-->
+    <div id="inner">
+        <div class="animateImg"></div>
+    </div>
+</div>
+
+<script>
+
+    let scene, camera, renderer;
+    let count = 2000;
+    const AllImageCount = 2286;
+
+    function changeImage(){
+        // if(time-lastFrameTime < FRAME_MIN_TIME){ //skip the frame if the call is too early
+        //
+        //     requestAnimationFrame(changeImage);
+        //     return; // return as there is nothing to do
+        // }
+
+        count++;
+        if(AllImageCount < count) count = 2000;
+        document.querySelector('.animateImg').setAttribute('class', `animateImg img-${count}`)
+    }
+
+    letsee.ready(() => {
+        letsee.start();
+    });
+    letsee.init();
+
+    letsee.onTrackStart(() => {
+        // myImage.style.display = 'block';
+    })
+
+    letsee.onTrackEnd(() => {
+        // myImage.style.display = 'none';
+    })
+
+    letsee.onTrackMove(() => {
+        console.warn(`changeImage`);
+        changeImage();
+    })
+
+    /*let viewCount = 0
+    letsee.onTrackMove(() => {
+        if(viewCount < 3 ) {
+            viewCount++
+            return
+        } else {
+            changeImage();
+            viewCount = 0
+        }
+
+    })*/
+
+    // Prevent user zoom in/out the webpage
+    document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+    });
+
+    /*let count = 0;
+    const AllImageCount = 286
+    function changeImage() {
+        let myImage = document.getElementById('myImg');
+        count++
+        if(AllImageCount < count) count = 0
+        myImage.src = `png02/Full 2${String(count).padStart(3, '0')}.png`
+    }*/
+
+</script>
+
+</body>
+</html>

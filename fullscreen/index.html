@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Fullscreen</title>
+	<meta content="minimum-scale=1.0, width=device-width, maximum-scale=1, user-scalable=no, viewport-fit=cover" name="viewport" />
+	<script src="../fullscreen/lib/letsee-0.9.20.js"></script>
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<style media="place" type="text/css">
+		#container {
+			-letsee-target: uri('toystory.json');
+			-letsee-transform: translate(0, 0, 0);
+			width: 140px;
+			height: 200px;
+			border: 1px solid blue;
+		}
+	</style>
+	<style>
+		html, body {
+			overflow: hidden;
+		}
+		#btn {
+			position: absolute;
+			top: 0;
+			left: 0;
+			padding: 20px;
+			color: #0d152a;
+			background-color: red;
+			z-index: 200;
+		}
+		.ar-renderer::backdrop {
+			background: transparent;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="container" style="color: red; text-align: center; font-weight: bold;">
+		Hello, world!
+		<button id="request">Request Fullscreen</button>
+		<button id="exit">Exit Fullscreen</button>
+        <button id="switch">switch Camera</button>
+	</div>
+
+	<script>
+		const config = {
+			//"appKey": "4a92cfd70eab0b61a50362e188511e6fb282189373281d5d6ea0a0d4958dd170000099990000",
+			"trackerType": "IMAGE",
+			bodyId: 'fallback-test',
+		};
+
+		const onLoaded = () => {
+			console.log("Letsee started!");
+		};
+		letsee.init(config, onLoaded);
+
+		const customLoader = "<p><span>Custom Loading...</span></p>";
+
+		const customLoaderCss = [
+			`#letseeLoaderWrapper p {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }`,
+			`#letseeLoaderWrapper p span {
+      color: #666666;
+    }`];
+
+		letsee.setLoadingScreen(customLoader, customLoaderCss);
+
+		document.getElementById('request').addEventListener('click', () => {
+			letsee.requestFullscreen();
+        });
+		
+		document.getElementById('exit').addEventListener('click', () => {
+			letsee.exitFullscreen();
+		});
+		
+	    document.getElementById('switch').addEventListener('click', () => {
+	    	letsee.setVideoSource('environment');
+	    });
+		
+		// window.onbeforeunload = function() { return "Your work will be lost."; };
+	</script>
+</body>
+</html>

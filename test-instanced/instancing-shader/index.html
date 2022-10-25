@@ -1,0 +1,86 @@
+<style>body {margin: 0}</style>
+<script type="module">
+import {
+	PerspectiveCamera, Material, Texture, Scene, WebGLRenderer,  ShaderMaterial, ObjectLoader,
+	InstancedMesh, BoxGeometry, MeshBasicMaterial, Mesh, Matrix4, Vector3
+} from 'https://unpkg.com/three@0.123.0/build/three.module.js'
+import { OrbitControls } from 'https://unpkg.com/three@0.123.0/examples/jsm/controls/OrbitControls.js'
+
+const updateTasks = {}
+let scene, camera, renderer, controls
+
+init()
+
+function init() {
+	scene = new Scene()
+	camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+	camera.position.z = 1
+	
+	renderer = new WebGLRenderer({ antialias: true })
+	renderer.setPixelRatio( window.devicePixelRatio )
+	renderer.setSize(window.innerWidth, window.innerHeight)
+	document.body.appendChild(renderer.domElement)
+	window.addEventListener('resize', () => {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(window.innerWidth, window.innerHeight)
+	})
+	postUpdate('renderer', () => renderer.render(scene, camera))
+	
+	controls = new OrbitControls(camera, renderer.domElement)
+	postUpdate(controls.uuid, controls.update)
+	addModel()
+
+	run()
+}
+
+function addModel() {
+	fetch("../_assets/instances.json").then(r => r.json()).then(async instanceData => {
+		let [geometry, texture] = await (() => new Promise(resolve => {
+				new ObjectLoader().load('../model.json', mesh => {
+					resolve([mesh.geometry, mesh.material.map])
+				})
+		}))()
+		let material = new ShaderMaterial({
+			uniforms: { uTime: { type: 'f', value: 0 }, uTexture: { type: 't', value: texture } },
+			vertexShader: `
+				uniform float uTime;
+				out vec2 vUV;
+				void main() {
+					vUV = uv;
+					vec3 pos = position + vec3(sin(uTime+float(gl_InstanceID)), 0., 0.);
+					gl_Position = projectionMatrix * viewMatrix * modelMatrix * instanceMatrix * vec4( pos, 1.0 );
+				}`,
+			fragmentShader: `
+				uniform float uTime;
+				uniform sampler2D uTexture;
+				in vec2 vUV;
+				void main() {
+					vec4 color = texture(uTexture, vUV);
+					gl_FragColor = color;
+				}`,
+		})
+		let mesh = new InstancedMesh(geometry, material, instanceData.length)
+		
+		let matrix = new Matrix4() // init matrix to assign transforms
+		for (let i = 0; i < instanceData.length; i++) {
+			let inst = instanceData[i]
+			let pos = new Vector3(inst["tx"], inst["ty"], inst["tz"])
+			matrix.setPosition(pos)
+			mesh.setMatrixAt(i, matrix)
+		}
+
+		postUpdate(material.uuid, () => material.uniforms.uTime.value += 0.0167)
+		scene.add(mesh)
+	})
+}
+
+function postUpdate(uuid, task) {
+	updateTasks[uuid] = task // Each task runs every frame
+}
+
+function run() {
+	for (let key in updateTasks) { updateTasks[key]() }
+	requestAnimationFrame(run)
+}
+</script>

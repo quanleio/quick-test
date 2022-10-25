@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Woody</title>
+	<meta charset="utf-8">
+  
+  <!-- Letsee Engine - Updated 2020.11.25 -->
+<!--  <script src="letsee.js"></script>-->
+ 
+ <script src="https://developer.letsee.io/api/webar?key=13bb10a9b86adec346ea228483142b1368c3289757d39f0194a2865b7a45a8d3"></script>
+  
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
+  
+  <script src="js/woody.js"></script>
+</head>
+
+<body>
+	<div id="container"></div>
+  
+  <script>
+  
+    // import { initWorld } from './js/woody.js';
+
+    let scene, camera, renderer;
+    // let xrScene = {};
+    
+    letsee.ready(() => {
+      letsee.start();
+  
+      letsee.addTHREE(THREE).then(obj => {
+        camera = obj.camera;
+        renderer = obj.renderer;
+        scene = obj.scene;
+        
+        /*xrScene.camera = camera;
+        xrScene.renderer = renderer;
+        xrScene.scene = scene;*/
+    
+        initWorld();
+      })
+    });
+    letsee.init();
+
+    // Prevent user zoom in/out the webpage
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+  
+  </script>
+
+</body>
+</html>

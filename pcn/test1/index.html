@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom template</title>
+  
+  <!-- THREE.js -->
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/libs/stats.min.js"></script>
+  
+  <style media="place" type="text/css">
+    #container {
+      -letsee-target: uri('toystory.json');
+      width: 140px;
+      height: 200px;
+      border: 4px solid red;
+    }
+  </style>
+  
+  <script src="letsee.js"></script>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+  let scene,
+    camera,
+    renderer,
+    update,
+    mixer,
+    toystory;
+  let mainURL = 'https://intra.letsee.io/3D-model/gltf/';
+  // DRACO
+  let dracoLoader = new THREE.DRACOLoader();
+  dracoLoader.setDecoderPath( 'draco/' );
+  dracoLoader.preload();
+  
+  const clock = new THREE.Clock();
+  const stats = new Stats();
+  
+  stats.showPanel(1);
+  document.body.appendChild(stats.dom);
+  
+  letsee.ready(() => {
+    letsee.start();
+    letsee.addTHREE(THREE).then(obj => {
+      console.log(obj);
+      // camera = obj.camera;
+      renderer = obj.renderer;
+      scene = obj.scene;
+      update = obj.update;
+      
+      initScene();
+      loadModel();
+      
+    });
+  });
+  letsee.init();
+
+  /**
+   * Loade model.
+   */
+  function loadModel() {
+    letsee.addTarget('toystory.json').then(entity => {
+      toystory = entity;
+    
+      let geometry_toy = new THREE.BoxGeometry(142, 200, 0);
+      let texture_toy = new THREE.TextureLoader().load('toystory.jpg');
+      let material_toy = new THREE.MeshBasicMaterial({map: texture_toy});
+      let target1 = new THREE.Mesh(geometry_toy, material_toy);
+      target1.name = 'Mesh 1';
+      // toystory.add(new THREE.AxesHelper(300));
+      toystory.add(target1);
+    
+      // Instantiate a gltfLoader
+      let gltfLoader = new THREE.GLTFLoader();
+      gltfLoader.setDRACOLoader( dracoLoader );
+      gltfLoader.load(mainURL + 'lgDIOS/20201214/lg_dios_all.glb', function(gltf) {
+      
+        console.warn(gltf.scene);
+      
+        gltf.scene.position.set(0, -70, 10);
+        gltf.scene.visible = true;
+        gltf.scene.scale.setScalar(400);
+        gltf.scene.animations = [];
+      
+        if (gltf.animations.length > 0) {
+          gltf.scene.animations = gltf.animations;
+          console.warn(gltf.animations);
+        
+          mixer = new THREE.AnimationMixer(gltf.scene);
+          let action = mixer.clipAction(gltf.animations[0]);
+          action.play();
+        
+        } else console.error(`Model [${gltf.scene.name}] does not have animation.`);
+      
+        // Add mesh into entity
+        toystory.add(gltf.scene);
+      
+      });
+    
+      // Add entity to scene
+      scene.add(toystory);
+      animate();
+    });
+  }
+
+  /**
+   * Initialize Scene.
+   */
+  function initScene() {
+    // Add lights
+    let dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    dirLight.position.set(-0.5, 0.5, 0.866);
+    dirLight.castShadow = false;
+    dirLight.shadow.mapSize = new THREE.Vector2(512, 512);
+    scene.add(dirLight);
+  
+    let pmremGenerator = new THREE.PMREMGenerator( renderer );
+    pmremGenerator.compileEquirectangularShader();
+  
+    // 2. Set background for scene as image
+    new THREE.RGBELoader()
+    .setDataType( THREE.UnsignedByteType )
+    .setPath( 'textures/' )
+    .load( 'royal_esplanade_1k.hdr', function ( texture ) {
+    
+      let envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+    
+      scene.environment = envMap;
+    
+      texture.dispose();
+      pmremGenerator.dispose();
+    
+    });
+  
+    renderer.toneMappingExposure     = 1;
+    renderer.toneMapping             = 0;
+    renderer.gammaFactor             = 2;
+    renderer.outputEncoding          = THREE.sRGBEncoding;
+    renderer.physicallyCorrectLights = true;
+  }
+
+  /**
+   * Animate the model for each frame.
+   * @returns {Promise<void>}
+   */
+  const animate = async function() {
+    requestAnimationFrame(animate);
+    stats.begin();
+  
+    if (mixer) {
+      let delta = clock.getDelta();
+      mixer.update(delta);
+    }
+  
+    await letsee.threeRenderer().update();
+  
+    const camera = letsee.threeRenderer().getDeviceCamera();
+    renderer.render(scene, camera);
+    stats.update();
+  
+    stats.end();
+  };
+
+</script>
+</body>
+</html>

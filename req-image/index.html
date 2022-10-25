@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body>
+<img src="" id="testImg" style="width: 100%;">
+<button id="btnClick" style="left: 3%;position:absolute; background-color: blue; color: white">Click</button>
+<script>
+  document.getElementById('btnClick').addEventListener('click', ()=>{
+    if (axios) {
+      try {
+        axios.get('https://d-developer.letsee.io/api-tm/target-manager/projects/6041c2d2d88b75a4c27c6ae5/images/origin/60c70a7346d63ce899c07b97',
+          {
+            responseType: 'arraybuffer',
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWY5Nzg2NzRjM2QwOTg4MGY1YjU1M2FlIiwiaWF0IjoxNjIzNjUyMTYzLCJleHAiOjE2MjQyNTY5NjN9.oXpyPQnYBI8soaU9irf8OU7Y20naTrfAMOZnOP8yMkU`
+            }
+          }).then(result => {
+          // result.data => binary data
+          console.log(result)
+          console.log(result.data)
+          let blob = new Blob([result.data]);
+          console.log(blob);
+          let url = URL.createObjectURL(blob);
+          // TODO: Make Blob
+          let BLOB = 'blob_content';
+          document.getElementById('testImg').src = url;
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>L-Systems-Trees</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8"/>
+  
+  <link rel="icon" href="images/tree.ico" type="image/x-icon">
+  <link href="styles/main.css" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  
+  <!-- Three.js -->
+  <script src="https://unpkg.com/three@0.131.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.131.0/examples/js/utils/BufferGeometryUtils.js"></script>
+  <script src="https://unpkg.com/three@0.131.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.131.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.131.0/examples/js/loaders/MTLLoader.js"></script>
+  <script src="https://unpkg.com/three@0.131.0/examples/js/loaders/OBJLoader.js"></script>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  
+  <!-- client code -->
+  <script src="js/app.js"></script>
+  <script src="js/buttonsListener.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/leafCreator.js"></script>
+</head>
+
+<body>
+  <div class="gui-container accordion" id="accordionExample">
+    <div class="card bg-transparent rounded border-0">
+      <div class="card-header rounded border-0">
+        <h3 class="title">Tree Parameters</h3>
+      </div>
+      
+      <div class="card-body rounded border-0">
+        <div class="spacing">
+          <button class="btn btn-outline-light normal-button" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Axioms
+          </button>
+          
+          <div class="content">
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Axiom</span>
+                </div>
+                <input id="axiom" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="ffBfffA">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Rule 1 (A=)</span>
+                </div>
+                <input id="rule1" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="fB++fB<<fvB">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Rule 2 (B=)</span>
+                </div>
+                <input id="rule2" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="f<f>B>f--AvA">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Iterations</span>
+                </div>
+                <input id="iterations" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="5" min="0">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="spacing">
+          <button class="btn btn-outline-light normal-button" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            Properties
+          </button>
+          <div class="content">
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Angle</span>
+                </div>
+                <input id="degrees" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" min="0" max="360" value="25">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Branch Lenght</span>
+                </div>
+                <input id="length" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" min="0" value="5">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Length Reduction Factor</span>
+                </div>
+                <input id="lengthReductionFactor" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="2" min="0" max="10" step="0.5">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Branch Radius</span>
+                </div>
+                <input id="radius" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" min="0" value="0.5" step=".05">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Radius Reduction Factor</span>
+                </div>
+                <input id="radiusReductionFactor" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="5" min="0" max="10" step="0.5">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="spacing">
+          <button class="btn btn-outline-light normal-button" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+            Environment
+          </button>
+          <div class="content">
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Season</span>
+                </div>
+                <input id="season" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="3" min="1" max="4" step="1">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Bark</span>
+                </div>
+                <input id="bark" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="1" min="1" max="3" step="1">
+              </div>
+              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Preset</span>
+                </div>
+                <input id="presets" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="1" min="1" max="5" step="1">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="rendering-button">
+          <button type="button" class="btn btn-primary" id="rendering">Rendering</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="index">
+    <div class="card bg-transparent rounded border-0">
+      <div class="card-body rounded border-0" id="text-index">
+        <b>f</b>: create a branch (terminal symbol)
+        <br> <b>A, B</b>: production rules
+        <br> <b>+, -</b>: rotate the branch right/left in x-axis
+        <br> <b>^, v</b>: rotate the branch respect y-axis
+        <br> <b><, ></b>: rotate the branch in z-axis
+      </div>
+    </div>
+  </div>
+  
+  <div id="scene-container"></div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+@function preloadImages() {
+  $result: ();
+  @for $i from 3000 through 3286 {
+    $result: append($result, url('#{'png_3/Full'+ $i}.png'))
+  }
+  @return $result;
+}
+
+@mixin makeImages() {
+  @for $i from 3000 through 3286 {
+    #{' .animateImg' + '.' + 'img-' + $i} {
+      background-image: url('#{'png_3/Full'+ $i}.png')
+    }
+  }
+}
+
+body:after {
+  //position: absolute;
+  //overflow: hidden;
+  //width: 0;
+  //height: 0;
+  content: preloadImages();
+  //z-index: -1;
+
+}
+
+@include makeImages();

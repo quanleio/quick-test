@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test 3 - Tracking Events</title>
+  
+  <!-- Letsee SDK -->
+  <script src="https://developer.letsee.io/api/webar?key=95b3e0c2fd6f8a7539e87b8e9ea7ec33b45ce405e93d9b48a090ddee58d6ec55"></script>
+  
+  <!-- THREE.js -->
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/libs/stats.min.js"></script>
+  
+  <style media="place" type="text/css">
+    #container {
+      -letsee-target: uri('toystory.json');
+      width: 140px;
+      height: 200px;
+      border: 4px solid red;
+      background: rgba(255,0,0, .1);
+    }
+  </style>
+  <style>
+    h1 {
+      color: white;
+    }
+    .logContainer {
+      width: 100%;
+      height: 200px;
+      /*padding: 7.5px 0 13px;*/
+      padding: 20px;
+      /*border: solid 0.5px #979797;*/
+      background-color: #ffffff88;
+      position:absolute;
+      z-index: 1400;
+      top: 50px;
+      overflow: scroll;
+      left:0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    button {
+      position: relative;
+      margin-top: 250px;
+      z-index: 1400;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <h1>Hello World!</h1>
+</div>
+<div class="logContainer"></div>
+<!--<button id="btnClear">Clear</button>-->
+<script>
+  
+  const stats = new Stats();
+  stats.showPanel(1);
+  document.body.appendChild(stats.dom);
+
+  let logContainer = document.getElementsByClassName('logContainer')[0];
+  let logItem = document.createElement('div');
+  let logs = [];
+  
+  
+  letsee.ready(() => {
+    letsee.start();
+    
+    letsee.onTrackStart(e => {
+      logs.push(e);
+      const idx = logs.length-1;
+      writeButtonLog(logs[idx], idx);
+    });
+    letsee.onTrackEnd(e => {
+      logItem.innerHTML = '';
+    });
+    letsee.onTrackMove(e => {
+      stats.update();
+    });
+  });
+  letsee.init();
+
+  function writeButtonLog(e, idx) {
+  
+    logItem.innerHTML = `<p>Event: ${e.type}-${idx}  <br> Entity: ${e.trace.entity}</p>`;
+    logContainer.appendChild(logItem);
+    logContainer.scrollTop = logContainer.scrollHeight
+  }
+  
+</script>
+</body>
+</html>

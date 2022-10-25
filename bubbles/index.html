@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Letsee WebAR - glTF Loader</title>
+  
+  <!-- Letsee SDK -->
+  <script src="https://d-developer.letsee.io/api/webar?key=eb18cfefb541907c407098e1b42c603efd86a0baf81ae0bae6e5a7457e78e374"></script>
+  
+  <script src="https://unpkg.com/three@0.126.1/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.126.1/examples/js/loaders/RGBELoader.js"></script>
+  <script src="js/main.js"></script>
+</head>
+<body>
+
+<!-- For partical system -->
+<script type="x-shader/x-vertex" id="vertexshader">
+
+			attribute float size;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vColor = color;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+				gl_PointSize = size * ( 300.0 / -mvPosition.z );
+
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform sampler2D pointTexture;
+			uniform float opacity;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				// gl_FragColor = vec4( vColor, .6 );
+				gl_FragColor = vec4( vColor, opacity );
+
+				gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+
+			}
+
+		</script>
+
+<script>
+  let scene, camera, renderer;
+  
+  letsee.ready(() => {
+    letsee.start();
+    
+    letsee.addTHREE(THREE).then(obj => {
+      camera = obj.camera;
+      renderer = obj.renderer;
+      scene = obj.scene;
+  
+      initWorld();
+    })
+  
+    letsee.onTrackStart(() => {});
+    letsee.onTrackMove(() => {});
+    letsee.onTrackEnd(() => {});
+    
+  });
+  letsee.init();
+  
+  // Prevent user zoom in/out the webpage
+  document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+  });
+
+</script>
+</body>
+</html>

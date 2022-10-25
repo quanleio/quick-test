@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom template</title>
+  
+  <!-- THREE.js -->
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/libs/stats.min.js"></script>
+  
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
+  <style media="place" type="text/css">
+    #container {
+      -letsee-target: uri('toystory.json');
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+  <style>
+    .blue {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border: none;
+      border-radius: 100%;
+      z-index: 200;
+      background-color: blue;
+      top: 28.5px;
+      left: 22.5px;
+    }
+    
+    .green {
+      position: absolute;
+      width: 1.5px;
+      height: 1.5px;
+      border: none;
+      border-radius: 100%;
+      z-index: 200;
+      background-color: lawngreen;
+      top: 27px;
+      left: 21px;
+    }
+    
+    .grid {
+      border: 1px solid yellow;
+      border-width: 1px 0 0 1px;
+    }
+    
+    .grid div {
+      border: 1px solid yellow;
+      border-width: 0 1px 1px 0;
+      float: left;
+    }
+  </style>
+  
+  <script src="letsee.js"></script>
+</head>
+<body>
+<div id="container">
+  <div class="blue"></div>
+  <div class="green"></div>
+</div>
+<script>
+  let scene, camera, renderer, update;
+  const stats = new Stats();
+  
+  stats.showPanel(1);
+  document.body.appendChild(stats.dom);
+  
+  letsee.ready(() => {
+    letsee.start();
+    
+    createGrid(10);
+  });
+  letsee.init();
+
+  /**
+   * Create the yellow grid.
+   * @param size
+   */
+  function createGrid(size) {
+    let ratioW = Math.floor(100 / size);
+    let ratioH = Math.floor(100 / size);
+    
+    let container = document.getElementById('container');
+    
+    let parent = $('<div />', {
+      class: 'grid',
+      width: ratioW * size,
+      height: ratioH * size,
+    }).addClass('grid').appendTo(container);
+    
+    for (let i = 0; i < ratioH; i++) {
+      for (let p = 0; p < ratioW; p++) {
+        $('<div />', {
+          width: size - 1,
+          height: size - 1,
+        }).appendTo(parent);
+      }
+    }
+  }
+
+</script>
+</body>
+</html>

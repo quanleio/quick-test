@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test 1 - Loading model</title>
+  
+  <!-- Letsee SDK -->
+  <script src="https://developer.letsee.io/api/webar?key=95b3e0c2fd6f8a7539e87b8e9ea7ec33b45ce405e93d9b48a090ddee58d6ec55"></script>
+  
+  <!-- THREE.js -->
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/libs/stats.min.js"></script>
+  
+  <script src="js/test1.js"></script>
+
+</head>
+<body>
+<script>
+  
+  stats.showPanel(1);
+  document.body.appendChild(stats.dom);
+  
+  letsee.ready(() => {
+    letsee.start();
+    
+    letsee.addTHREE(THREE).then(obj => {
+      camera = obj.camera;
+      renderer = obj.renderer;
+      scene = obj.scene;
+      
+      initScene();
+      proceedModel();
+    });
+    
+    letsee.onTrackStart(() => {});
+    letsee.onTrackEnd(() => {});
+    letsee.onTrackMove(() => {
+      if (toystory.children.length > 0) toystory.children[0].visible = true;
+    });
+  });
+  letsee.init();
+  
+</script>
+</body>
+</html>

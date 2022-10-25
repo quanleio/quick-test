@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Letsee WebAR Demo</title>
+  <script src="https://developer.letsee.io/api/webar?key=95b3e0c2fd6f8a7539e87b8e9ea7ec33b45ce405e93d9b48a090ddee58d6ec55"></script>
+  
+  <style media="place" type="text/css">
+      #container {
+          -letsee-target: uri('letsee-marker.json');
+        width: 200px;
+        height: 140px;
+      }
+  </style>
+</head>
+<body>
+<div id="container"><h1 style="color: black">Hello, world!</h1></div>
+<script>
+  
+  letsee.ready(() => {
+    letsee.start();
+  });
+  letsee.init();
+</script>
+</body>
+</html>

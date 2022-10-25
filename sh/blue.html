@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>EMC - Take 05</title>
+	<meta charset="utf-8">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans:100,300,400,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500&display=swap" rel="stylesheet">
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.js"></script>
+	<script src="js/lib/r120/GLTFLoader.js"></script>
+	
+	<script src="letsee.js"></script>
+<!--	<script src="https://developer.letsee.io/api/webar?key=e9270840704142e2639eef773034ba7b9a32fb12e9140a545288720650207bab"></script>-->
+	
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+	<!-- client code -->
+	<script src="js/blue.js"></script>
+	<link rel="stylesheet" href="css/main.css">
+
+	<style>
+	
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+	
+	<div id="hint">
+		<p id="percent"></p>
+		<svg
+						class="progress-ring"
+						width="130"
+						height="130">
+			<circle
+							class="progress-ring__circle"
+							stroke="#a50634"
+							stroke-width="4"
+							fill="rgba(255, 255, 255, 0.5)"
+							r="52"
+							cx="60"
+							cy="60"/>
+		</svg>
+	</div>
+	
+	<script>
+    letsee.ready(() => {
+      letsee.start();
+      
+      letsee.addTHREE(THREE).then(obj => {
+        camera = obj.camera;
+        renderer = obj.renderer;
+        scene = obj.scene;
+  
+        initWorld();
+      })
+    });
+    letsee.init();
+
+    // Prevent user zoom in/out the webpage
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+
+	</script>
+</body>
+</html>

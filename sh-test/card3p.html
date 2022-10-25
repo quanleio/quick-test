@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>Letsee WebAR SDK Test WebApp - Card1</title>
+
+    <script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.123.0/examples/js/loaders/GLTFLoader.js"></script>
+    <link rel="stylesheet" href="main.css"/>
+
+        <script src="letsee.js"></script>
+<!--    <script src="https://developer.letsee.io/api/webar?key=598fd5bd3ec4e258d90b37f37e33992a529071e346560189fcc83e31e46b7218"></script>-->
+
+    <!-- client code -->
+    <!--  <script src="js/card3.js"></script>-->
+
+    <style media="place" type="text/css">
+        #container {
+            -letsee-target: uri('card3_front.json');
+            width: 300px;
+            height: 400px;
+        }
+    </style>
+
+    <style>
+        .animateImg {
+            display: flex;
+            align-content: center;
+            align-items: center;
+            /*overflow: hidden;*/
+            background: no-repeat 50%/100%;
+            height: 120%;
+            margin-top: 25%;
+            width: 100%;
+        }
+        #inner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="container">
+    <div id="inner">
+        <div class="animateImg"></div>
+    </div>
+</div>
+
+<script>
+
+    let scene, camera, renderer;
+    let viewCount = 0;
+    let count = 3000;
+    const AllImageCount = 3286;
+    let id;
+    /*let myImage = document.getElementById('myImg');
+    let onLoadImage = false;
+
+    let images = [
+        'png_3/Full 3000.png',
+        'png_3/Full 3001.png',
+        'png_3/Full 3002.png',
+        'png_3/Full 3003.png',
+        'png_3/Full 3004.png',
+        'png_3/Full 3005.png',
+        'png_3/Full 3006.png',
+        'png_3/Full 3007.png',
+        'png_3/Full 3008.png',
+        'png_3/Full 3009.png',
+        'png_3/Full 3010.png',
+        'png_3/Full 3011.png',
+        'png_3/Full 3012.png',
+        'png_3/Full 3013.png',
+        'png_3/Full 3014.png',
+        'png_3/Full 3015.png',
+        'png_3/Full 3016.png',
+        'png_3/Full 3017.png',
+        'png_3/Full 3018.png',
+        'png_3/Full 3019.png',
+        'png_3/Full 3020.png',
+        'png_3/Full 3021.png',
+        'png_3/Full 3022.png',
+        'png_3/Full 3023.png',
+        'png_3/Full 3024.png',
+        'png_3/Full 3025.png',
+        'png_3/Full 3026.png',
+        'png_3/Full 3027.png',
+        'png_3/Full 3028.png',
+        'png_3/Full 3029.png',
+        'png_3/Full 3030.png',
+        'png_3/Full 3031.png',
+        'png_3/Full 3032.png',
+        'png_3/Full 3033.png',
+        'png_3/Full 3034.png',
+        'png_3/Full 3035.png',
+        'png_3/Full 3036.png',
+        'png_3/Full 3037.png',
+        'png_3/Full 3038.png',
+        'png_3/Full 3039.png',
+        'png_3/Full 3040.png',
+        'png_3/Full 3041.png',
+        'png_3/Full 3042.png',
+        'png_3/Full 3043.png',
+        'png_3/Full 3044.png',
+        'png_3/Full 3045.png',
+        'png_3/Full 3046.png',
+        'png_3/Full 3047.png',
+        'png_3/Full 3048.png',
+        'png_3/Full 3049.png',
+        'png_3/Full 3050.png',
+        'png_3/Full 3051.png',
+        'png_3/Full 3052.png',
+        'png_3/Full 3053.png',
+        'png_3/Full 3054.png',
+        'png_3/Full 3055.png',
+        'png_3/Full 3056.png',
+        'png_3/Full 3057.png',
+        'png_3/Full 3058.png',
+        'png_3/Full 3059.png',
+        'png_3/Full 3060.png',
+        'png_3/Full 3061.png',
+        'png_3/Full 3062.png',
+        'png_3/Full 3063.png',
+        'png_3/Full 3064.png',
+        'png_3/Full 3065.png',
+        'png_3/Full 3066.png',
+        'png_3/Full 3067.png',
+        'png_3/Full 3068.png',
+        'png_3/Full 3069.png',
+        'png_3/Full 3070.png',
+        'png_3/Full 3071.png',
+        'png_3/Full 3072.png',
+        'png_3/Full 3073.png',
+        'png_3/Full 3074.png',
+        'png_3/Full 3075.png',
+        'png_3/Full 3076.png',
+        'png_3/Full 3077.png',
+        'png_3/Full 3078.png',
+        'png_3/Full 3079.png',
+        'png_3/Full 3080.png',
+        'png_3/Full 3081.png',
+        'png_3/Full 3082.png',
+        'png_3/Full 3083.png',
+        'png_3/Full 3084.png',
+        'png_3/Full 3085.png',
+        'png_3/Full 3086.png',
+        'png_3/Full 3087.png',
+        'png_3/Full 3088.png',
+        'png_3/Full 3089.png',
+        'png_3/Full 3090.png',
+        'png_3/Full 3091.png',
+        'png_3/Full 3092.png',
+        'png_3/Full 3093.png',
+        'png_3/Full 3094.png',
+        'png_3/Full 3095.png',
+        'png_3/Full 3096.png',
+        'png_3/Full 3097.png',
+        'png_3/Full 3098.png',
+        'png_3/Full 3099.png',
+        'png_3/Full 3100.png',
+    ];
+
+    let FRAMES_PER_SECOND;
+
+    const UA = window.navigator.userAgent;
+    const isAndroid = UA.indexOf("Android") > 0;
+    const isIOS = UA.indexOf("iPhone") > 0;
+    if (isAndroid) {
+        console.warn(`isAndroid!`);
+        FRAMES_PER_SECOND = 500;
+    }
+    if (isIOS) {
+        console.warn(`isOS!`);
+        FRAMES_PER_SECOND = 400;
+    }
+
+    // set the mim time to render the next frame
+    const FRAME_MIN_TIME = (1000/60) * (60 / FRAMES_PER_SECOND) - (1000/60) * 0.5;
+    let lastFrameTime = 0;  // the last frame time
+    let time =0 ;*/
+
+    function changeImage(){
+        // if(time-lastFrameTime < FRAME_MIN_TIME){ //skip the frame if the call is too early
+        //
+        //     requestAnimationFrame(changeImage);
+        //     return; // return as there is nothing to do
+        // }
+
+        count++;
+        if(AllImageCount < count) count = 3000;
+       // document.querySelector('.animateImg').setAttribute('style', `background-image:url("png_3/Full 3${String(count).padStart(3, '0')}.png")`)
+        document.querySelector('.animateImg').setAttribute('class', `animateImg img-${count}`)
+        // myImage.src = `png_3/Full 3${String(count).padStart(3, '0')}.png`;
+    }
+
+    // function changeImage() {
+    //     let myImage = document.getElementById('myImg');
+    //     count++
+    //     if(AllImageCount < count) count = 0;
+    //     myImage.src = `png_3/Full 3${String(count).padStart(3, '0')}.png`;
+    //
+    //     id = requestAnimationFrame(changeImage);
+    //
+    // }
+
+    letsee.ready(() => {
+        letsee.start();
+    });
+    letsee.init();
+
+    letsee.onTrackStart(() => {
+        // myImage.style.display = 'block';
+        //id = changeImage(time);
+    })
+
+    letsee.onTrackEnd(() => {
+        // myImage.style.display = 'none';
+        // cancelAnimationFrame(id);
+    })
+
+    letsee.onTrackMove(() => {
+        console.warn(`changeImage`);
+       changeImage();
+    })
+
+    /*letsee.onTrackMove(() => {
+        if(viewCount < 1 ) {
+            viewCount++
+            return
+        } else {
+            changeImage();
+            viewCount = 0
+        }
+
+    })*/
+
+</script>
+
+</body>
+</html>

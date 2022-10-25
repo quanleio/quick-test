@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <title>Letsee WebAR SDK Test WebApp - Card3</title>
+
+  <script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.123.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <!--    <script src="letsee.js"></script>-->
+  <script src="https://developer.letsee.io/api/webar?key=598fd5bd3ec4e258d90b37f37e33992a529071e346560189fcc83e31e46b7218"></script>
+
+  <!-- client code -->
+<!--  <script src="js/card3.js"></script>-->
+
+  <style media="place" type="text/css">
+      #container {
+          -letsee-target: uri('card3_front.json');
+          width: 300px;
+          height: 400px;
+          /*border: 4px solid red;*/
+      }
+  </style>
+
+  <style>
+    video {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+        width: 100%;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div id="container">
+    <video muted autoplay playsinline webkit-playsinline loop>
+      <source src="20201130-LS03-w.mp4">
+    </video>
+
+  </div>
+
+  <script>
+
+    let scene, camera, renderer;
+
+    letsee.ready(() => {
+      letsee.start();
+      /*letsee.addTHREE(THREE).then(obj => {
+        camera = obj.camera;
+        renderer = obj.renderer;
+        scene = obj.scene;
+
+        initWorld();
+      })*/
+    });
+    letsee.init();
+
+    // Prevent user zoom in/out the webpage
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<!--  <meta http-equiv="cache-control" content="max-age=0" />-->
+  <meta http-equiv="cache-control" content="no-cache, no-store">
+  <meta http-equiv="expires" content="0">
+  <meta http-equiv="pragma" content="no-cache, no-store">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <title>File Downloader</title>
+  <style>
+    html, body {
+      overflow-x: scroll;
+    }
+    .wrapper {
+      font-size: 1.5rem;
+    }
+    .row {
+      width: 100%;
+      height: 80px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-content: center;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    input {
+      width: 500px;
+      margin-right: 20px;
+    }
+    button {
+      margin-left: 20px;
+      margin-right: 20px;
+      height: 50px;
+    }
+    p { margin-left: 20px }
+    span { font-weight: bold }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <h1>File Downloader</h1>
+  </header>
+  <div class="row">
+    <p>File #1:</p>
+    <button onclick="downloadFile(0)">Download</button>
+    <p class="start">Start: </p>
+    <p class="end">End: </p>
+    <p class="size">Size:</p>
+    <p>
+      Duration:
+      <span class="ms"></span>
+    </p>
+  </div>
+  
+  <div class="row">
+    <p>File #2: </p>
+    <button onclick="downloadFile(1)">Download</button>
+    <p class="start">Start: </p>
+    <p class="end">End: </p>
+    <p class="size">Size:</p>
+    <p>Duration:
+      <span class="ms"></span>
+    </p>
+  </div>
+  
+  <div class="row">
+    <p>File #3:</p>
+    <button onclick="downloadFile(2)">Download</button>
+    <p class="start">Start: </p>
+    <p class="end">End: </p>
+    <p class="size">Size:</p>
+    <p>Duration:
+      <span class="ms"></span>
+    </p>
+  </div>
+  
+  <div class="row">
+    <p>File #4: </p>
+    <button onclick="downloadFile(3)">Download</button>
+    <p class="start">Start: </p>
+    <p class="end">End: </p>
+    <p class="size">Size:</p>
+    <p>Duration: <span class="ms"></span></p>
+  </div>
+  
+  <div class="row">
+    <p>File #5: </p>
+    <button onclick="downloadFile(4)">Download</button>
+    <p class="start">Start: </p>
+    <p class="end">End: </p>
+    <p class="size">Size:</p>
+    <p>Duration: <span class="ms"></span></p>
+  </div>
+</div>
+
+<script>
+  let currentUrl
+  const starHtml = document.getElementsByClassName('start')
+  const endHtml = document.getElementsByClassName('end')
+  const sizeHtml = document.getElementsByClassName('size')
+  const mSec = document.getElementsByClassName('ms');
+
+  const downloadFile = ( order ) => {
+    switch (order) {
+      case 0:
+        currentUrl = 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/glb/5MB.bin'
+  
+        // reset
+        starHtml[0].innerHTML = 'Start: '
+        endHtml[0].innerHTML = 'End: '
+        sizeHtml[0].innerHTML = 'Size: '
+        mSec[0].innerHTML = ''
+        
+        let now0 = moment(new Date());
+        console.warn('start: ', now0)
+        starHtml[0].innerHTML += now0.format('LTS');
+        fetchFile(0, now0, currentUrl);
+        
+        break;
+      case 1:
+        currentUrl = 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/glb/10MB.bin'
+  
+        // reset
+        starHtml[1].innerHTML = 'Start: '
+        endHtml[1].innerHTML = 'End: '
+        sizeHtml[1].innerHTML = 'Size: '
+        mSec[1].innerHTML = ''
+        
+        let now1 = moment(new Date());
+        console.warn('start: ', now1)
+        starHtml[1].innerHTML += now1.format('LTS');
+        fetchFile(1, now1, currentUrl);
+        
+        break;
+      case 2:
+        currentUrl = 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/glb/20MB.bin'
+  
+        // reset
+        starHtml[2].innerHTML = 'Start: '
+        endHtml[2].innerHTML = 'End: '
+        sizeHtml[2].innerHTML = 'Size: '
+        mSec[2].innerHTML = ''
+        
+        let now2 = moment(new Date());
+        console.warn('start: ', now2)
+        starHtml[2].innerHTML += now2.format('LTS');
+        fetchFile(2,now2, currentUrl);
+    
+        break;
+      case 3:
+        currentUrl = 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/glb/50MB.bin'
+  
+        // reset
+        starHtml[3].innerHTML = 'Start: '
+        endHtml[3].innerHTML = 'End: '
+        sizeHtml[3].innerHTML = 'Size: '
+        mSec[3].innerHTML = ''
+        
+        let now3 = moment(new Date());
+        console.warn('start: ', now3)
+        starHtml[3].innerHTML += now3.format('LTS');
+        fetchFile(3, now3, currentUrl);
+    
+        break;
+      case 4:
+        currentUrl = 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/glb/100MB.bin'
+    
+        // reset
+        starHtml[4].innerHTML = 'Start: '
+        endHtml[4].innerHTML = 'End: '
+        sizeHtml[4].innerHTML = 'Size: '
+        mSec[4].innerHTML = ''
+    
+        let now4 = moment(new Date());
+        console.warn('start: ', now4)
+        starHtml[4].innerHTML += now4.format('LTS');
+        fetchFile(4, now4, currentUrl);
+    
+        break;
+    }
+  }
+  
+  function fetchFile(order, now, url) {
+    fetch(url).then(res => res.blob()).then(file => {
+      console.warn(file)
+      let tempUrl = URL.createObjectURL(file);
+      const aTag = document.createElement('a');
+      aTag.href = tempUrl;
+      aTag.download = url.replace(/^.*[\\\/]/, '');
+      document.body.appendChild(aTag);
+      aTag.click();
+      URL.revokeObjectURL(tempUrl);
+      aTag.remove();
+  
+      let end = moment(new Date());
+      console.warn('End: ', end)
+  
+      switch (order) {
+        case 0:
+          endHtml[0].innerHTML += end.format('LTS');
+          sizeHtml[0].innerHTML += (file.size / (1024*1024)).toFixed(2) + ' MB';
+  
+          var duration = moment.duration(end.diff(now)).asMilliseconds();
+          console.warn('duration: ', duration, ' ms')
+          
+          mSec[0].innerHTML += duration + ' ms'
+          break;
+        case 1:
+          endHtml[1].innerHTML += end.format('LTS');
+          sizeHtml[1].innerHTML += (file.size / (1024*1024)).toFixed(2) + ' MB';
+  
+          var duration = moment.duration(end.diff(now)).asMilliseconds();
+          console.warn('duration: ', duration, ' ms')
+          
+          mSec[1].innerHTML += duration + ' ms'
+          break;
+        case 2:
+          endHtml[2].innerHTML += end.format('LTS');
+          sizeHtml[2].innerHTML += (file.size / (1024*1024)).toFixed(2) + ' MB';
+  
+          var duration = moment.duration(end.diff(now)).asMilliseconds();
+          console.warn('duration: ', duration, ' ms')
+          mSec[2].innerHTML += duration + ' ms'
+          break;
+        case 3:
+          endHtml[3].innerHTML += end.format('LTS');
+          sizeHtml[3].innerHTML += (file.size / (1024*1024)).toFixed(2) + ' MB';
+  
+          var duration = moment.duration(end.diff(now)).asMilliseconds();
+          console.warn('duration: ', duration, ' ms')
+          mSec[3].innerHTML += duration + ' ms'
+          break;
+        case 4:
+          endHtml[4].innerHTML += end.format('LTS');
+          sizeHtml[4].innerHTML += (file.size / (1024*1024)).toFixed(2) + ' MB';
+  
+          var duration = moment.duration(end.diff(now)).asMilliseconds();
+          console.warn('duration: ', duration, ' ms')
+          mSec[4].innerHTML += duration + ' ms'
+          break;
+      }
+      
+      // console.timeEnd('check')
+    })
+    .catch((err) => {
+      alert('Failed to download file! ', err);
+    });
+  }
+</script>
+</body>
+</html>

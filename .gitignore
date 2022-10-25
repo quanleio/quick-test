@@ -3,6 +3,7 @@ package-lock.json
 dist/*
 !dist/.keep
 .idea
+.vscode
 *.map
 *.css
 .DS_STORE

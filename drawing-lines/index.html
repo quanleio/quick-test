@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  
+  <script src="https://unpkg.com/three@0.130.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.130.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<script>
+  var camera, scene, renderer, controls;
+  var sphere1, sphere2, sphere3, line;
+  var MAX_POINTS = 4;
+  let drawCount;
+  
+  init();
+  
+  
+  function init() {
+    
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.set(5, 10, 10);
+    
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    
+    const geometry = new THREE.SphereGeometry( 0.5, 32, 4 );
+    const material_red = new THREE.MeshBasicMaterial( {color: 'red', wireframe: false} );
+    sphere1 = new THREE.Mesh( geometry, material_red );
+    sphere1.position.set(2, 0, 0);
+  
+    const material_blue = new THREE.MeshBasicMaterial( {color: 'blue', wireframe: false} );
+    sphere2 = new THREE.Mesh( geometry, material_blue );
+    sphere2.position.set(-2, 0, 0);
+  
+    const material_yellow = new THREE.MeshBasicMaterial( {color: 'yellow', wireframe: false} );
+    sphere3 = new THREE.Mesh( geometry, material_yellow );
+    sphere3.position.set(0, 2, 0);
+  
+    /*let points = [];
+    points.push( new THREE.Vector3( - 10, 0, 0 ) );
+    points.push( new THREE.Vector3( 0, 10, 0 ) );
+    points.push( new THREE.Vector3( 10, 0, 0 ) );
+    
+    // points.push( sphere1.position, sphere2.position, sphere3.position, sphere1.position );
+    let lineGeom = new THREE.BufferGeometry().setFromPoints( points );
+    lineGeom.computeBoundingSphere();
+    // geometry.setDrawRange( 0, 0 );
+    console.error(lineGeom);
+  
+    var lineMat = new THREE.LineBasicMaterial({
+      color: 'white',
+      opacity: 1,
+      linewidth: 2
+    });
+    line = new THREE.Line(lineGeom, lineMat);
+    // line = new THREE.LineSegments( lineGeom, lineMat );
+    scene.add(line)*/
+    
+    // scene.add(sphere1, sphere2, sphere3, line);
+  
+    //create a blue LineBasicMaterial
+    const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+    const points = [];
+    points.push( new THREE.Vector3( - 10, 0, 0 ) );
+    points.push( new THREE.Vector3( 0, 10, 0 ) );
+    points.push( new THREE.Vector3( 10, 0, 0 ) );
+    const lineGeo = new THREE.BufferGeometry().setFromPoints( points );
+    const line = new THREE.Line( lineGeo, material );
+    scene.add(line)
+    
+    //updatePositions();
+    animate();
+  }
+  
+  function animate() {
+    var timestamp = new Date() * 0.0005;
+    requestAnimationFrame(animate);
+  
+    sphere1.position.x = Math.cos(timestamp) * 7;
+    sphere1.position.z = Math.sin(timestamp) * 7;
+  
+    sphere2.position.x = Math.cos(timestamp * 2) * 5;
+    sphere2.position.y = Math.sin(timestamp * 2) * 5;
+  
+    sphere3.position.x = Math.cos(timestamp * 2) * 2;
+    sphere3.position.y = Math.sin(timestamp * 2) * 2;
+  
+    /*let position = line.geometry.attributes.position.array;
+    let length = line.geometry.attributes.position.count*line.geometry.attributes.position.itemSize;
+    
+    let i = 0;
+    position[i++] = sphere1.position.x;
+    position[i++] = sphere1.position.y;
+    position[i++] = sphere1.position.z;
+
+    position[i++] = sphere2.position.x;
+    position[i++] = sphere2.position.y;
+    position[i++] = sphere2.position.z; //position[i] = sphere2.position.z;
+
+    position[i++] = sphere3.position.x;
+    position[i++] = sphere3.position.y;
+    position[i++] = sphere3.position.z;
+
+    position[i++] = sphere1.position.x;
+    position[i++] = sphere1.position.y;
+    position[i++] = sphere1.position.z;
+    line.geometry.attributes.position.needsUpdate = true;*/
+  
+    /*let numConnected = 0;
+  
+    line.geometry.setDrawRange( 0, numConnected * 2 );
+    line.geometry.attributes.position.needsUpdate = true;*/
+    
+    render();
+  }
+
+  // update positions
+  function updatePositions() {
+  
+    var positions = line.geometry.attributes.position.array;
+  
+    let x= 0, y=0, z=0, index=0;
+  
+    for ( var i = 0, l = MAX_POINTS; i < l; i ++ ) {
+    
+      positions[ index ++ ] = x;
+      positions[ index ++ ] = y;
+      positions[ index ++ ] = z;
+    
+      x += ( Math.random() - 0.5 ) * 30;
+      y += ( Math.random() - 0.5 ) * 30;
+      z += ( Math.random() - 0.5 ) * 30;
+    }
+  
+  }
+  
+  function render() {
+    renderer.render(scene, camera);
+  }
+
+</script>
+</body>
+</html>

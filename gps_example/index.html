@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+
+<!-- <p>Click the button to get your coordinates.</p> -->
+
+<br><br>
+Radius : <input id="userRadius" name="Range" value="40">m
+<button onclick="changeRadius()">Apply</button>
+
+<br><br><br>
+
+<button class="UpdateBtn" onclick="startWatch()">Start GPS</button>
+<button class="StopBtn" onclick="stopWatch()">Stop GPS</button>
+
+
+<!-- <button class="UpdateBtn" onclick="getLocation()">UpdateGPS</button> -->
+
+
+<p id="myCoor"></p>
+
+<p id="infoText"></p>
+
+
+<script>
+  
+  let Radius = 35;    // Radius 초기값
+  let watchID;
+  let textData = '';
+  let jsonData = [];
+  let x = document.getElementById('infoText');
+  let myCoorText = document.getElementById('myCoor');
+  
+  let request = new XMLHttpRequest();
+  
+  // 위치값들이 저장된 .tsv 파일 경로
+  request.open('GET', 'https://test-geofencing.s3.ap-northeast-1.amazonaws.com/mgc/mgc_test.tsv', true);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.onload = (e) => {
+    textData = request.response;
+    jsonData = TSVToJSON(textData);
+  };
+  request.send();
+  
+  function stopWatch() {               // GPS 추적 종료
+    navigator.geolocation.clearWatch(watchID);
+  }
+  
+  function startWatch() {        // GPS 추적 시작
+    
+    watchID = navigator.geolocation.watchPosition(function(position) {
+      myCoorText.innerHTML = 'My Coor : ' + position.coords.latitude + ' , ' + position.coords.longitude;
+      
+      for (idx in jsonData) {
+        const dstLat = jsonData[idx]['Latitude'];
+        const dstlong = jsonData[idx]['Longitude'];
+        
+        const cio = checkInsideOne(position.coords.latitude, position.coords.longitude, dstLat, dstlong, Radius);
+        
+        if (cio['isInside']) {        // 1. 내 위치가 목적지들 중 하나의 내부에 있으면? Do something...
+          x.innerHTML = '<br> isInside: <b>' + cio['isInside'] + ' / ' + jsonData[idx]['Name'] + '  ' +
+            jsonData[idx]['Latitude'] + ',' + jsonData[idx]['Longitude'];
+          x.innerHTML += '<br> Distance: <b>' + Math.sqrt(cio['distance']) / 0.00001 + '(m)';
+          break;
+        } else {
+          x.innerHTML = 'Outside';
+        }
+      }
+      
+    }, function(error) {
+      console.error(error);
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: Infinity,
+    });
+  }
+  
+  function changeRadius() {       // UI에 있는 Input필드로 radius 변경하기
+    Radius = document.getElementById('userRadius').value;
+  }
+  
+  function checkInsideOne(a, b, cx, cy, r) {      // 내위치(a,b), 비교대상위치(cx,cy), 반경(r) / 내 위치가 비교대상의 위치를 기점으로 반지름 r 속에 있는지 아닌지를 파악.
+    // a:Current Latitude , b:Current Longitude, add:오차보정(m)
+    // cx:Building CenterX , cy:Building CenterY, r:Radius
+    
+    r = r * 0.00001;
+    
+    // R^2 > (cx-a)^2 + (cy-b)^2 이면 내부에 있음.
+    const sqrtR = Math.pow(r, 2);
+    const result = Math.pow((cx - a), 2) + Math.pow((cy - b), 2);
+    // console.log("sqrtR:",sqrtR, "result:",result , "sqrtR-result:",sqrtR-result,  "Answer:", (sqrtR > result ? "In":"Out") ); // 양수이면 내부, 음수이면 외부
+    
+    if (sqrtR > result) {
+      return {'isInside': true, 'distance': result};       // 내부에 있음
+    } else {
+      return {'isInside': false, 'distance': result};       // 밖에 있음
+    }
+    
+  }
+
+
+</script>
+
+<style>
+  .UpdateBtn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 60px 100px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  
+  .StopBtn {
+    background-color: #ff0000;
+    border: none;
+    color: white;
+    padding: 60px 100px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+</style>
+
+
+<script type="text/javascript">     // 다운받아온 위치들의 데이터를 JSON으로 변환
+// REF : https://www.bennadel.com/blog/1504-ask-ben-parsing-csv-strings-with-javascript-exec-regular-expression-command.htm
+function CSVToArray(strData, strDelimiter) {
+  strDelimiter = (strDelimiter || ',');
+  var objPattern = new RegExp(
+    (
+      '(\\' + strDelimiter + '|\\r?\\n|\\r|^)' +
+      '(?:"([^"]*(?:""[^"]*)*)"|' +
+      '([^"\\' + strDelimiter + '\\r\\n]*))'
+    ),
+    'gi',
+  );
+  var arrData = [[]];
+  var arrMatches = null;
+  while (arrMatches = objPattern.exec(strData)) {
+    var strMatchedDelimiter = arrMatches[1];
+    if (
+      strMatchedDelimiter.length &&
+      (strMatchedDelimiter != strDelimiter)
+    ) {
+      arrData.push([]);
+    }
+    if (arrMatches[2]) {
+      var strMatchedValue = arrMatches[2].replace(
+        new RegExp('""', 'g'),
+        '"',
+      );
+      
+    } else {
+      var strMatchedValue = arrMatches[3];
+    }
+    arrData[arrData.length - 1].push(strMatchedValue);
+  }
+  return (arrData);
+}
+
+// REF : https://curryyou.tistory.com/252
+function CSVToJSON(csv_string) {
+  const rows = csv_string.split('\r\n');
+  const jsonArray = [];
+  const header = rows[0].split(',');
+  for (let i = 1; i < rows.length; i++) {
+    let obj = {};
+    let row = rows[i].split(',');
+    for (let j = 0; j < header.length; j++) {
+      obj[header[j]] = row[j];
+    }
+    jsonArray.push(obj);
+  }
+  return jsonArray;
+}
+
+function TSVToJSON(tsv_string) {
+  const rows = tsv_string.split('\r\n');
+  const jsonArray = [];
+  const header = rows[0].split('\t');
+  for (let i = 1; i < rows.length; i++) {
+    let obj = {};
+    let row = rows[i].split('\t');
+    for (let j = 0; j < header.length; j++) {
+      obj[header[j]] = row[j];
+    }
+    jsonArray.push(obj);
+  }
+  return jsonArray;
+}
+
+//REF : https://curryyou.tistory.com/259
+function JSONToTSV(json_data) {
+  
+  const json_array = json_data;
+  let tsv_string = '';
+  const titles = Object.keys(json_array[0]);
+  titles.forEach((title, index) => {
+    tsv_string += (index !== titles.length - 1 ? `${title}\t` : `${title}\r\n`);
+  });
+  json_array.forEach((content, index) => {
+    let row = ''; // 각 인덱스에 해당하는 '내용'을 담을 행
+    for (let title in content) { // for in 문은 객체의 키값만 추출하여 순회함.
+      row += (row === '' ? `${content[title]}` : `\t${content[title]}`);
+    }
+    tsv_string += (index !== json_array.length - 1 ? `${row}\r\n` : `${row}`);
+  });
+  return tsv_string;
+}
+</script>
+
+</body>
+</html>
+
+
+
+

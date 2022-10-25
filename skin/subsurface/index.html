@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Fast subsurface scattering in Blinn-Phong shading demo</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../main.css">
+  
+  <script src="https://unpkg.com/three@0.145.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/RGBELoader.js"></script>
+  
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/MaskPass.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/SSAOPass.js"></script>
+  
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/BleachBypassShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/ColorCorrectionShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/FXAAShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/GammaCorrectionShader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/shaders/SubsurfaceScatteringShader.js"></script>
+  
+  <script src="https://unpkg.com/three@0.145.0/examples/js/math/SimplexNoise.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+</head>
+
+<body>
+<div id="app"></div>
+
+<div id="info">
+  <br/>Fast subsurface scattering in Blinn-Phong shading demo<br/>
+  three.js v145 | GLTFLoader v145 | DRACOLoader v145<br>
+  Follow example: <a href="https://codesandbox.io/s/muddy-wave-qmjs9?file=/src/index.js:2720-2731" target="_blank" rel="noopener">https://codesandbox.io/s/muddy-wave-qmjs9?file=/src/index.js:2720-2731</a><br>
+  Model: son_102_1k0-v1.glb, 4MB, texture resolution: 512x512 <br>
+  <p>
+    Environment:
+    <a href="https://github.com/google/model-viewer/blob/master/packages/shared-assets/environments/pillars_1k.hdr" target="_blank" rel="noopener">ModelViewer Pillars</a>
+    <br>
+    Lights: AmbientLight, HemisphereLight, SpotLight(2) <br>
+    ToneMapping: THREE.LinearToneMapping<br>
+    Mesh material: ShaderMaterial
+  </p>
+</div>
+
+<script src="src/index.js">
+</script>
+</body>
+
+</html>

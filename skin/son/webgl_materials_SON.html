@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>three.js webgl - Fast subsurface scattering in Blinn-Phong shading demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../main.css">
+  
+  <script src="https://unpkg.com/three@0.145.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://unpkg.com/three@0.145.0/examples/js/loaders/RGBELoader.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+<div id="info">
+  three.js v145 | GLTFLoader v145 | DRACOLoader v145
+  <br/>Model: son_102_1k0.glb, 4MB | Texture resolution: 512x512<br/>
+  <p>
+    Environment:
+    <a href="https://github.com/google/model-viewer/blob/master/packages/shared-assets/environments/pillars_1k.hdr" target="_blank" rel="noopener">ModelViewer Pillars</a>
+    | Lights: NONE
+    <br>
+    ToneMapping: ACESFilmicToneMapping | OutputEncoding: sRGBEncoding | PhysicallyCorrectLights: True <br>
+    Mesh material: StandardMaterial + PhysicalMaterial <br>
+    FrustumCulled: False
+  </p>
+</div>
+
+<script>
+  
+  let container;
+  let camera, scene, renderer;
+  let model;
+  
+  init();
+  animate();
+  
+  function init() {
+    
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 10000);
+    camera.position.set(0, 0, 100);
+    
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    new THREE.RGBELoader().load('pillars_1k.hdr', function(hdrEquirect) {
+      hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+      scene.environment = hdrEquirect;
+      render();
+    });
+    
+    // Lights
+    // scene.add( new THREE.AmbientLight( 0x888888 ) );
+    
+    // const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.03 );
+    // directionalLight.position.set( 0.0, 0.5, 0.5 ).normalize();
+    // scene.add( directionalLight );
+    
+    // const pointLight1 = new THREE.PointLight( 0xffffff, 1.0, 300 )
+    // scene.add( pointLight1 );
+    // pointLight1.position.set(0, -50, 300)
+    //
+    // const pointLight2 = new THREE.PointLight( 0xffffff, 1.0, 500 )
+    // scene.add( pointLight2 );
+    // pointLight2.position.set(0, -50, -300)
+    
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.physicallyCorrectLights = true;
+    container.appendChild(renderer.domElement);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    
+    const controls = new THREE.OrbitControls(camera, container);
+    window.addEventListener('resize', onWindowResize);
+    
+    loadModel();
+    
+  }
+  
+  function loadModel() {
+    const loaderGLB = new THREE.GLTFLoader();
+    const dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath('../draco/');
+    loaderGLB.setDRACOLoader(dracoLoader);
+    
+    // Son
+    loaderGLB.load('son_102_1k0-v1.glb', function(gltf) {
+      model = gltf.scene;
+      model.position.set(150, -50, 0);
+      model.scale.setScalar(120);
+      scene.add(model);
+      
+      console.warn('MATERIAL:')
+      model.traverse(child => {
+        child.frustumCulled = false;
+        
+        if (child.material) {
+          if (child.material.name === 'Eye_Right_shader') {
+            console.warn()
+            console.warn('Name: ', child.material.name)
+            console.warn('Color: ', child.material.color)
+            console.warn('Emissive color: ', child.material.emissive)
+            console.warn('Reflectivity: ', child.material.reflectivity)
+            console.warn('Roughness: ', child.material.roughness)
+            console.warn('Metalness: ', child.material.metalness)
+            console.warn('Clearcoat: ', child.material.clearcoat)
+            console.warn('Clearcoat Roughness: ', child.material.clearcoatRoughness)
+            // console.warn('Clearcoat Roughness: ', child.material.irdes)
+          }
+        }
+      });
+    });
+  }
+  
+  function onWindowResize() {
+    
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+  }
+  
+  //
+  function animate() {
+    
+    requestAnimationFrame(animate);
+    
+    render();
+    
+  }
+  
+  function render() {
+    
+    renderer.render(scene, camera);
+    
+  }
+</script>
+
+</body>
+</html>

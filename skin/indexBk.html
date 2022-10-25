@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="main.css">
+  
+<!--  <script src="https://unpkg.com/three@0.129.0/build/three.min.js"></script>-->
+<!--  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>-->
+<!--  <script src="https://threejs.org/examples/js/controls/TransformControls.js"></script>-->
+<!--  <script src="https://mevedia.com/share/ExtendMaterial.js"></script>-->
+<!--  <script src="https://cdn.jsdelivr.net/gh/mrdoob/Three.js@r92/examples/js/loaders/GLTFLoader.js"></script>-->
+  
+    <script src="https://unpkg.com/three@0.131.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.131.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://mevedia.com/share/ExtendMaterial.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/Three.js@r92/examples/js/loaders/GLTFLoader.js"></script>
+<!--  <script src="https://unpkg.com/three@0.132.0/examples/js/loaders/GLTFLoader.js"></script>-->
+  <style>
+    body {
+      background-color: #000;
+      margin: 0px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<div id="info">
+  <br/>THREE.ShaderMaterial.extend - Skin demo<br/>
+  three.js v131 | GLTFLoader v92 <br>
+  Follow example: <a href="https://codepen.io/Fyrestar/pen/yLPWrNX" target="_blank" rel="noopener">https://codepen.io/Fyrestar/pen/yLPWrNX</a>
+  <p>
+    Environment: NO <br>
+    Lights: DirectionalLight<br>
+    ToneMapping: ExtendMaterial <br>
+  </p>
+</div>
+<script>
+  
+  var mesh, renderer, scene, camera, controls;
+  
+  //loader.load('https://threejs.org/examples/textures/brick_diffuse.jpg')
+  
+  // renderer
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.gammaFactor = 2.2;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping
+  document.body.appendChild( renderer.domElement );
+  
+  // scene
+  scene = new THREE.Scene();
+  
+  // camera
+  camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.01, 10000 );
+  camera.position.set(0, 0, 100 );
+  
+  // controls
+  controls = new THREE.OrbitControls( camera, document.body );
+  
+  // ambient light
+  // scene.add( new THREE.AmbientLight( 0x222222 ) );
+  
+  // directional light
+  
+  /*const dirLight1 = new THREE.DirectionalLight( 0xffddcc, 1 );
+  dirLight1.position.set( 1, 0.75, 0.5 );
+  scene.add( dirLight1 );
+  
+  const dirLight2 = new THREE.DirectionalLight( 0xccccff, 1 );
+  dirLight2.position.set( - 1, 0.75, - 0.5 );
+  scene.add( dirLight2 );
+  scene.add( new THREE.AmbientLight( 0x443333 ) ); */
+
+  // lights
+  scene.add( new THREE.AmbientLight( 0x888888 ) );
+
+  const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.03 );
+  directionalLight.position.set( 0.0, 0.5, 0.5 ).normalize();
+  scene.add( directionalLight );
+
+  const pointLight1 = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x888888 } ) );
+  pointLight1.add( new THREE.PointLight( 0x888888, 7.0, 300 ) );
+  scene.add( pointLight1 );
+  pointLight1.position.set(0, -50, 300)
+
+  const pointLight2 = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x888800 } ) );
+  pointLight2.add( new THREE.PointLight( 0x888800, 1.0, 500 ) );
+  scene.add( pointLight2 );
+  pointLight2.position.set(0, -50, -300)
+
+  const texture = new THREE.TextureLoader;
+  
+  
+  
+  // geometry
+  var geometry = new THREE.TorusKnotBufferGeometry( 1, 0.3, 128, 22 );
+  
+  
+  // https://github.com/Fyrestar/THREE.extendMaterial
+  
+  const patch = {
+    
+    
+    // Will be prepended to vertex and fragment code
+    
+    header: 'varying vec3 vNN; varying vec3 vEye;',
+    
+    
+    // Insert code lines by hinting at a existing
+    
+    vertex: {
+      // Inserts the line after #include <fog_vertex>
+      '#include <fog_vertex>': `
+
+
+          mat4 LM = modelMatrix;
+          LM[2][3] = 0.0;
+          LM[3][0] = 0.0;
+          LM[3][1] = 0.0;
+          LM[3][2] = 0.0;
+
+          vec4 GN = LM * vec4(objectNormal.xyz, 1.0);
+          vNN = normalize(GN.xyz);
+          vEye = normalize(GN.xyz-cameraPosition);`
+    },
+    fragmentHeader: `
+      uniform vec3 skinTone;
+      `,
+    fragment: {
+      '?gl_FragColor = vec4( outgoingLight, diffuseColor.a );': `
+        float skinShadow = 1.0 - length( outgoingLight.rgb ) ;
+        outgoingLight += skinShadow * blood * fresnel;
+        `,
+      '?#include <emissivemap_fragment>' : `
+        
+        const vec3 blood = vec3( 0.15, 0.02, 0.03 );
+        diffuseColor.rgb = texture2D( map, vUv ).rgb;
+        float bri = ( length( diffuseColor.rgb ) );
+        vec3 subtone = diffuseColor.rgb * bri;
+        vec3 fronttone = diffuseColor.rgb * bri;
+        subtone *= vec3( 1.0 ) + blood;
+        
+        float fresnel = ( 1.0 - -min(dot(vEye, normalize(vNN) ), 0.0 ) );
+        float sublit =  pow( fresnel, 2.0 );
+        float frontlit = ( 1.0 - sublit );
+        diffuseColor.rgb *=  sublit * subtone * subtone + frontlit * fronttone;
+        diffuseColor.rgb += pow( fresnel, 4.0 ) * 0.5;
+
+`
+    },
+    
+    
+    // Uniforms (will be applied to existing or added)
+    
+    uniforms: {
+      roughness: 0.5,
+      
+      specularMap: texture.load('son/specularGlossinessTexture_1.png'),
+      map: texture.load('son/diffuseTexture_1.jpg'),
+      normalMap: texture.load('son/normalTexture_1.png'),
+      
+      normalScale: new THREE.Vector2( 0.6, 0.6 ),
+      skinTone: new THREE.Color( '#ba9b80'),
+      specular: new THREE.Color( '#FFFFFF' ),
+      shininess: 25
+    }
+    
+    
+  };
+  
+  var material = THREE.extendMaterial(THREE.MeshStandardMaterial, patch );
+  
+  
+  const gltf = new THREE.GLTFLoader();
+  // gltf.load( 'https://threejs.org/examples/models/gltf/LeePerrySmith/LeePerrySmith.glb', model => {
+  gltf.load( 'son_lod2_face_rendering_quality_test_20221018.glb', gltf => {
+    console.warn(gltf.scene)
+    const model = gltf.scene
+    
+    /*gltf.scene.traverse( child => {
+      if ( child.isMesh ) {
+        child.material = material;
+        scene.add( child );
+      }
+    });*/
+    scene.add( model );
+    model.position.set( 220, -70, 0 );
+    model.scale.setScalar( 180 );
+    
+    model.traverse(child => {
+      child.frustumCulled = false
+    })
+    
+  });
+  const clock = new THREE.Clock;
+  
+  function animate() {
+    
+    
+    requestAnimationFrame( animate );
+    
+    renderer.render( scene, camera );
+    
+  }
+  
+  
+  
+  animate();
+
+</script>
+</body>
+</html>

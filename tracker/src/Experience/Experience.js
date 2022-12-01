@@ -1,5 +1,4 @@
 import * as THREE from "three"
-
 import Debug from "./Utils/Debug.js"
 import Sizes from "./Utils/Sizes.js"
 import Time from "./Utils/Time.js"
@@ -55,6 +54,7 @@ export default class Experience {
   }
 
   destroy() {
+    console.log('destroy')
     /**Clear Event Emitter*/
     this.sizes.off("resize")
     this.time.off("tick")

@@ -8,15 +8,14 @@ import Renderer from "./Renderer.js"
 import World from "./World/World.js"
 import Resources from "./Utils/Resources.js"
 import Stats from "./Utils/Stats.js"
-
 import sources from "./sources.js"
 
-let instance = null
-
 export default class Experience {
+  static instance
+
   constructor(_canvas) {
-    if (instance) return instance
-    instance = this
+    if (Experience.instance) return Experience.instance
+    Experience.instance = this
 
     window.experience = this
 

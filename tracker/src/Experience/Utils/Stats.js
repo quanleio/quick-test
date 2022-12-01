@@ -1,25 +1,25 @@
-import StatsJs from "stats.js";
+import StatsJs from "stats.js"
 
 export default class Stats {
   constructor() {
-    this.active = window.location.hash === "#debug";
+    this.active = window.location.hash === "#debug"
 
     if (this.active) {
-      this.activate();
+      this.activate()
     }
   }
 
   activate() {
-    this.instance = new StatsJs();
-    this.instance.showPanel(0);
-    document.body.appendChild(this.instance.dom);
+    this.instance = new StatsJs()
+    this.instance.showPanel(0)
+    document.body.appendChild(this.instance.dom)
   }
 
   beforeRender() {
-    this.instance.begin();
+    this.instance.begin()
   }
 
   afterRender() {
-    this.instance.end();
+    this.instance.end()
   }
 }

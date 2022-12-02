@@ -38,7 +38,7 @@
 <p id="printValue">test</p>
 
 <button onclick="onSearchName()">Search Name</button>
-<button onclick="onSearchAddress()">Search Address</button> 
+<button onclick="onSearchAddress()">Search Address</button>
 <br><br><br>
 <button onclick="onPrintBtn()">Print</button>
 
@@ -54,14 +54,14 @@
 
     <script>
         var x = document.getElementById('printValue');
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
             level: 3 // 지도의 확대 레벨
-        };  
+        };
 
-    // 지도를 생성합니다    
-    var map = new kakao.maps.Map(mapContainer, mapOption); 
+    // 지도를 생성합니다
+    var map = new kakao.maps.Address(mapContainer, mapOption);
 
     // 주소-좌표 변환 객체를 생성합니다
     var geocoder = new kakao.maps.services.Geocoder();
@@ -109,7 +109,7 @@
     function onSearchAddress() {
         jsonArray=[];
         for(idx in jsonData){
-            // ps.keywordSearch(jsonData[idx]["Name"], keywordSearchCB); 
+            // ps.keywordSearch(jsonData[idx]["Name"], keywordSearchCB);
             addressSearch(jsonData[idx]["Address"]);
         }
     }
@@ -118,7 +118,7 @@
         jsonArray=[];
         // 키워드로 장소를 검색합니다
         for(idx in jsonData){
-            ps.keywordSearch(jsonData[idx]["Name"], keywordSearchCB); 
+            ps.keywordSearch(jsonData[idx]["Name"], keywordSearchCB);
         }
     }
 
@@ -152,7 +152,7 @@
 
     function addressSearch (address){
         geocoder.addressSearch(address, function(result, status) {
-            // 정상적으로 검색이 완료됐으면 
+            // 정상적으로 검색이 완료됐으면
             if (status === kakao.maps.services.Status.OK) {
                 var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
                 jsonArray.push(
@@ -163,7 +163,7 @@
                     }
                 );
             }
-        });    
+        });
     }
 
     // test("스타벅스 스타필드코엑스몰 R점");
@@ -173,7 +173,7 @@
     //////////////// 2. 이름으로 좌표 찾기
 
     // 장소 검색 객체를 생성합니다
-    var ps = new kakao.maps.services.Places(); 
+    var ps = new kakao.maps.services.Places();
 
     // 키워드 검색 완료 시 호출되는 콜백함수 입니다
     function keywordSearchCB (result, status, pagination) {
@@ -204,10 +204,10 @@
     // //////////////// 2. 이름으로 좌표 찾기
 
     // // 장소 검색 객체를 생성합니다
-    // var ps = new kakao.maps.services.Places(); 
+    // var ps = new kakao.maps.services.Places();
 
     // // 키워드로 장소를 검색합니다
-    // ps.keywordSearch('메가MGC커피 서충주신도시점', keywordSearchCB); 
+    // ps.keywordSearch('메가MGC커피 서충주신도시점', keywordSearchCB);
 
     // // 키워드 검색 완료 시 호출되는 콜백함수 입니다
     // function keywordSearchCB (result, status, pagination) {
@@ -216,7 +216,7 @@
     //             console.log(result[i].y, result[i].x);
     //         }
 
-    //     } 
+    //     }
     // }
 
 
@@ -247,7 +247,7 @@
 
     // geocoder.addressSearch('서울 송파구 삼전로6길 16 1층', function(result, status) {
 
-    //     // 정상적으로 검색이 완료됐으면 
+    //     // 정상적으로 검색이 완료됐으면
     //     if (status === kakao.maps.services.Status.OK) {
 
     //         var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
@@ -269,8 +269,8 @@
 
     //         // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
     //         map.setCenter(coords);
-    //     } 
-    // });    
+    //     }
+    // });
 
 
 

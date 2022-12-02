@@ -8,6 +8,7 @@ import World from "./World/World.js"
 import Resources from "./Utils/Resources.js"
 import Stats from "./Utils/Stats.js"
 import sources from "./sources.js"
+import Environment from './Environment';
 
 export default class Experience {
   static instance
@@ -26,6 +27,7 @@ export default class Experience {
     this.time = new Time()
     this.scene = new THREE.Scene()
     this.resources = new Resources(sources)
+    this.environment = new Environment()
     this.camera = new Camera()
     this.renderer = new Renderer()
     this.world = new World()
@@ -34,12 +36,10 @@ export default class Experience {
     this.sizes.on("resize", () => this.resize())
     this.time.on("tick", () => this.update())
   }
-
   resize() {
     this.camera.resize()
     this.renderer.resize()
   }
-
   update() {
     /**Begin analyzing frame */
     this.stats.active && this.stats.beforeRender()
@@ -52,7 +52,6 @@ export default class Experience {
     /**Finish analyzing frame */
     this.stats.active && this.stats.afterRender()
   }
-
   destroy() {
     console.log('destroy')
     /**Clear Event Emitter*/

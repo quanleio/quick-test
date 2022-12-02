@@ -1,5 +1,4 @@
 import Experience from "../Experience.js"
-import Fox from "./Fox.js"
 import Address from './Address';
 
 export default class World {
@@ -11,13 +10,11 @@ export default class World {
     // Wait for resources
     this.resources.on("ready", () => {
       // Setup
-      // this.fox = new Fox()
       this.map = new Address()
     })
   }
 
   update() {
-    // if (this.fox) this.fox.update()
     if (this.map) this.map.update()
   }
 }

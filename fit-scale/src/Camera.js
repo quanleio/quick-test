@@ -20,19 +20,19 @@ export default class Camera {
         45,
         this.width / this.height,
         .01,
-        1000
+        10000
     )
-    this.instance.position.set(0, 0, 0)
-    this.instance.lookAt(0, 0, 0)
+    this.instance.position.set(0, 0, 10)
+    // this.instance.lookAt(0, 0, 0)
     this.scene.add(this.instance)
 
-    const helper = new THREE.CameraHelper( this.instance );
-    this.scene.add( helper );
+    // const helper = new THREE.CameraHelper( this.instance );
+    // this.scene.add( helper );
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enabled = true
-    this.controls.enableZoom = false
+    // this.controls.enableZoom = false
   }
   resize() {
     this.instance.aspect = this.width / this.height

@@ -1,0 +1,22 @@
+{
+  "name": "grain-effect",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite serve --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "lil-gui": "^0.17.0",
+    "sass": "^1.56.2",
+    "stats.js": "^0.17.0",
+    "stylus": "^0.59.0",
+    "three": "^0.147.0",
+    "vite-plugin-glsl": "^1.0.1"
+  }
+}

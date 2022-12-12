@@ -2,11 +2,11 @@ export default [
   {
     name: "testMatcap",
     type: "texture",
-    path: "textures/matcap.png",
+    path: "assets/textures/matcap.png",
   },
   {
     name: "foxModel",
     type: "gltfModel",
-    path: "models/Fox/glTF/Fox.gltf",
+    path: "assets/models/Fox/glTF/Fox.gltf",
   },
 ];

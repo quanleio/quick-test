@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../Experience';
-import vertexShader from '../../shaders/vertexShader.glsl'
-import fragmentShader from '../../shaders/fragmentShader.glsl'
+import vertexShader from '../../shaders/grain.vert'
+import fragmentShader from '../../shaders/grain.frag'
 
 export default class SphereGrain {
   constructor() {
@@ -13,7 +13,7 @@ export default class SphereGrain {
   }
 
   setSphereObject = () => {
-    const geometry = new THREE.SphereGeometry(1, 32, 32)
+    const geometry = new THREE.SphereGeometry(1, 64, 64)
     const material = new THREE.MeshBasicMaterial({
       color: 'black',
       wireframe: true
@@ -23,11 +23,15 @@ export default class SphereGrain {
   }
 
   setMaterial = () => {
+
     const material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
       uniforms: {
-        uColor: { value: new THREE.Color(0xbb0033)}
+        uColor: { value: new THREE.Color(0xbb0033)},
+        uLightPos: { value: new THREE.Vector3(0, 5, 3)},
+        uLightColor: { value: new THREE.Color(0xffffff)},
+        uLightIntensity: { value: 0.7}
       }
     })
 

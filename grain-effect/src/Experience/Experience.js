@@ -14,7 +14,7 @@ import sources from "./sources.js";
 let instance = null;
 
 export default class Experience {
-  constructor(_canvas) {
+  constructor() {
     /**Singleton */
     if (instance) {
       return instance;
@@ -25,7 +25,10 @@ export default class Experience {
     window.experience = this;
 
     /**Canvas*/
-    this.canvas = _canvas;
+    const _canvas = document.createElement("canvas");
+    _canvas.id = 'experience'
+    document.body.appendChild(_canvas);
+    this.canvas = _canvas
 
     /**Setup Classes */
     this.debug = new Debug();

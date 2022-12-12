@@ -31,7 +31,8 @@ export default class SphereGrain {
         uColor: { value: new THREE.Color(0xbb0033)},
         uLightPos: { value: new THREE.Vector3(0, 5, 3)},
         uLightColor: { value: new THREE.Color(0xffffff)},
-        uLightIntensity: { value: 0.7}
+        uLightIntensity: { value: 0.7},
+        myNoiseScaleVal: {value: 0.01}
       }
     })
 

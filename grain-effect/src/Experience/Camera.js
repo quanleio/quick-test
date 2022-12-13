@@ -1,6 +1,8 @@
 import * as THREE from "three";
+import { gsap } from 'gsap'
 import Experience from "./Experience.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import {EVT} from '../utils/contains';
 
 export default class Camera {
   constructor() {
@@ -12,7 +14,6 @@ export default class Camera {
     this.setInstance();
     this.setControls();
   }
-
   setInstance() {
     this.instance = new THREE.PerspectiveCamera(
       50,
@@ -20,19 +21,34 @@ export default class Camera {
       0.1,
       1000
     );
-    this.instance.position.set(4, -2, 18);
+    // this.instance.position.set(4, 2, 18);
+    this.instance.position.set(-20, 20, -20);
     this.scene.add(this.instance);
+
+    this.animate()
+  }
+  animate = () => {
+    gsap.to(this.instance.position, {
+      duration: 2.2,
+      x: 4,
+      y: 2,
+      z: 18,
+      ease: "power2.easeInOut",
+      onComplete: () => {
+        this.controls.enabled = true
+        window.dispatchEvent(new Event(EVT.CAMERA_ANIMATE_COMPLETED))
+      }
+    })
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas);
-    this.controls.autoRotate = true
+    this.controls.enabled = false
+    // this.controls.autoRotate = true
   }
-
   resize() {
     this.instance.aspect = this.sizes.width / this.sizes.height;
     this.instance.updateProjectionMatrix();
   }
-
   update() {
     this.controls.update();
   }

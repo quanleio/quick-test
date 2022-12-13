@@ -20,6 +20,11 @@ export default [
     path: "assets/models/statue_of_liberty.glb",
   },
   {
+    name: "rockyGround",
+    type: "gltfModel",
+    path: "assets/models/rocky_ground_with_moss.glb",
+  },
+  {
     name: "deerModel",
     type: "objModel",
     path: "assets/models/deer.obj",

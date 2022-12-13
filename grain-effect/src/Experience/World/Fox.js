@@ -27,7 +27,7 @@ export default class Fox {
 
   setModel() {
     this.model = this.resource.scene;
-    this.model.scale.setScalar(0.05)
+    this.model.scale.setScalar(0.06)
     this.model.position.y = -1.5
     this.model.translateY(-2)
     this.scene.add(this.model);

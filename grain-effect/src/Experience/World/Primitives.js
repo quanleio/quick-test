@@ -11,13 +11,13 @@ export default class Primitives {
     this.grainMaterial = _grainMaterial
 
     this.group = new THREE.Group()
-    // this.group.add( new THREE.AxesHelper(10))
-    // this.group.rotateY(-60)
+    this.group.rotation.y = THREE.MathUtils.degToRad(-100)
+    this.group.position.y = -.5
     this.scene.add(this.group)
 
     this.setCylinders()
     this.setSpheres()
-    // this.setModel()
+    this.setModel()
   }
   setCylinders = () => {
     const dist = 6
@@ -76,10 +76,9 @@ export default class Primitives {
 
   }
   setModel = () => {
-    this.model = this.resources.items.deerModel
-    this.model.scale.setScalar(1/200)
-    this.model.position.y = -1.5
-    this.model.translateY(-2)
+    this.model = this.resources.items.statueOfLiberty.scene
+    this.model.scale.setScalar(1/4)
+    this.model.position.y = -13
 
     this.model.traverse(child => {
       child.material = this.grainMaterial;
@@ -88,9 +87,9 @@ export default class Primitives {
     this.group.add(this.model)
   }
   update = () => {
-    this.mouse.x = THREE.MathUtils.lerp(this.mouse.x, this.targetMouse.x, 0.1)
-    this.mouse.y = THREE.MathUtils.lerp(this.mouse.y, this.targetMouse.y, 0.1)
-    this.group.rotation.y = THREE.MathUtils.degToRad(20 * this.mouse.x)
+    // this.mouse.x = THREE.MathUtils.lerp(this.mouse.x, this.targetMouse.x, 0.1)
+    // this.mouse.y = THREE.MathUtils.lerp(this.mouse.y, this.targetMouse.y, 0.1)
+    // this.group.rotation.y = THREE.MathUtils.degToRad(20 * this.mouse.x)
 
     for(let i=0; i<this.spheres.length; i++) {
       // this.spheres[i].render(performance.now(), this.mouse)

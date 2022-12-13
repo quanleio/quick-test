@@ -15,6 +15,11 @@ export default [
     path: "assets/models/Fox/glTF/Fox.gltf",
   },
   {
+    name: "statueOfLiberty",
+    type: "gltfModel",
+    path: "assets/models/statue_of_liberty.glb",
+  },
+  {
     name: "deerModel",
     type: "objModel",
     path: "assets/models/deer.obj",

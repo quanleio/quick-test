@@ -15,7 +15,7 @@ export default class World {
     // Wait for resources
     this.resources.on("ready", () => {
       this.primitives = new Primitives(this.grainMaterial)
-      this.fox = new Fox(this.grainMaterial)
+      // this.fox = new Fox(this.grainMaterial)
     });
   }
   setGrainMaterial = () => {
@@ -41,6 +41,6 @@ export default class World {
   }
   update() {
     if (this.primitives) this.primitives.update();
-    if (this.fox) this.fox.update()
+    // if (this.fox) this.fox.update()
   }
 }

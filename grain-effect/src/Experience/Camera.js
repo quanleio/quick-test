@@ -20,13 +20,13 @@ export default class Camera {
       0.1,
       1000
     );
-    this.instance.position.set(2.5, 2, 2);
-
+    this.instance.position.set(4, 2, 15);
+    // this.instance.rotation.y = Math.PI/180 * -20
     this.scene.add(this.instance);
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas);
-    this.controls.enableDamping = true;
+    // this.controls.autoRotate = true
   }
 
   resize() {

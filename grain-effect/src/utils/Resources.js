@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import EventEmitter from "./EventEmitter.js";
 
 export default class Resources extends EventEmitter {
@@ -19,6 +20,7 @@ export default class Resources extends EventEmitter {
   setLoaders() {
     this.loaders = {};
     this.loaders.gltfLoader = new GLTFLoader();
+    this.loaders.objLoader = new OBJLoader()
     this.loaders.textureLoader = new THREE.TextureLoader();
     this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader();
   }
@@ -30,11 +32,18 @@ export default class Resources extends EventEmitter {
         this.loaders.gltfLoader.load(source.path, (file) => {
           this.sourceLoaded(source, file);
         });
-      } else if (source.type === "texture") {
+      }
+      else if (source.type === "objModel") {
+        this.loaders.objLoader.load(source.path, (file) => {
+          this.sourceLoaded(source, file);
+        });
+      }
+      else if (source.type === "texture") {
         this.loaders.textureLoader.load(source.path, (file) => {
           this.sourceLoaded(source, file);
         });
-      } else if (source.type === "cubeTexture") {
+      }
+      else if (source.type === "cubeTexture") {
         this.loaders.cubeTextureLoader.load(source.path, (file) => {
           this.sourceLoaded(source, file);
         });

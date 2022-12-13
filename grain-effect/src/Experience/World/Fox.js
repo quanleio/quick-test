@@ -2,12 +2,15 @@ import * as THREE from "three";
 import Experience from "../Experience.js";
 
 export default class Fox {
-  constructor() {
+  constructor(_grainMaterial) {
     this.experience = new Experience();
     this.scene = this.experience.scene;
+    this.mouse = this.experience.mouse.mouse
+    this.targetMouse = this.experience.mouse.targetMouse
     this.resources = this.experience.resources;
-    this.time = this.experience.time;
     this.debug = this.experience.debug;
+    this.time = this.experience.time
+    this.grainMaterial = _grainMaterial
 
     // Debug
     if (this.debug.active) {
@@ -24,18 +27,15 @@ export default class Fox {
 
   setModel() {
     this.model = this.resource.scene;
-    this.model.scale.set(0.05, 0.05, 0.05);
-    this.model.position.y -= 1.5;
+    this.model.scale.setScalar(0.05)
+    this.model.position.y = -1.5
+    this.model.translateY(-2)
     this.scene.add(this.model);
   }
 
   setMaterial() {
-    this.material = new THREE.MeshMatcapMaterial({
-      matcap: this.resources.items.testMatcap,
-    });
-
-    this.model.traverse((child) => {
-      child.material = this.material;
+    this.model.traverse(child => {
+      child.material = this.grainMaterial;
     });
   }
 
@@ -48,17 +48,11 @@ export default class Fox {
     // Actions
     this.animation.actions = {};
 
-    this.animation.actions.idle = this.animation.mixer.clipAction(
-      this.resource.animations[0]
-    );
-    this.animation.actions.walking = this.animation.mixer.clipAction(
-      this.resource.animations[1]
-    );
-    this.animation.actions.running = this.animation.mixer.clipAction(
-      this.resource.animations[2]
-    );
+    this.animation.actions.run = this.animation.mixer.clipAction(this.resource.animations[0]);
+    this.animation.actions.survey = this.animation.mixer.clipAction(this.resource.animations[1]);
+    this.animation.actions.walk = this.animation.mixer.clipAction(this.resource.animations[2]);
 
-    this.animation.actions.current = this.animation.actions.idle;
+    this.animation.actions.current = this.animation.actions.run;
     this.animation.actions.current.play();
 
     // Play the action
@@ -94,5 +88,9 @@ export default class Fox {
 
   update() {
     this.animation.mixer.update(this.time.delta * 0.001);
+
+    this.mouse.x = THREE.MathUtils.lerp(this.mouse.x, this.targetMouse.x, 0.1)
+    this.mouse.y = THREE.MathUtils.lerp(this.mouse.y, this.targetMouse.y, 0.1)
+    this.model.rotation.y = THREE.MathUtils.degToRad(20 * this.mouse.x)
   }
 }

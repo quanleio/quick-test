@@ -21,7 +21,7 @@ export default class Pillars {
       const position = new THREE.Vector3(Math.cos(angle) * dist, -2, Math.sin(angle) * dist)
       const scale = THREE.MathUtils.randFloat(1, 2)
 
-      const geometry = new THREE.CylinderGeometry(.5, .5, 3, 32)
+      const geometry = new THREE.CylinderGeometry(0.4, .5, 3, 32)
       geometry.translate(0, 1.5, 0)
       const cylinder = new THREE.Mesh(geometry,this.grainMaterial)
       cylinder.position.copy(position)

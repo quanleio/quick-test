@@ -1,12 +1,11 @@
-import * as dat from "lil-gui";
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 
 export default class Debug {
   constructor() {
-    // this.active = window.location.hash === "#debug";
-    this.active = true
+    this.active = window.location.hash === "#debug";
 
     if (this.active) {
-      this.ui = new dat.GUI();
+      this.ui = new GUI({ width: 310 })
     }
   }
 }

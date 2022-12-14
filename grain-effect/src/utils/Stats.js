@@ -2,8 +2,7 @@ import StatsJs from "stats.js";
 
 export default class Stats {
   constructor() {
-    // this.active = window.location.hash === "#debug";
-    this.active = true
+    this.active = window.location.hash === "#debug";
 
     if (this.active) {
       this.activate();

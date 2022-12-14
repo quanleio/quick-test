@@ -22,7 +22,7 @@ vec3 light_reflection(vec3 vSurfaceToLight, vec3 lightColor) {
 void main() {
     vec3 light_value = vec3(0);
 
-    for(int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         light_value += light_reflection(vSurfaceToLight[i], uLightColor[i]);
     }
     light_value *= uLightIntensity;
@@ -39,4 +39,5 @@ void main() {
     gl_FragColor.g = max(colorNoise.g, uColor.g);
     gl_FragColor.b = max(colorNoise.b, uColor.b);
     gl_FragColor.a = 1.0;
+    //    gl_FragColor.a *= pow( uTime, 1.0 );
 }

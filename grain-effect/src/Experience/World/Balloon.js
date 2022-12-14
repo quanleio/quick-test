@@ -1,6 +1,7 @@
-import Experience from '../Experience';
-import * as THREE from 'three';
-import {degToRad, randFloat} from 'three/src/math/MathUtils';
+import Experience from '../Experience'
+import * as THREE from 'three'
+import { gsap } from 'gsap'
+import {degToRad, randFloat} from 'three/src/math/MathUtils'
 
 export default class Balloon {
   constructor(_group, _grainMaterial) {
@@ -9,6 +10,7 @@ export default class Balloon {
     this.time = this.experience.time
     this.group = _group
     this.grainMaterial = _grainMaterial
+    this.count = 5
     this.balloons = []
 
     this.setBalloons()
@@ -17,9 +19,9 @@ export default class Balloon {
     const dist = 3
     let angle = 0
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < this.count; i++) {
       const position = new THREE.Vector3(Math.cos(angle) * dist, randFloat(-1, 1), Math.sin(angle) * dist)
-      const scale = randFloat(0.2, 0.6)
+      const scale = randFloat(0.3, 0.7)
 
       const geometry = new THREE.SphereGeometry(1, 32, 32)
       const balloon = new THREE.Mesh(geometry, this.grainMaterial)
@@ -31,7 +33,14 @@ export default class Balloon {
       angle += degToRad(360 / 5)
       this.scene.add(balloon)
       this.balloons.push(balloon)
+
+      // this.animate(balloon)
     }
+  }
+  animate = (_balloon) => {
+    gsap.to(_balloon.material, {
+      duration: 1.6,
+    })
   }
   update = () => {
     for (let i = 0; i < this.balloons.length; i++) {

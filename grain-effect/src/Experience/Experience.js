@@ -1,5 +1,4 @@
 import * as THREE from "three"
-import Debug from "../utils/Debug"
 import Sizes from "../utils/Sizes.js"
 import Time from "../utils/Time.js"
 import Camera from "./Camera.js"
@@ -11,6 +10,7 @@ import Stats from "../utils/Stats.js"
 import sources from "./sources.js"
 import Environment from './Environment'
 import Mouse from '../utils/Mouse';
+import Debug from '../utils/Debug';
 
 let instance = null
 

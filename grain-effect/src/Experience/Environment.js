@@ -1,23 +1,20 @@
 import Experience from './Experience'
-import * as THREE from 'three';
 import Debug from '../utils/Debug';
-import FogGUIHelper from '../utils/FogGUIHelper';
 
 export default class Environment {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
-    this.debug = new Debug()
 
     // Wait for resources
     this.resources.on("ready", () => {
       this.setEnv()
     });
 
-    if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder('Fog')
-    }
+    // if (this.debug.active) {
+      // this.debugFolder = this.debug.ui.addFolder('Fog')
+    // }
 
   }
   setEnv = () => {

@@ -14,7 +14,7 @@ export default class Fox {
 
     // Debug
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder("fox");
+      // this.debugFolder = this.debug.ui.addFolder("fox");
     }
 
     // Resource

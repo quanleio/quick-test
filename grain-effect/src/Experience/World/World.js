@@ -23,14 +23,14 @@ export default class World {
 
     // Wait for resources
     this.resources.on("ready", () => {
+      this.setGround()
       this.primitives = new Primitives(this.group, this.grainMaterial)
       this.statue = new Statue(this.group, this.grainMaterial)
-      this.setGround()
     })
   }
 
   /**
-   * https://sketchfab.com/3d-models/rocky-ground-with-moss-2c0386dd36124ad78f37dbf6432eac21
+   * Free download: https://sketchfab.com/3d-models/rocky-ground-with-moss-2c0386dd36124ad78f37dbf6432eac21
    */
   setGround = () => {
     this.ground = this.resources.items.rockyGround.scene

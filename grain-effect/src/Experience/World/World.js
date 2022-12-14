@@ -95,8 +95,8 @@ export default class World {
       uNoiseMin: { value: this.guiController.uNoiseMin },
       uNoiseMax: { value: this.guiController.uNoiseMax},
       uNoiseScale: {value: this.guiController.uNoiseScale},
-      // uColor: { value: new THREE.Color(0x749bff)},
-      uColor: { value: new THREE.Color(0xa5c9a5)},
+      uColor: { value: new THREE.Color(0x749bff)},
+      // uColor: { value: new THREE.Color(0xa5c9a5)},
     }
     this.grainMaterial = new THREE.ShaderMaterial({
       vertexShader: vertexShader,

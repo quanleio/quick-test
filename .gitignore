@@ -10,3 +10,6 @@ dist/*
 backup
 .eslintrc.js
 .env
+
+# Local Netlify folder
+.netlify

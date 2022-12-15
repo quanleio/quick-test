@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import Experience from '../Experience'
-import Box from './components/Box';
 import Cone from './components/Cone';
 import Torus from './components/Torus';
 import {distance, hexToRgb, map, radians} from '../../utils/utils';
-import Cylinder from './components/Cylinder';
+import Bar from './components/Bar';
+import Heart from './components/Heart';
 
 export default class WallShapes {
   constructor() {
@@ -20,7 +20,7 @@ export default class WallShapes {
     this.meshes = []
     this.grid = { cols: 14, rows: 6}
     this.mouse = new THREE.Vector2()
-    this.geometries = [new Box(), new Torus(), new Cylinder()]
+    this.geometries = [new Bar(), new Torus(), new Cone(), new Heart()]
 
     // debug
     if (this.debug.active) {
@@ -35,14 +35,20 @@ export default class WallShapes {
   }
   setWall = () => {
     this.groupMesh = new THREE.Object3D()
+    this.groupMesh.add( new THREE.AxesHelper(5))
     this.groupMesh.rotation.x = Math.PI/180 * -40
-    window.groupMesh = this.groupMesh
 
-    const meshParams = {
+    /*const meshParams = {
       color: '#ff00ff',
       emissive: '#000000',
       metalness: 0.58,
       roughness: 0.18,
+    };*/
+    const meshParams = {
+      color: '#372414',
+      metalness: 0.6, //.58,
+      emissive: '#000000',
+      roughness: 0.5, //.05,
     };
     const material = new THREE.MeshPhysicalMaterial(meshParams)
 
@@ -82,8 +88,12 @@ export default class WallShapes {
     }
 
     const centerX = ((this.grid.cols - 1) + ((this.grid.cols - 1) * this.gutter.size)) * 0.5;
-    // const centerZ = ((this.grid.rows - 1) + ((this.grid.rows - 1) * this.gutter.size)) * 0.5;
+    const centerZ = ((this.grid.rows - 1) + ((this.grid.rows - 1) * this.gutter.size)) * 0.5;
     this.groupMesh.position.set(-centerX, 0, -3)
+
+    // const centerX = -(this.grid.cols / 2) * this.gutter.size - 1;
+    // const centerZ = -(this.grid.rows / 2) - .8;
+    // this.groupMesh.position.set(centerX, 0, centerZ);
 
     this.scene.add(this.groupMesh)
   }
@@ -136,7 +146,7 @@ export default class WallShapes {
             y: y < 1 ? 1 : y
           })
 
-          const scaleFactor = mesh.position.y / 2.5;
+          const scaleFactor = mesh.position.y / 2.0;
           const scale = scaleFactor < 1 ? 1 : scaleFactor;
           gsap.to(mesh.scale, {
             duration: 0.7,

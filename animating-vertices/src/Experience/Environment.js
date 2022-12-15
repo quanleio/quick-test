@@ -16,16 +16,21 @@ export default class Environment {
 
     // Wait for resources
     this.resources.on("ready", () => {
-      // this.setEnv()
+      this.setEnv()
     });
 
     this.setLights()
   }
   setLights = () => {
-    const lightColors = {
+    /*const lightColors = {
       AmbientColor: '#2900af',
       SpotColor: '#e000ff',
       RectColor: '#0077ff',
+    }*/
+    const lightColors = {
+      AmbientColor: '#ffffff',
+      SpotColor: '#372414',
+      RectColor: '#341212',
     }
 
     const ambient = new THREE.AmbientLight(lightColors.AmbientColor, 1)
@@ -50,41 +55,25 @@ export default class Environment {
     this.debugFolder.addColor(lightColors, 'RectColor')
     .onChange(val => rectLight.color = hexToRgb(val))
 
-    const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
+    /*const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
     point1.position.set(0, 10, -100)
     this.scene.add(point1)
     const point2 = new THREE.PointLight(0x00ff00, 1, 1000, 1)
     point2.position.set(20, 5, 20)
+    this.scene.add(point2)*/
+    const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
+    point1.position.set(0, 10, -100)
+    this.scene.add(point1)
+    const point2 = new THREE.PointLight(0x79573e, 1, 1000, 1)
+    point2.position.set(100, 10, 0)
     this.scene.add(point2)
+    const point3 = new THREE.PointLight(0xc27439, 1, 1000, 1)
+    point3.position.set(20, 5, 20)
+    this.scene.add(point3)
   }
   setEnv = () => {
-    // this.scene.background = new THREE.Color(0xa5c9a5)
+    this.scene.background = new THREE.Color(0x645345)
     // this.scene.background = this.resources.items.sceneBackground
-
-    /*const intensity = 1;
-    const light = new THREE.DirectionalLight(0xFFFFFF, intensity);
-    light.position.set(-1, 2, 4);
-    this.scene.add(light);
-
-    const near = 1;
-    const far = 2
-    const color = 'lightblue';
-    this.scene.fog = new THREE.Fog(color, near, far);
-    this.scene.background = new THREE.Color(color);
-
-    if (this.debug.active) {
-      const fogGUIHelper = new FogGUIHelper(this.scene.fog, this.scene.background)
-      this.debugFolder.add(fogGUIHelper, 'near', near, 10000).onChange(val => {
-        this.scene.fog.near = val
-      })
-      this.debugFolder.add(fogGUIHelper, 'far', far, 10000).onChange(val => {
-        this.scene.fog.far = val
-      })
-      this.debugFolder.addColor(fogGUIHelper, 'color').onChange(val => {
-        this.scene.fog.color.set(val);
-        this.scene.background.set(val);
-      })
-    }*/
   }
   update = () => {}
 }

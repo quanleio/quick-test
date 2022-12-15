@@ -31,13 +31,13 @@ export default class Camera {
         0.1,
         10000
     )
-    this.instance.position.set(0, 30, 2)
+    this.instance.position.set(0, 25, 2)
     this.scene.add(this.instance)
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
-    // this.controls.enabled = true
-    // this.controls.autoRotate = false
+    this.controls.enabled = false
+    this.controls.autoRotate = false
 
     if (this.debug.active) {
       // this.debugFolder = this.debug.ui.addFolder('Camera')

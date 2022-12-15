@@ -5,6 +5,7 @@ import Box from './components/Box';
 import Cone from './components/Cone';
 import Torus from './components/Torus';
 import {distance, hexToRgb, map, radians} from '../../utils/utils';
+import Cylinder from './components/Cylinder';
 
 export default class WallShapes {
   constructor() {
@@ -19,7 +20,7 @@ export default class WallShapes {
     this.meshes = []
     this.grid = { cols: 14, rows: 6}
     this.mouse = new THREE.Vector2()
-    this.geometries = [new Box(), new Cone(), new Torus()]
+    this.geometries = [new Box(), new Torus(), new Cylinder()]
 
     // debug
     if (this.debug.active) {
@@ -34,6 +35,8 @@ export default class WallShapes {
   }
   setWall = () => {
     this.groupMesh = new THREE.Object3D()
+    this.groupMesh.rotation.x = Math.PI/180 * -40
+    window.groupMesh = this.groupMesh
 
     const meshParams = {
       color: '#ff00ff',
@@ -78,9 +81,9 @@ export default class WallShapes {
       }
     }
 
-    const centerX = ((this.grid.cols - 1) + ((this.grid.cols - 1) * this.gutter.size)) * .5;
-    const centerZ = ((this.grid.rows - 1) + ((this.grid.rows - 1) * this.gutter.size)) * .5;
-    this.groupMesh.position.set(-centerX, 0, -centerZ)
+    const centerX = ((this.grid.cols - 1) + ((this.grid.cols - 1) * this.gutter.size)) * 0.5;
+    // const centerZ = ((this.grid.rows - 1) + ((this.grid.rows - 1) * this.gutter.size)) * 0.5;
+    this.groupMesh.position.set(-centerX, 0, -3)
 
     this.scene.add(this.groupMesh)
   }
@@ -129,14 +132,14 @@ export default class WallShapes {
           const endDistance = 0
           const y = map(mouseDistance, startDistance, endDistance, minPositionY, maxPositionY)
           gsap.to(mesh.position, {
-            duration: 0.4,
+            duration: 0.7,
             y: y < 1 ? 1 : y
           })
 
           const scaleFactor = mesh.position.y / 2.5;
           const scale = scaleFactor < 1 ? 1 : scaleFactor;
           gsap.to(mesh.scale, {
-            duration: 0.4,
+            duration: 0.7,
             x: scale,
             y: scale,
             z: scale,

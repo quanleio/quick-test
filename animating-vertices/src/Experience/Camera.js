@@ -16,28 +16,37 @@ export default class Camera {
     this.setControls()
   }
   setInstance() {
-    this.instance = new THREE.PerspectiveCamera(
+    // for flag demo
+    /*this.instance = new THREE.PerspectiveCamera(
       75,
       this.sizes.width / this.sizes.height,
       0.1,
       10000
     )
-    this.instance.position.set(0, 10, 10);
+    this.instance.position.set(0, 10, 10);*/
+
+    this.instance = new THREE.PerspectiveCamera(
+        45,
+        this.sizes.width / this.sizes.height,
+        0.1,
+        10000
+    )
+    this.instance.position.set(0, 30, 0)
     this.scene.add(this.instance)
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
-    this.controls.enabled = true
-    this.controls.autoRotate = false
+    // this.controls.enabled = true
+    // this.controls.autoRotate = false
 
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder('Camera')
-      const debugObject = {
-        'Rotate': this.controls.autoRotate,
-      };
-      this.debugFolder.add(debugObject, "Rotate").onChange(val => {
-        this.controls.autoRotate = val
-      });
+      // this.debugFolder = this.debug.ui.addFolder('Camera')
+      // const debugObject = {
+      //   'Rotate': this.controls.autoRotate,
+      // };
+      // this.debugFolder.add(debugObject, "Rotate").onChange(val => {
+      //   this.controls.autoRotate = val
+      // });
     }
   }
   resize() {

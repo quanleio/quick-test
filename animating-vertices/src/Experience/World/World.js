@@ -1,5 +1,6 @@
 import Experience from "../Experience.js"
 import Flag from './Flag';
+import WallShapes from './WallShapes';
 
 export default class World {
   constructor() {
@@ -10,10 +11,14 @@ export default class World {
 
     // Wait for resources
     this.resources.on("ready", () => {
-      this.flag = new Flag()
+      // this.flag = new Flag()
+
+      // https://tympanus.net/codrops/2018/12/06/interactive-repulsion-effect-with-three-js/
+      this.wall = new WallShapes()
     })
   }
   update() {
-    if (this.flag) this.flag.update()
+    // if (this.flag) this.flag.update()
+    if (this.wall) this.wall.update()
   }
 }

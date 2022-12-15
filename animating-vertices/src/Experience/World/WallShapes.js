@@ -35,7 +35,6 @@ export default class WallShapes {
   }
   setWall = () => {
     this.groupMesh = new THREE.Object3D()
-    this.groupMesh.add( new THREE.AxesHelper(5))
     this.groupMesh.rotation.x = Math.PI/180 * -40
 
     /*const meshParams = {

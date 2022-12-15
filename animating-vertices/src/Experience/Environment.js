@@ -73,7 +73,7 @@ export default class Environment {
   }
   setEnv = () => {
     this.scene.background = new THREE.Color(0x645345)
-    // this.scene.background = this.resources.items.sceneBackground
+    // this.scene.background = this.resources.items.chocolate
   }
   update = () => {}
 }

@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader';
 import EventEmitter from "./EventEmitter.js";
 
 export default class Resources extends EventEmitter {
@@ -28,6 +29,7 @@ export default class Resources extends EventEmitter {
     this.loaders.objLoader = new OBJLoader()
     this.loaders.textureLoader = new THREE.TextureLoader();
     this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader();
+    this.loaders.ttfLoader = new TTFLoader()
   }
 
   startLoading() {
@@ -53,6 +55,11 @@ export default class Resources extends EventEmitter {
           this.sourceLoaded(source, file);
         });
       }
+      else if (source.type === "font") {
+        this.loaders.ttfLoader.load(source.path, (file) => {
+          this.sourceLoaded(source, file);
+        });
+      }
     }
   }
 
@@ -63,6 +70,7 @@ export default class Resources extends EventEmitter {
 
     /**Trigger Event Emitter if all sources are loaded */
     if (this.loaded === this.toLoad) {
+      console.log('dispatch')
       this.trigger("ready");
     }
   }

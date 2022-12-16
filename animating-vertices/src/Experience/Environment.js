@@ -28,7 +28,7 @@ export default class Environment {
       RectColor: '#0077ff',
     }*/
     const lightColors = {
-      AmbientColor: '#ffffff',
+      AmbientColor: '#9f3632',
       SpotColor: '#372414',
       RectColor: '#341212',
     }
@@ -36,24 +36,27 @@ export default class Environment {
     const ambient = new THREE.AmbientLight(lightColors.AmbientColor, 1)
     this.scene.add(ambient)
 
-    this.debugFolder.addColor(lightColors, 'AmbientColor')
-    .onChange(val => ambient.color = hexToRgb(val))
-
     const spot = new THREE.SpotLight(lightColors.SpotColor, 1, 1000)
     spot.position.set(0, 27, 0)
     spot.castShadow = true
     this.scene.add(spot)
-
-    this.debugFolder.addColor(lightColors, 'SpotColor')
-    .onChange(val => spot.color = hexToRgb(val))
 
     const rectLight = new THREE.RectAreaLight(lightColors.RectColor, 1, 2000, 2000)
     rectLight.position.set(5, 50, 50)
     rectLight.lookAt(0, 0, 0)
     this.scene.add(rectLight)
 
-    this.debugFolder.addColor(lightColors, 'RectColor')
-    .onChange(val => rectLight.color = hexToRgb(val))
+    // debug
+    if (this.debug.active) {
+      this.debugFolder.addColor(lightColors, 'AmbientColor')
+      .onChange(val => ambient.color = hexToRgb(val))
+
+      this.debugFolder.addColor(lightColors, 'SpotColor')
+      .onChange(val => spot.color = hexToRgb(val))
+
+      this.debugFolder.addColor(lightColors, 'RectColor')
+      .onChange(val => rectLight.color = hexToRgb(val))
+    }
 
     /*const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
     point1.position.set(0, 10, -100)
@@ -74,6 +77,7 @@ export default class Environment {
   setEnv = () => {
     this.scene.background = new THREE.Color(0x645345)
     // this.scene.background = this.resources.items.chocolate
+    this.scene.fog = new THREE.Fog(0x202533, -1, 100)
   }
   update = () => {}
 }

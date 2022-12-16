@@ -39,15 +39,15 @@ export default class Camera {
     // this.controls.enabled = false
     this.controls.autoRotate = false
 
-    if (this.debug.active) {
-      // this.debugFolder = this.debug.ui.addFolder('Camera')
-      // const debugObject = {
-      //   'Rotate': this.controls.autoRotate,
-      // };
-      // this.debugFolder.add(debugObject, "Rotate").onChange(val => {
-      //   this.controls.autoRotate = val
-      // });
-    }
+    /*if (this.debug.active) {
+      this.debugFolder = this.debug.ui.addFolder('Camera')
+      const debugObject = {
+        'Rotate': this.controls.autoRotate,
+      };
+      this.debugFolder.add(debugObject, "Rotate").onChange(val => {
+        this.controls.autoRotate = val
+      });
+    }*/
   }
   resize() {
     this.instance.aspect = this.sizes.width / this.sizes.height

@@ -52,18 +52,20 @@ export default class WallShapes {
     const material = new THREE.MeshPhysicalMaterial(meshParams)
 
     // debug
-    this.debugFolder.addColor(meshParams, 'color').onChange(val => {
-      material.color = hexToRgb(val)
-    })
-    this.debugFolder.addColor(meshParams, 'emissive').onChange(val => {
-      material.emissive = hexToRgb(val)
-    })
-    this.debugFolder.add(meshParams, 'metalness', 0.1, 1).onChange(val => {
-      material.metalness = val
-    })
-    this.debugFolder.add(meshParams, 'roughness', 0.1, 1).onChange(val => {
-      material.roughness = val
-    })
+    if(this.debug.active){
+      this.debugFolder.addColor(meshParams, 'color').onChange(val => {
+        material.color = hexToRgb(val)
+      })
+      this.debugFolder.addColor(meshParams, 'emissive').onChange(val => {
+        material.emissive = hexToRgb(val)
+      })
+      this.debugFolder.add(meshParams, 'metalness', 0.1, 1).onChange(val => {
+        material.metalness = val
+      })
+      this.debugFolder.add(meshParams, 'roughness', 0.1, 1).onChange(val => {
+        material.roughness = val
+      })
+    }
 
     for(let i=0; i< this.grid.rows; i++) {
       this.meshes[i] = []
@@ -145,7 +147,7 @@ export default class WallShapes {
             y: y < 1 ? 1 : y
           })
 
-          const scaleFactor = mesh.position.y / 2.0;
+          const scaleFactor = mesh.position.y / 2.1;
           const scale = scaleFactor < 1 ? 1 : scaleFactor;
           gsap.to(mesh.scale, {
             duration: 0.7,

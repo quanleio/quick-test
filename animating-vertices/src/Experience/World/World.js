@@ -1,6 +1,7 @@
 import Experience from "../Experience.js"
 import Flag from './Flag';
 import WallShapes from './WallShapes';
+import TextNote from './TextNote';
 
 export default class World {
   constructor() {
@@ -13,12 +14,17 @@ export default class World {
     this.resources.on("ready", () => {
       // this.flag = new Flag()
 
-      // https://tympanus.net/codrops/2018/12/06/interactive-repulsion-effect-with-three-js/
-      this.wall = new WallShapes()
+      // https://tympanus.net/codrops/2019/12/10/building-a-physics-based-3d-menu-with-cannon-js-and-three-js/
+      // https://tympanus.net/codrops/2019/10/10/create-text-in-three-js-with-three-bmfont-text/
+      this.textNode = new TextNote()
     })
+
+    // https://tympanus.net/codrops/2018/12/06/interactive-repulsion-effect-with-three-js/
+    this.wall = new WallShapes()
   }
   update() {
     // if (this.flag) this.flag.update()
     if (this.wall) this.wall.update()
+    if (this.textNode) this.textNode.update()
   }
 }

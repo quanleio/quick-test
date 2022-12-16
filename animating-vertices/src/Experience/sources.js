@@ -14,4 +14,9 @@ export default [
     type: "texture",
     path: "assets/textures/cute-chocolate-bar-cake-seamless-pattern-background-vector-wallpaper_58032-798.webp"
   },
+  {
+    name: "fontKenpixel",
+    type: "font",
+    path: "assets/fonts/kenpixel.ttf"
+  },
 ];

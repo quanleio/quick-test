@@ -77,7 +77,8 @@ export default class Environment {
     spotLight.angle = 0.3
     spotLight.penumbra = 0.2
     spotLight.decay = 2
-    spotLight.distance = 50
+    spotLight.distance = 40
+    spotLight.intensity = 0.5
 
     spotLight.position.copy(position)
 

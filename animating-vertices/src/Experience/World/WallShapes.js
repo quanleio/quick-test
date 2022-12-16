@@ -99,18 +99,18 @@ export default class WallShapes {
     this.scene.add(this.groupMesh)
   }
   setFloor = () => {
-    const geometry = new THREE.PlaneGeometry(100, 100)
+    const geometry = new THREE.PlaneGeometry(2000, 2000)
     // const material = new THREE.ShadowMaterial({
     //   opacity: 0.3
     // })
     const material = new THREE.MeshPhongMaterial( {
       color: 0x808080,
       transparent: true,
-      opacity: 0.3
+      opacity: 1
     } );
     this.floor = new THREE.Mesh(geometry, material)
-    // this.floor.position.y = 0
-    this.floor.position.set(0, - 0.05, 0)
+    this.floor.position.y = 0
+    // this.floor.position.set(0, - 0.05, 0)
     this.floor.receiveShadow = true
     this.floor.rotateX(-Math.PI/2)
     this.scene.add(this.floor)

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 import Experience from './Experience'
 import { hexToRgb } from '../utils/utils';
 
@@ -22,11 +23,6 @@ export default class Environment {
     this.setLights()
   }
   setLights = () => {
-    /*const lightColors = {
-      AmbientColor: '#2900af',
-      SpotColor: '#e000ff',
-      RectColor: '#0077ff',
-    }*/
     const lightColors = {
       AmbientColor: '#9f3632',
       SpotColor: '#372414',
@@ -58,26 +54,63 @@ export default class Environment {
       .onChange(val => rectLight.color = hexToRgb(val))
     }
 
-    /*const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
-    point1.position.set(0, 10, -100)
-    this.scene.add(point1)
-    const point2 = new THREE.PointLight(0x00ff00, 1, 1000, 1)
-    point2.position.set(20, 5, 20)
-    this.scene.add(point2)*/
-    const point1 = new THREE.PointLight(0xfff000, 1, 1000, 1)
-    point1.position.set(0, 10, -100)
-    this.scene.add(point1)
-    const point2 = new THREE.PointLight(0x79573e, 1, 1000, 1)
-    point2.position.set(100, 10, 0)
-    this.scene.add(point2)
-    const point3 = new THREE.PointLight(0xc27439, 1, 1000, 1)
-    point3.position.set(20, 5, 20)
-    this.scene.add(point3)
+    // point lights
+    this.scene.add(this.createPointLight(0xfff000, new THREE.Vector3(0, 10, -100)))
+    this.scene.add(this.createPointLight(0x79573e, new THREE.Vector3(100, 10, 0)))
+    this.scene.add(this.createPointLight(0xc27439, new THREE.Vector3(20, 5, 20)))
+
+    this.spotLight_1 = this.createSpotLight(0xFF7F00, new THREE.Vector3(15, 40, 45))
+    this.spotLight_2 = this.createSpotLight(0x00FF7F, new THREE.Vector3(0, 40, 35))
+    this.spotLight_3 = this.createSpotLight(0x7F00FF, new THREE.Vector3(- 15, 40, 45))
+    this.scene.add(this.spotLight_1, this.spotLight_2, this.spotLight_3)
+
+    this.animateLight()
   }
   setEnv = () => {
     this.scene.background = new THREE.Color(0x645345)
     // this.scene.background = this.resources.items.chocolate
-    this.scene.fog = new THREE.Fog(0x202533, -1, 100)
+    // this.scene.fog = new THREE.Fog(0x202533, -1, 100) // => ???
   }
-  update = () => {}
+  createSpotLight = (color, position) => {
+    const spotLight = new THREE.SpotLight(color, 2)
+    spotLight.castShadow = true
+    spotLight.angle = 0.3
+    spotLight.penumbra = 0.2
+    spotLight.decay = 2
+    spotLight.distance = 50
+
+    spotLight.position.copy(position)
+
+    return spotLight
+  }
+  tween = light => {
+    new TWEEN.Tween( light ).to( {
+      angle: ( Math.random() * 0.7 ) + 0.1,
+      penumbra: Math.random() + 1
+    }, Math.random() * 3000 + 2000 )
+    .easing( TWEEN.Easing.Quadratic.Out ).start();
+
+    new TWEEN.Tween( light.position ).to( {
+      x: ( Math.random() * 30 ) - 15,
+      y: ( Math.random() * 10 ) + 15,
+      z: ( Math.random() * 30 ) - 15
+    }, Math.random() * 3000 + 2000 )
+    .easing( TWEEN.Easing.Quadratic.Out ).start();
+  }
+  createPointLight = (color, position) => {
+    const pointLight = new THREE.PointLight(color, 1, 1000, 1)
+    pointLight.position.copy(position)
+
+    return pointLight
+  }
+  animateLight = () => {
+    this.tween(this.spotLight_1)
+    this.tween(this.spotLight_2)
+    this.tween(this.spotLight_3)
+
+    setTimeout( this.animateLight, 5000)
+  }
+  update = () => {
+    TWEEN.update()
+  }
 }

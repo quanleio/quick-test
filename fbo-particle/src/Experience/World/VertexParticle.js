@@ -34,8 +34,14 @@ export default class VertexParticle {
       },
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
-      blending: THREE.AdditiveBlending
+      blending: THREE.AdditiveBlending,
     })
+
+    let c1 = new THREE.Color(0x00ffff);
+    let c2 = new THREE.Color(0xff00ff);
+    let c = new THREE.Color();
+    let sphereColors = [];
+    let modelColors = [];
 
     // Apply particle geometry to model (if using model)
     this.buffGeometry = new THREE.BufferGeometry()
@@ -44,12 +50,22 @@ export default class VertexParticle {
         this.buffGeometry = child.geometry
       }
     })
+    for(let i = 0; i < this.buffGeometry.attributes.position.count; i++){
+      c.lerpColors(c1, c2, (1 - this.buffGeometry.attributes.position.getY(i)) / 2);
+      modelColors.push(c.r, c.g, c.b);
+    }
+    this.buffGeometry.setAttribute("color", new THREE.Float32BufferAttribute(modelColors, 3));
 
     // if using premitive sphere
     this.sphereGeometry = new THREE.IcosahedronGeometry(1, 100)
+    for(let i = 0; i < this.sphereGeometry.attributes.position.count; i++){
+      c.lerpColors(c1, c2, (1 - this.sphereGeometry.attributes.position.getY(i)) / 2);
+      sphereColors.push(c.r, c.g, c.b);
+    }
+    this.sphereGeometry.setAttribute("color", new THREE.Float32BufferAttribute(sphereColors, 3));
 
+    // particle
     this.particle = new THREE.Points(this.sphereGeometry, this.material)
-    // this.scene.add(this.particle)
 
     // debug
     if (this.debugFolder) {

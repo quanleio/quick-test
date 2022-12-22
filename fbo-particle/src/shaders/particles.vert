@@ -3,6 +3,8 @@ varying vec2 vUv;
 varying vec2 vPosition;
 uniform sampler2D positionTexture;
 attribute vec2 reference;
+attribute vec3 color;
+varying vec3 vColor;
 
 // Description : Array and textureless GLSL 2D simplex noise function.
 //      Author : Ian McEwan, Ashima Arts.
@@ -119,6 +121,7 @@ vec3 curl(float	x,	float	y,	float	z) {
 
 void main() {
     vUv = reference;
+    vColor = color;
 
     vec3 newPos = position;
     float f = 7.;
@@ -130,6 +133,6 @@ void main() {
     newPos = mix( position, target, pow( d, 5. ) );
 
     vec4 mvPoisition = modelViewMatrix * vec4( newPos, 1.);
-    gl_PointSize = 2. * ( 1.0 / - mvPoisition.z);
+    gl_PointSize = 1. * ( 1.0 / - mvPoisition.z);
     gl_Position = projectionMatrix * mvPoisition;
 }

@@ -9,9 +9,9 @@ body {
   width: 100%;
   position: fixed;
   height: 50%;
-  background: white;
-  z-index: 100;
+  background: #dde8eb;
   mix-blend-mode: difference;
+  pointer-events: none;
 }
 
 /*# sourceMappingURL=style.css.map */

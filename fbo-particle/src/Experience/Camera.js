@@ -26,7 +26,10 @@ export default class Camera {
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enabled = true
-    this.controls.autoRotate = false
+    this.controls.autoRotate = true
+    this.controls.autoRotateSpeed = 1.0
+    this.controls.minDistance = 1
+    this.controls.maxDistance = 4
 
     // debug
     /*if (this.debug.active) {

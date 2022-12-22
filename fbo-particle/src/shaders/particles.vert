@@ -118,18 +118,8 @@ vec3 curl(float	x,	float	y,	float	z) {
 }
 
 void main() {
-//    With GPGPU
-//    vUv = reference;
-//    vec3 pos = texture(positionTexture, reference).xyz;
-//
-//    vec4 mvPoisition = modelViewMatrix * vec4( pos, 1.);
-//
-//    gl_PointSize = 5.0 * ( 1.0 / -mvPoisition.z);
-//    gl_Position = projectionMatrix * mvPoisition;
-
     vUv = reference;
 
-//    vec3 pos = texture(positionTexture, reference).xyz; // using model
     vec3 newPos = position;
     float f = 7.;
     float amplitude = 1.;
@@ -140,7 +130,6 @@ void main() {
     newPos = mix( position, target, pow( d, 5. ) );
 
     vec4 mvPoisition = modelViewMatrix * vec4( newPos, 1.);
-//    vec4 mvPoisition = modelViewMatrix * vec4( pos, 1.);  // using model
     gl_PointSize = 3. * ( 1.0 / - mvPoisition.z);
     gl_Position = projectionMatrix * mvPoisition;
 }

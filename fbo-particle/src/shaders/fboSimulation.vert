@@ -118,19 +118,11 @@ vec3 curl(float	x,	float	y,	float	z) {
 }
 
 void main() {
-    /*vUv = reference;
-    vec3 pos = texture(positionTexture, reference).xyz;
-
-    vec4 mvPoisition = modelViewMatrix * vec4( pos, 1.);
-
-    gl_PointSize = 5. * ( 1. / - mvPoisition.z);
-    gl_Position = projectionMatrix * mvPoisition;*/
-
     vUv = reference;
 
     vec3 pos = texture(positionTexture, reference).xyz;
     vec3 newPos = position;
-    float f = 10.;
+    float f = 30.;
     float amplitude = 1.;
     float maxDistance = 2.;
     vec3 target = position + curl( newPos.x * f, newPos.y * f, newPos.z * f ) * amplitude;

@@ -12,7 +12,7 @@ export default class FboSimulation {
     this.resources = this.experience.resources
     this.renderer = this.experience.renderer.instance
 
-    this.WIDTH = 64*10 // Texture width for simulation
+    this.WIDTH = 128 // Texture width for simulation
 
     this.setModel()
     this.setParticle()
@@ -57,10 +57,6 @@ export default class FboSimulation {
     for(let i=0; i< arr.length; i=i+4) {
 
       let rand = Math.floor(Math.random() * this.faceNumber)
-      // let x = Math.random()
-      // let y = Math.random()
-      // let z = Math.random()
-
       let x = this.facePos[3 * rand]
       let y = this.facePos[3 * rand + 1]
       let z = this.facePos[3 * rand + 2]
@@ -99,12 +95,6 @@ export default class FboSimulation {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geometry.setAttribute('reference', new THREE.BufferAttribute(reference, 2))
 
-    // Apply particle geometry to model
-    // this.model.traverse(child => {
-    //   if (child.isMesh) {
-    //     geometry = child.geometry
-    //   }
-    // })
     const particle = new THREE.Points(geometry, this.material)
     this.scene.add(particle)
   }

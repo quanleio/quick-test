@@ -8,7 +8,6 @@ export default class VertexParticle {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
-    // this.debug = this.experience.debug
     this.debugFolder = _debugFolder
 
     this.setModel()
@@ -53,12 +52,14 @@ export default class VertexParticle {
     // this.scene.add(this.particle)
 
     // debug
-    const debugObject = {
-      'Skull Model': false,
+    if (this.debugFolder) {
+      const debugObject = {
+        'Skull Model': false,
+      }
+      this.debugFolder.add(debugObject, 'Skull Model').onChange(val => {
+        val ? this.particle.geometry = this.buffGeometry : this.particle.geometry = this.sphereGeometry
+      })
     }
-    this.debugFolder.add(debugObject, 'Skull Model').onChange(val => {
-      val ? this.particle.geometry = this.buffGeometry : this.particle.geometry = this.sphereGeometry
-    })
   }
   update = (isEnabled) => {
     if (isEnabled) {

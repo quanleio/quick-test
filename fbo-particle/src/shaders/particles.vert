@@ -130,6 +130,6 @@ void main() {
     newPos = mix( position, target, pow( d, 5. ) );
 
     vec4 mvPoisition = modelViewMatrix * vec4( newPos, 1.);
-    gl_PointSize = 3. * ( 1.0 / - mvPoisition.z);
+    gl_PointSize = 2. * ( 1.0 / - mvPoisition.z);
     gl_Position = projectionMatrix * mvPoisition;
 }

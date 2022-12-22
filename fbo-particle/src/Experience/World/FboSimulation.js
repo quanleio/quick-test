@@ -23,7 +23,6 @@ export default class FboSimulation {
     this.facePos = []
     this.model.traverse(child => {
       if (child.isMesh) {
-        child.geometry.rotateY(Math.PI/180 * -90)
         child.geometry.translate(0, 0.2, 0)
         this.facePos.push(...child.geometry.attributes.position.array)
       }
@@ -95,12 +94,18 @@ export default class FboSimulation {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geometry.setAttribute('reference', new THREE.BufferAttribute(reference, 2))
 
-    const particle = new THREE.Points(geometry, this.material)
-    this.scene.add(particle)
+    this.particle = new THREE.Points(geometry, this.material)
+    // this.scene.add(particle)
   }
-  update = () => {
-    this.positionVariable.material.uniforms.time.value = performance.now() / 1000
-    this.gpuCompute.compute()
-    this.material.uniforms.positionTexture.value = this.gpuCompute.getCurrentRenderTarget(this.positionVariable).texture
+  update = (isEnabled) => {
+    if(isEnabled) {
+      this.scene.add(this.particle)
+      this.positionVariable.material.uniforms.time.value = performance.now() / 1000
+      this.gpuCompute.compute()
+      this.material.uniforms.positionTexture.value = this.gpuCompute.getCurrentRenderTarget(this.positionVariable).texture
+    }
+    else {
+      this.scene.remove(this.particle)
+    }
   }
 }

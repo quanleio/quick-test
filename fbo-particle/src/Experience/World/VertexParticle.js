@@ -4,12 +4,14 @@ import vertexShader from '../../shaders/particles.vert'
 import fragmentShader from '../../shaders/particles.frag'
 
 export default class VertexParticle {
-  constructor() {
+  constructor(_debugFolder) {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
+    // this.debug = this.experience.debug
+    this.debugFolder = _debugFolder
 
-    // this.setModel()
+    this.setModel()
     this.setParticle()
   }
   setModel = () => {
@@ -37,17 +39,35 @@ export default class VertexParticle {
     })
 
     // Apply particle geometry to model (if using model)
-    /*let geometry = new THREE.BufferGeometry()
+    this.buffGeometry = new THREE.BufferGeometry()
     this.model.traverse(child => {
       if (child.isMesh) {
-        geometry = child.geometry
+        this.buffGeometry = child.geometry
       }
-    })*/
-    const geometry = new THREE.IcosahedronGeometry(1, 100)
-    const particle = new THREE.Points(geometry, this.material)
-    this.scene.add(particle)
+    })
+
+    // if using premitive sphere
+    this.sphereGeometry = new THREE.IcosahedronGeometry(1, 100)
+
+    this.particle = new THREE.Points(this.sphereGeometry, this.material)
+    // this.scene.add(this.particle)
+
+    // debug
+    const debugObject = {
+      'Skull Model': false,
+    }
+    this.debugFolder.add(debugObject, 'Skull Model').onChange(val => {
+      val ? this.particle.geometry = this.buffGeometry : this.particle.geometry = this.sphereGeometry
+    })
   }
-  update = () => {
-    this.material.uniforms.time.value = performance.now() / 1000
+  update = (isEnabled) => {
+    if (isEnabled) {
+      this.scene.add(this.particle)
+      this.material.uniforms.time.value = performance.now() / 1000;
+    }
+    else {
+      this.scene.remove(this.particle)
+    }
+
   }
 }

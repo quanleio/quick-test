@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.curtain {
+  width: 100%;
+  position: fixed;
+  height: 50%;
+  background: white;
+  z-index: 100;
+  mix-blend-mode: difference;
+}
+
+/*# sourceMappingURL=style.css.map */

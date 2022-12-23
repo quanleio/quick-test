@@ -1,20 +1,34 @@
 import * as THREE from 'three'
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise'
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import Experience from '../Experience'
 import {randFloat} from 'three/src/math/MathUtils';
+
 import grainVertex from '../../shaders/grain.vert'
 import grainFragment from '../../shaders/grain.frag'
+import postVertex from '../../shaders/post.vert';
+import postFragment from '../../shaders/post.frag';
+import mouseVertex from '../../shaders/mouse.vert'
+import mouseFragment from '../../shaders/mouse.frag'
 
 export default class Flag {
   constructor() {
     this.experience = new Experience()
+    this.renderer = this.experience.renderer.instance
     this.scene = this.experience.scene
+    this.camera = this.experience.camera.instance
     this.resources = this.experience.resources
     this.perlin = new ImprovedNoise()
     this.speed = randFloat(500, 1000)
     this.clock = new THREE.Clock()
-    this.debug = this.experience.debug
-
+    this.time = 0
+    this.speed = 0
+    this.targetSpeed = 0
+    this.followMouse = new THREE.Vector2()
+    this.prevMouse = new THREE.Vector2()
+    this.paused = false
     this.weight = [0.2126, 0.7152, 0.0722]
     this.zRange = 120
     this.grainSetting = {
@@ -26,9 +40,39 @@ export default class Flag {
       light_1: 0.7,
       light_2: 8,
     }
+    this.debug = this.experience.debug
 
-    this.createGrainMaterial()
-    this.setMap()
+    // this.setMap()
+    this.addObject()
+  }
+  addObject = () => {
+    /*const geometry = new THREE.PlaneGeometry(1, 1, 80, 80)
+    this.material = new THREE.ShaderMaterial({
+      side: THREE.DoubleSide,
+      transparent: true,
+      uniforms: {
+        uTime: { value: 0},
+        uProgress: { value: 0},
+        uAngle: { value: 0},
+        texture1: { value: null},
+        texture2: { value: null},
+        uResolution: { value: new THREE.Vector4()},
+        uvRate: { value: new THREE.Vector2(2, 1)}
+      },
+      vertexShader: mouseVertex,
+      fragmentShader: mouseFragment
+    })*/
+
+    const geometry = new THREE.PlaneGeometry(40, 18, 32, 32)
+    geometry.rotateX(Math.PI * 0.5)
+    geometry.center()
+
+    const material = new THREE.MeshBasicMaterial({
+      map: this.resources.items.city
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.rotation.x = Math.PI/180 * -120
+    this.scene.add(mesh)
   }
   createGrainMaterial = () => {
     const uniforms = {
@@ -73,12 +117,13 @@ export default class Flag {
     this.vUv = new THREE.Vector2()
   }
   update = () => {
-    let t = this.clock.getElapsedTime()
+
+    /*let t = this.clock.getElapsedTime()
     for(let i=0; i<this.position.count; i++) {
       this.vUv.fromBufferAttribute(this.uv, i).multiplyScalar(2.5)
       const y = this.perlin.noise(this.vUv.x, this.vUv.y + t,  t * 0.1)
       this.position.setY(i, y)
     }
-    this.position.needsUpdate = true
+    this.position.needsUpdate = true*/
   }
 }

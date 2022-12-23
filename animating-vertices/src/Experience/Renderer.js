@@ -18,13 +18,14 @@ export default class Renderer {
       antialias: true,
     })
 
-    this.instance.setClearColor("#262626", 1)
-    this.instance.physicallyCorrectLights = true
+    // this.instance.setClearColor("#262626", 1)
+    // this.instance.physicallyCorrectLights = true
     // this.instance.outputEncoding = THREE.sRGBEncoding
     this.instance.shadowMap.enabled = true
     this.instance.shadowMap.type = THREE.PCFSoftShadowMap
     this.instance.toneMapping = THREE.NoToneMapping
     this.instance.toneMappingExposure = 1
+    this.instance.sortObjects = false
 
     this.resize()
   }

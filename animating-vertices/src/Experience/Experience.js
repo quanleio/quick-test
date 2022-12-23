@@ -10,7 +10,7 @@ import Stats from "../utils/Stats.js"
 import sources from "./sources.js"
 import Environment from './Environment'
 import Debug from '../utils/Debug';
-import Mouse from '../utils/Mouse';
+import PostEffect from './PostEffect';
 
 let instance = null
 
@@ -35,7 +35,7 @@ export default class Experience {
     this.debug = new Debug()
     this.stats = new Stats()
     this.sizes = new Sizes()
-    this.time = new Time()
+    // this.time = new Time()
     this.resources = new Resources(sources)
 
     this.scene = new THREE.Scene()
@@ -44,10 +44,12 @@ export default class Experience {
     this.environment = new Environment()
     this.camera = new Camera()
     this.renderer = new Renderer()
+    this.postEffect = new PostEffect()
     this.world = new World()
 
     this.sizes.on("resize", () => this.resize())
-    this.time.on("tick", () => this.update())
+    // this.time.on("tick", () => this.update())
+    this.tick()
   }
 
   resize() {
@@ -62,10 +64,16 @@ export default class Experience {
     /**update everything */
     this.camera.update()
     this.world.update()
-    this.renderer.update()
+    // this.renderer.update() // Don't use this if using PostProcessing
+    this.postEffect.update()
 
     /**Finish analyzing frame */
     this.stats.active && this.stats.afterRender()
+  }
+
+  tick = () => {
+    requestAnimationFrame( this.tick )
+    this.update()
   }
 
   destroy() {

@@ -12,8 +12,9 @@ export default class PostEffect {
     this.renderer = this.experience.renderer.instance
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
-    this.debug = this.experience.debug
     this.resources = this.experience.resources
+    this.sizes = this.experience.sizes
+    this.debug = this.experience.debug
 
     this.mouse = new THREE.Vector2()
     this.followMouse = new THREE.Vector2();
@@ -93,7 +94,9 @@ export default class PostEffect {
       });
     }
   }
-
+  resize = () => {
+    this.customPass.uniforms.uResolution.value.y = this.sizes.height / this.sizes.width
+  }
   update = () => {
     this.getSpeed()
 

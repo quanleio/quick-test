@@ -1,4 +1,5 @@
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
+#pragma glslify: grain = require(glsl-film-grain)
 
 uniform vec3 uLightColor[2];
 uniform vec3 uColor;
@@ -7,6 +8,7 @@ uniform float uNoiseCoef;
 uniform float uNoiseMin;
 uniform float uNoiseMax;
 uniform float uNoiseScale;
+uniform sampler2D uTexture;
 
 varying vec3 vNormal;
 varying vec3 vSurfaceToLight[2];
@@ -39,5 +41,6 @@ void main() {
     gl_FragColor.g = max(colorNoise.g, uColor.g);
     gl_FragColor.b = max(colorNoise.b, uColor.b);
     gl_FragColor.a = 1.0;
-    //    gl_FragColor.a *= pow( uTime, 1.0 );
+
+//    gl_FragColor = texture2D(uTexture, uv);
 }

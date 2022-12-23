@@ -1,8 +1,6 @@
 import * as THREE from "three"
-import { gsap } from 'gsap'
 import Experience from "./Experience.js"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
-import {EVT} from '../utils/contains'
 
 export default class Camera {
   constructor() {
@@ -16,27 +14,18 @@ export default class Camera {
     this.setControls()
   }
   setInstance() {
-    // for flag demo
-    /*this.instance = new THREE.PerspectiveCamera(
-      75,
-      this.sizes.width / this.sizes.height,
-      0.1,
-      10000
-    )
-    this.instance.position.set(0, 10, 10);*/
-
     this.instance = new THREE.PerspectiveCamera(
-        45,
+        75,
         this.sizes.width / this.sizes.height,
         0.1,
         10000
     )
-    this.instance.position.set(0, 25, 2)
+    this.instance.position.set(0, 0, 20)
     this.scene.add(this.instance)
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
-    this.controls.enabled = false
+    this.controls.enabled = true
     this.controls.autoRotate = false
 
     /*if (this.debug.active) {

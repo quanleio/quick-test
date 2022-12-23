@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import Sizes from "../utils/Sizes.js"
-import Time from "../utils/Time.js"
+// import Time from "../utils/Time.js"
 import Camera from "./Camera.js"
 import Renderer from "./Renderer.js"
 import World from "./World/World.js"

@@ -12,6 +12,7 @@ export default class PostEffect {
     this.renderer = this.experience.renderer.instance
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
+    this.debug = this.experience.debug
 
     this.mouse = new THREE.Vector2()
     this.followMouse = new THREE.Vector2();
@@ -20,6 +21,8 @@ export default class PostEffect {
     this.targetSpeed = 0
     this.speed = 0
     this.time = 0
+    this.effects = [ 'Colorful', 'Zoom', 'Grain' ];
+    this.effect = { Effect: 'Colorful' };
 
     this.onMouseMove()
     this.setEffect()
@@ -52,10 +55,10 @@ export default class PostEffect {
         tDiffuse: { value: null },
         uResolution: { value: new THREE.Vector2(1.,window.innerHeight/window.innerWidth) },
         uMouse: { value: new THREE.Vector2(-10,-10) },
-        "uVelo": { value: 0 },
-        "uScale": { value: 0 },
-        "uType": { value: 0 },
-        "time": { value: 0 }
+        uVelocity: { value: 0 },
+        uScale: { value: 0 },
+        uType: { value: 0 },
+        uTime: { value: 0 }
       },
       vertexShader: postVertex,
       fragmentShader: postFragment
@@ -63,14 +66,32 @@ export default class PostEffect {
     this.customPass = new ShaderPass(myEffect)
     this.customPass.renderToScreen = true
     this.composer.addPass(this.customPass)
+
+    //debug
+    if(this.debug.active) {
+      this.debug.ui.add( this.effect, 'Effect' ).options(this.effects).onChange(val => {
+        console.log(val)
+        switch (val) {
+          case 'Colorful':
+            this.customPass.uniforms.uType.value = 0;
+            break;
+          case 'Zoom':
+            this.customPass.uniforms.uType.value = 1;
+            break;
+          case 'Grain':
+            this.customPass.uniforms.uType.value = 2;
+            break;
+        }
+      });
+    }
   }
+
   update = () => {
-    console.log('aaaa')
     this.getSpeed()
 
-    this.customPass.uniforms.time.value = performance.now() / 1000
+    this.customPass.uniforms.uTime.value = performance.now() / 1000
     this.customPass.uniforms.uMouse.value = this.followMouse // this.mouse
-    this.customPass.uniforms.uVelo.value = Math.min(this.targetSpeed, 0.05);
+    this.customPass.uniforms.uVelocity.value = Math.min(this.targetSpeed, 0.05);
     this.targetSpeed *=0.999;
 
     this.composer.render()

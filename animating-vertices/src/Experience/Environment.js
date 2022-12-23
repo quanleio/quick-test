@@ -10,7 +10,7 @@ export default class Environment {
 
     // debug
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder('Lights')
+      // this.debugFolder = this.debug.ui.addFolder('Lights')
     }
 
     // Wait for resources

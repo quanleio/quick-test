@@ -1,9 +1,7 @@
-uniform float time;
-uniform float progress;
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
 uniform vec2 uMouse;
-uniform float uVelo;
+uniform float uVelocity;
 uniform int uType;
 
 varying vec2 vUv;
@@ -61,16 +59,16 @@ void main() {
 
     // zoom
     if(uType==1){
-        float c = circle(newUV, uMouse, 0.0, 0.1+uVelo*2.)*40.*uVelo;
+        float c = circle(newUV, uMouse, 0.0, 0.1+uVelocity*2.)*40.*uVelocity;
         vec2 offsetVector = normalize(uMouse - vUv);
         vec2 warpedUV = mix(vUv, uMouse, c * 0.99); //power
         color = texture2D(tDiffuse,warpedUV) + texture2D(tDiffuse,warpedUV)*vec4(vec3(c),1.);
     }
 
-    // zoom
+    // grain
     if(uType==2){
         float hash = hash12(vUv*10.);
-        float c = circle(newUV, uMouse, 0.0, 0.1+uVelo*0.01)*10.*uVelo;
+        float c = circle(newUV, uMouse, 0.0, 0.1+uVelocity*0.01)*10.*uVelocity;
         vec2 offsetVector = normalize(uMouse - vUv);
         vec2 warpedUV = vUv + vec2(hash - 0.5)*c; //power
         color = texture2D(tDiffuse,warpedUV) + texture2D(tDiffuse,warpedUV)*vec4(vec3(c),1.);

@@ -13,6 +13,7 @@ export default class PostEffect {
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
     this.debug = this.experience.debug
+    this.resources = this.experience.resources
 
     this.mouse = new THREE.Vector2()
     this.followMouse = new THREE.Vector2();
@@ -25,7 +26,10 @@ export default class PostEffect {
     this.effect = { Effect: 'Colorful' };
 
     this.onMouseMove()
-    this.setEffect()
+
+    this.resources.on("ready", () => {
+      this.setEffect()
+    })
   }
   onMouseMove = () => {
     document.addEventListener('mousemove', (e) => {
@@ -48,6 +52,10 @@ export default class PostEffect {
     this.composer = new EffectComposer(this.renderer)
     const renderPass = new RenderPass(this.scene, this.camera)
     this.composer.addPass(renderPass)
+
+   /* const imageWidth = this.resources.items.city.source.data.width
+    const imageHeight = this.resources.items.city.source.data.height
+    console.log(imageWidth, imageHeight)*/
 
     // custom shader pass
     const myEffect = {
@@ -89,11 +97,13 @@ export default class PostEffect {
   update = () => {
     this.getSpeed()
 
-    this.customPass.uniforms.uTime.value = performance.now() / 1000
-    this.customPass.uniforms.uMouse.value = this.followMouse // this.mouse
-    this.customPass.uniforms.uVelocity.value = Math.min(this.targetSpeed, 0.05);
-    this.targetSpeed *=0.999;
+    if (this.customPass) {
+      this.customPass.uniforms.uTime.value = performance.now() / 1000
+      this.customPass.uniforms.uMouse.value = this.followMouse // this.mouse
+      this.customPass.uniforms.uVelocity.value = Math.min(this.targetSpeed, 0.05);
+      this.targetSpeed *=0.999;
+    }
 
-    this.composer.render()
+    if(this.composer) this.composer.render()
   }
 }

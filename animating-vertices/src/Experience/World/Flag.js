@@ -9,19 +9,12 @@ import grainFragment from '../../shaders/grain.frag'
 export default class Flag {
   constructor() {
     this.experience = new Experience()
-    this.renderer = this.experience.renderer.instance
     this.scene = this.experience.scene
-    this.camera = this.experience.camera.instance
     this.resources = this.experience.resources
+
     this.perlin = new ImprovedNoise()
     this.speed = randFloat(500, 1000)
     this.clock = new THREE.Clock()
-    this.time = 0
-    this.speed = 0
-    this.targetSpeed = 0
-    this.followMouse = new THREE.Vector2()
-    this.prevMouse = new THREE.Vector2()
-    this.paused = false
     this.weight = [0.2126, 0.7152, 0.0722]
     this.zRange = 120
     this.grainSetting = {
@@ -36,7 +29,6 @@ export default class Flag {
     this.debug = this.experience.debug
 
     this.setMap()
-    // this.addObject()
   }
   addObject = () => {
     const geometry = new THREE.PlaneGeometry(40, 18, 32, 32)

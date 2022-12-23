@@ -1,17 +1,10 @@
 import * as THREE from 'three'
 import { ImprovedNoise } from 'three/examples/jsm/math/ImprovedNoise'
-import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
-import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
-import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import Experience from '../Experience'
 import {randFloat} from 'three/src/math/MathUtils';
 
 import grainVertex from '../../shaders/grain.vert'
 import grainFragment from '../../shaders/grain.frag'
-import postVertex from '../../shaders/post.vert';
-import postFragment from '../../shaders/post.frag';
-import mouseVertex from '../../shaders/mouse.vert'
-import mouseFragment from '../../shaders/mouse.frag'
 
 export default class Flag {
   constructor() {

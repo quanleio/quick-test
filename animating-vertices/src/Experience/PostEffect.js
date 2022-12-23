@@ -14,6 +14,12 @@ export default class PostEffect {
     this.camera = this.experience.camera.instance
 
     this.mouse = new THREE.Vector2()
+    this.followMouse = new THREE.Vector2();
+    this.prevMouse = new THREE.Vector2();
+
+    this.targetSpeed = 0
+    this.speed = 0
+    this.time = 0
 
     this.onMouseMove()
     this.setEffect()
@@ -24,6 +30,17 @@ export default class PostEffect {
       this.mouse.y = 1. - ( e.clientY/ window.innerHeight );
     })
   }
+  getSpeed = () => {
+    this.speed = Math.sqrt( (this.prevMouse.x- this.mouse.x)**2 + (this.prevMouse.y- this.mouse.y)**2 )
+
+    this.targetSpeed -= 0.1*(this.targetSpeed - this.speed);
+    this.followMouse.x -= 0.1*(this.followMouse.x - this.mouse.x);
+    this.followMouse.y -= 0.1*(this.followMouse.y - this.mouse.y);
+
+    this.prevMouse.x = this.mouse.x;
+    this.prevMouse.y = this.mouse.y;
+
+  }
   setEffect = () => {
     this.composer = new EffectComposer(this.renderer)
     const renderPass = new RenderPass(this.scene, this.camera)
@@ -32,9 +49,13 @@ export default class PostEffect {
     // custom shader pass
     const myEffect = {
       uniforms: {
-        "tDiffuse": { value: null },
-        "uResolution": { value: new THREE.Vector2(1.,window.innerHeight/window.innerWidth) },
-        "uMouse": { value: new THREE.Vector2(-10,-10) },
+        tDiffuse: { value: null },
+        uResolution: { value: new THREE.Vector2(1.,window.innerHeight/window.innerWidth) },
+        uMouse: { value: new THREE.Vector2(-10,-10) },
+        "uVelo": { value: 0 },
+        "uScale": { value: 0 },
+        "uType": { value: 0 },
+        "time": { value: 0 }
       },
       vertexShader: postVertex,
       fragmentShader: postFragment
@@ -45,8 +66,13 @@ export default class PostEffect {
   }
   update = () => {
     console.log('aaaa')
+    this.getSpeed()
 
-    this.customPass.uniforms.uMouse.value = this.mouse
+    this.customPass.uniforms.time.value = performance.now() / 1000
+    this.customPass.uniforms.uMouse.value = this.followMouse // this.mouse
+    this.customPass.uniforms.uVelo.value = Math.min(this.targetSpeed, 0.05);
+    this.targetSpeed *=0.999;
+
     this.composer.render()
   }
 }

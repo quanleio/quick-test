@@ -42,27 +42,10 @@ export default class Flag {
     }
     this.debug = this.experience.debug
 
-    // this.setMap()
-    this.addObject()
+    this.setMap()
+    // this.addObject()
   }
   addObject = () => {
-    /*const geometry = new THREE.PlaneGeometry(1, 1, 80, 80)
-    this.material = new THREE.ShaderMaterial({
-      side: THREE.DoubleSide,
-      transparent: true,
-      uniforms: {
-        uTime: { value: 0},
-        uProgress: { value: 0},
-        uAngle: { value: 0},
-        texture1: { value: null},
-        texture2: { value: null},
-        uResolution: { value: new THREE.Vector4()},
-        uvRate: { value: new THREE.Vector2(2, 1)}
-      },
-      vertexShader: mouseVertex,
-      fragmentShader: mouseFragment
-    })*/
-
     const geometry = new THREE.PlaneGeometry(40, 18, 32, 32)
     geometry.rotateX(Math.PI * 0.5)
     geometry.center()
@@ -117,13 +100,12 @@ export default class Flag {
     this.vUv = new THREE.Vector2()
   }
   update = () => {
-
-    /*let t = this.clock.getElapsedTime()
+    let t = this.clock.getElapsedTime()
     for(let i=0; i<this.position.count; i++) {
       this.vUv.fromBufferAttribute(this.uv, i).multiplyScalar(2.5)
       const y = this.perlin.noise(this.vUv.x, this.vUv.y + t,  t * 0.1)
       this.position.setY(i, y)
     }
-    this.position.needsUpdate = true*/
+    this.position.needsUpdate = true
   }
 }

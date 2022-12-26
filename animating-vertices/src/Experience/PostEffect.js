@@ -25,7 +25,7 @@ export default class PostEffect {
     this.speed = 0
     this.time = 0
     this.effects = [ EFFECTS.COLORFUL, EFFECTS.ZOOM, EFFECTS.GRAIN ]
-    this.effect = { Effect: EFFECTS.COLORFUL }
+    this.effect = { 'Post Effect': EFFECTS.COLORFUL }
 
     this.onMouseMove()
     this.setEffect()
@@ -71,7 +71,7 @@ export default class PostEffect {
 
     //debug
     if(this.debug.active) {
-      this.debug.ui.add( this.effect, 'Effect' ).options(this.effects).onChange(val => {
+      this.debug.ui.add( this.effect, 'Post Effect' ).options(this.effects).onChange(val => {
         switch (val) {
           case EFFECTS.COLORFUL:
             this.customPass.uniforms.uType.value = 0;

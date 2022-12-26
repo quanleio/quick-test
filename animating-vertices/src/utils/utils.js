@@ -20,3 +20,8 @@ export const hexToRgb = (hex) => {
     b: parseInt(result[3], 16) / 255
   } : null;
 }
+
+export const getRandomInt = max => {
+  //Math.floor(Math.random()*6+1)
+  return Math.floor(Math.random() * max);
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="//cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    body {
+      overflow: hidden;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<script id="vertexShader" type="x-shader/x-vertex">
+  varying vec2 vUv;
+  void main()	{
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+  varying vec2 vUv;
+  uniform sampler2D tDiffuse;
+  
+  const float lineThickness = 0.4;
+  const float gridSize = 200.0;
+  
+  void main()	{
+    
+    // the following technique (scaling uvs) is explained here: https://thebookofshaders.com/09/
+    vec2 st = fract( vUv * gridSize );
+    
+    // determine at which coordinate the line is visible (indicated via 0 or 1)
+    vec2 gridLine = step( st, vec2( lineThickness ) );
+    float a = max( gridLine.x, gridLine.y );
+    
+    vec4 baseColor = vec4( 0.0 ); // transparent base color
+    vec4 texColor = texture2D( tDiffuse, vUv );
+    
+    // a *= pow( gl_FragCoord.z, 500.0 ); // comment this line gradually remove the grid when coming closer
+    
+    // blend both colors
+    gl_FragColor = mix( texColor, baseColor, a );
+  
+  }
+</script>
+
+<script src="main.js"></script>
+</body>
+</html>

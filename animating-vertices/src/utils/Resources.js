@@ -4,6 +4,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader';
 import EventEmitter from "./EventEmitter.js";
+import {EVT} from './contains';
 
 export default class Resources extends EventEmitter {
   constructor(sources) {
@@ -70,8 +71,7 @@ export default class Resources extends EventEmitter {
 
     /**Trigger Event Emitter if all sources are loaded */
     if (this.loaded === this.toLoad) {
-      console.log('dispatch')
-      this.trigger("ready");
+      this.trigger(EVT.READY);
     }
   }
 }

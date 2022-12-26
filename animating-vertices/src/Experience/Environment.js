@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import Experience from './Experience'
+import {EVT} from '../utils/contains';
 
 export default class Environment {
   constructor() {
@@ -14,7 +15,7 @@ export default class Environment {
     }
 
     // Wait for resources
-    this.resources.on("ready", () => {
+    this.resources.on(EVT.READY, () => {
       this.setEnv()
     });
 
@@ -22,6 +23,7 @@ export default class Environment {
   }
   setEnv = () => {
     // this.scene.background = new THREE.Color(0xa5c9a5)
+    // this.scene.add(new THREE.GridHelper(10, 10, 0x007f7f, 0x007f7f));
   }
   setLights = () => {
     const light = new THREE.DirectionalLight(0xffffff, 1)

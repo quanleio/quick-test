@@ -1,4 +1,5 @@
 import EventEmitter from './EventEmitter';
+import {EVT} from './contains';
 
 export default class Mouse extends EventEmitter {
   constructor() {
@@ -7,9 +8,9 @@ export default class Mouse extends EventEmitter {
     this.mouse = { x: 0, y: 0}
     this.targetMouse = {x: 0, y: 0}
 
-    window.addEventListener('mousemove', e => {
+    window.addEventListener(EVT.MOUSE_MOVE, e => {
       this.handleMousemove(e)
-      this.trigger('mousemove')
+      this.trigger(EVT.MOUSE_MOVE)
     })
   }
   handleMousemove = e => {

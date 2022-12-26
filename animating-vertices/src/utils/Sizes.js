@@ -1,4 +1,5 @@
 import EventEmitter from "./EventEmitter.js";
+import {EVT} from './contains';
 
 export default class Sizes extends EventEmitter {
   constructor() {
@@ -7,9 +8,9 @@ export default class Sizes extends EventEmitter {
     this.updateSizes();
 
     /**Resize Event Listener */
-    window.addEventListener("resize", () => {
+    window.addEventListener(EVT.RESIZE, () => {
       this.updateSizes();
-      this.trigger("resize");
+      this.trigger(EVT.RESIZE);
     });
   }
 

@@ -1,10 +1,16 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+precision highp float;
+
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
 uniform vec2 uMouse;
 uniform float uVelocity;
 uniform int uType;
 
-varying vec2 vUv;
+varying vec2 vUv; // vertex uv
 
 float circle(vec2 uv, vec2 disc_center, float disc_radius, float border_size) {
     uv -= disc_center;

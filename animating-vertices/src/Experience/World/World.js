@@ -1,5 +1,6 @@
 import Experience from "../Experience.js"
 import Flag from './Flag';
+import {EVT} from '../../utils/contains';
 
 export default class World {
   constructor() {
@@ -9,7 +10,7 @@ export default class World {
     this.resources = this.experience.resources
 
     // Wait for resources
-    this.resources.on("ready", () => {
+    this.resources.on(EVT.READY, () => {
       this.flag = new Flag()
     })
   }

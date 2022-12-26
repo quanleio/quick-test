@@ -1,4 +1,12 @@
-
 export const EVT = {
-  CAMERA_ANIMATE_COMPLETED: 'camera-animate-completed'
+  READY: 'ready',
+  RESIZE: 'resize',
+  TICK: 'tick',
+  MOUSE_MOVE: 'mousemove'
+}
+
+export const EFFECTS = {
+  COLORFUL: 'Colorful',
+  ZOOM: 'Zoom',
+  GRAIN: 'Grain'
 }

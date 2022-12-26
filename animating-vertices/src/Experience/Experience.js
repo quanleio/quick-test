@@ -11,6 +11,7 @@ import sources from "./sources.js"
 import Environment from './Environment'
 import Debug from '../utils/Debug';
 import PostEffect from './PostEffect';
+import {EVT} from '../utils/contains';
 
 let instance = null
 
@@ -39,16 +40,14 @@ export default class Experience {
     this.resources = new Resources(sources)
 
     this.scene = new THREE.Scene()
-    //this.scene.add(new THREE.GridHelper(10, 10, 0x007f7f, 0x007f7f));
-
     this.environment = new Environment()
     this.camera = new Camera()
     this.renderer = new Renderer()
     this.postEffect = new PostEffect()
     this.world = new World()
 
-    this.sizes.on("resize", () => this.resize())
-    // this.time.on("tick", () => this.update())
+    this.sizes.on(EVT.RESIZE, () => this.resize())
+    // this.time.on(EVT.TICK, () => this.update())
     this.tick()
   }
 
@@ -79,8 +78,8 @@ export default class Experience {
 
   destroy() {
     /**Clear Event Emitter*/
-    this.sizes.off("resize")
-    this.time.off("tick")
+    this.sizes.off(EVT.RESIZE)
+    // this.time.off(EVT.TICK)
 
     /**Traverse the whole scene and check if it's a mesh */
     this.scene.traverse((child) => {

@@ -1,10 +1,11 @@
 import * as THREE from 'three'
-import Experience from './Experience';
-import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
-import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
-import postVertex from '../shaders/post.vert';
-import postFragment from '../shaders/post.frag';
-import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import Experience from './Experience'
+import { EFFECTS, EVT } from '../utils/contains';
+import postVertex from '../shaders/post.vert'
+import postFragment from '../shaders/post.frag'
 
 export default class PostEffect {
   constructor() {
@@ -17,23 +18,20 @@ export default class PostEffect {
     this.debug = this.experience.debug
 
     this.mouse = new THREE.Vector2()
-    this.followMouse = new THREE.Vector2();
-    this.prevMouse = new THREE.Vector2();
+    this.followMouse = new THREE.Vector2()
+    this.prevMouse = new THREE.Vector2()
 
     this.targetSpeed = 0
     this.speed = 0
     this.time = 0
-    this.effects = [ 'Colorful', 'Zoom', 'Grain' ];
-    this.effect = { Effect: 'Colorful' };
+    this.effects = [ EFFECTS.COLORFUL, EFFECTS.ZOOM, EFFECTS.GRAIN ]
+    this.effect = { Effect: EFFECTS.COLORFUL }
 
     this.onMouseMove()
-
-    this.resources.on("ready", () => {
-      this.setEffect()
-    })
+    this.setEffect()
   }
   onMouseMove = () => {
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener(EVT.MOUSE_MOVE, (e) => {
       this.mouse.x = ( e.clientX / window.innerWidth ) ;
       this.mouse.y = 1. - ( e.clientY/ window.innerHeight );
     })
@@ -47,16 +45,11 @@ export default class PostEffect {
 
     this.prevMouse.x = this.mouse.x;
     this.prevMouse.y = this.mouse.y;
-
   }
   setEffect = () => {
     this.composer = new EffectComposer(this.renderer)
     const renderPass = new RenderPass(this.scene, this.camera)
     this.composer.addPass(renderPass)
-
-   /* const imageWidth = this.resources.items.city.source.data.width
-    const imageHeight = this.resources.items.city.source.data.height
-    console.log(imageWidth, imageHeight)*/
 
     // custom shader pass
     const myEffect = {
@@ -79,15 +72,14 @@ export default class PostEffect {
     //debug
     if(this.debug.active) {
       this.debug.ui.add( this.effect, 'Effect' ).options(this.effects).onChange(val => {
-        console.log(val)
         switch (val) {
-          case 'Colorful':
+          case EFFECTS.COLORFUL:
             this.customPass.uniforms.uType.value = 0;
             break;
-          case 'Zoom':
+          case EFFECTS.ZOOM:
             this.customPass.uniforms.uType.value = 1;
             break;
-          case 'Grain':
+          case EFFECTS.GRAIN:
             this.customPass.uniforms.uType.value = 2;
             break;
         }
@@ -96,6 +88,7 @@ export default class PostEffect {
   }
   resize = () => {
     this.customPass.uniforms.uResolution.value.y = this.sizes.height / this.sizes.width
+    this.composer.setSize(window.innerWidth, window.innerHeight)
   }
   update = () => {
     this.getSpeed()

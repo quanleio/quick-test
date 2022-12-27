@@ -1,5 +1,5 @@
-uniform float time;
-uniform float progress;
+uniform float uTime;
+uniform float uProgress;
 uniform sampler2D uNoiseTexture;
 uniform vec4 resolution;
 varying vec2 vUv;
@@ -53,7 +53,7 @@ void main() {
     float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 700.); // from -1 to 1
 
     float smallnoise = noise(500.*vec3(vScreenSpace, 1.));
-    float bignoise = noise(5.*vec3(vScreenSpace, time/4.)); // from 0 to 1
+    float bignoise = noise(5.*vec3(vScreenSpace, uTime/4.)); // from 0 to 1
 
     stroke += (smallnoise*2. - 1.) + (bignoise*2. - 1.); // from -1 to 1
 
@@ -80,7 +80,7 @@ void main() {
     float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 700.);
 
     float smallnoise = noise(500.*vec3(vScreenSpace, 1.));
-    float bignoise = noise(5.*vec3(vScreenSpace, time/4.));
+    float bignoise = noise(5.*vec3(vScreenSpace, uTime/4.));
 
     stroke += (smallnoise*2. -1.) + (bignoise*2. - 1.);
 
@@ -88,7 +88,7 @@ void main() {
 
     float stroke1 = 1. - smoothstep(2.*light-2., 2.*light+2., stroke);
 
-    float temp = progress;
+    float temp = uProgress;
     temp += (2.*ttt - 1.)*0.2;
     float distanceFromCenter = length(vScreenSpace);
     temp = smoothstep(temp - 0.005, temp, distanceFromCenter);

@@ -27,8 +27,8 @@ export default class NoisySphere {
       },
       side: THREE.DoubleSide,
       uniforms: {
-        time: { value: 0 },
-        progress: { value: 0},
+        uTime: { value: 0 },
+        uProgress: { value: 0},
         uNoiseTexture: { value: this.resources.items.noiseTexture},
         resolution: { value: new THREE.Vector4()},
       },
@@ -42,7 +42,8 @@ export default class NoisySphere {
 
     // model
     this.model = this.resources.items.oldFace.scene
-    this.model.scale.setScalar(1/1.5)
+    this.animations = this.resources.items.oldFace.animations
+    // this.model.scale.setScalar(1/1.5)
     this.model.traverse(child => {
       if (child.material) {
         child.material = this.material
@@ -55,11 +56,16 @@ export default class NoisySphere {
       this.debug.ui.add(this.setting, "progress", 0, 1, 0.01)
     }
   }
+  setAnimation = () => {
+    this.mixer = new THREE.AnimationMixer(this.model)
+    const action = this.mixer.clipAction(this.animations[0])
+    action.play()
+  }
   update = () => {
     // this.sphere.rotation.x = performance.now() / 2000
     // this.sphere.rotation.y = performance.now() / 2000
 
-    this.material.uniforms.time.value = performance.now() / 2000
-    this.material.uniforms.progress.value = this.setting.progress
+    this.material.uniforms.uTime.value = performance.now() / 2000
+    this.material.uniforms.uProgress.value = this.setting.progress
   }
 }

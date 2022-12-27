@@ -1,4 +1,4 @@
-uniform float time;
+uniform float uTime;
 varying vec2 vUv;
 varying vec3 vPosition;
 varying vec2 vScreenSpace;
@@ -11,9 +11,6 @@ void main() {
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
 
-    // Get the screen coordinate to render the object
-    // The color of object will stay the same position
-    // when we zoom-in and out.
     vScreenSpace = gl_Position.xy/gl_Position.w;
     */
 
@@ -22,5 +19,8 @@ void main() {
     vNormal = normalize(mat3(modelMatrix)*normal);
     gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.);
 
+    // Get the screen coordinate to render the object
+    // The color of object will stay the same position
+    // when we zoom-in and out.
     vScreenSpace = gl_Position.xy/gl_Position.w;
 }

@@ -1,2 +1,0 @@
-# gltf-woody
-gltf-woody

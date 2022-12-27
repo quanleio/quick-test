@@ -40,6 +40,13 @@ export default class Flag {
         this.resources.items.town_7,
         this.resources.items.town_8,
     )
+    /*this.inks.push(
+        this.resources.items.disp_1,
+        this.resources.items.disp_2,
+        this.resources.items.disp_3,
+        this.resources.items.disp_4,
+        this.resources.items.disp_5,
+    )*/
   }
   setMap = () => {
     const geometry = new THREE.PlaneGeometry(40, 18, 32, 32)
@@ -84,6 +91,7 @@ export default class Flag {
     });*/
 
     // Case 2
+    let index = Math.floor(Math.random() * 7 + 1)
     let material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       transparent: true,
@@ -96,8 +104,8 @@ export default class Flag {
           type: 'f',
           value: this.effect['Transition Speed']
         },
-        tex1: { value: this.textures[0]},
-        tex2: { value: this.textures[5]},
+        tex1: { value: this.textures[index]},
+        tex2: { value: this.textures[index+1]},
         disp: { value: this.resources.items.disp_4},
       },
       vertexShader: `
@@ -186,19 +194,23 @@ export default class Flag {
     this.raycaster.setFromCamera(this.mouse, this.camera)
     const intersects = this.raycaster.intersectObjects([this.flag])
 
-    if (intersects.length > 0) {
-      let _random1 = Math.floor(Math.random() * 8 + 1)
-      let _random2 = Math.floor(Math.random() * 8 + 1)
-      // console.log(_random1, _random2)
+    /*if (intersects.length > 0) {
+      let idx1 = this.counter % this.textures.length
+      let idx2 = (idx1 + 1) === this.textures.length ? 0 : idx1 + 1
+      this.counter ++
+      console.log(idx1, idx2)
 
-      // this.flag.material.uniforms.tex1.value = this.textures[_random1]
-      // this.flag.material.uniforms.tex2.value = this.textures[_random2]
-    }
-
+      // this.flag.material.uniforms.tex1.value = this.textures[idx1]
+      // this.flag.material.uniforms.tex2.value = this.textures[idx2]
+      // this.flag.material.uniforms.needsUpdate = true
+    }*/
     gsap.to(this.flag.material.uniforms.dispFactor, {
       duration: 2.5,
       value: intersects.length,
-      ease: "power2.out"
+      ease: "power2.out",
+      onComplete: () => {
+
+      }
     })
   }
   update = () => {

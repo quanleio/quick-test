@@ -26,6 +26,8 @@ export default class Experience {
     /**Global Access */
     window.experience = this
 
+    this.createDOM()
+
     /**Canvas*/
     const _canvas = document.createElement("canvas")
     _canvas.id = 'experience'
@@ -49,6 +51,21 @@ export default class Experience {
     this.sizes.on(EVT.RESIZE, () => this.resize())
     // this.time.on(EVT.TICK, () => this.update())
     this.tick()
+  }
+
+  createDOM = () => {
+    const footer = document.createElement("div")
+    footer.classList.add('footer')
+
+    const note = document.createElement('p')
+    note.innerHTML = 'Image Credit: '
+
+    const linkNote = document.createElement('a')
+    linkNote.innerHTML = 'Misato Town'
+    note.appendChild(linkNote)
+
+    footer.appendChild(note)
+    document.body.appendChild(footer)
   }
 
   resize() {

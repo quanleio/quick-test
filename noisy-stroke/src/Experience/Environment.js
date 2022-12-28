@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 import Experience from './Experience'
-import Debug from '../utils/Debug';
-import {hexToRgb} from '../../../pick-chocolate/src/utils/utils';
 
 export default class Environment {
   constructor() {
@@ -11,20 +9,16 @@ export default class Environment {
     this.debug = this.experience.debug
 
     this.params = {
+      helper: true,
       ambientColor: 0xFF7F00,
       directionalColor: 0x111111,
       fogColor: 0xeeeeee,
-      fogNear: 4.,
-      fogFar: 15.
+      fogNear: 6,
+      fogFar: 20.
     };
 
+    this.setEnvironment()
     this.addLights()
-
-    // Wait for resources
-    this.resources.on("ready", () => {
-      this.setEnv()
-    });
-
   }
   addLights = () => {
     const ambientLight = new THREE.AmbientLight(this.params.ambientColor, 1.);
@@ -39,26 +33,28 @@ export default class Environment {
     dirLight.shadow.camera.far = 15;
     this.scene.add(dirLight);
   }
-  setEnv = () => {
-    // test
-    this.scene.add(new THREE.GridHelper(20, 20, 0x007f7f, 0x007f7f));
-    // this.scene.background = this.params.fogColor
-    // this.scene.background = this.resources.items.bgTexture
+  setEnvironment = () => {
+    // helper
+    this.gridHelper = new THREE.GridHelper(20, 20, 0x007f7f, 0x007f7f)
+    this.scene.add(this.gridHelper)
 
     this.scene.fog = new THREE.Fog(this.params.fogColor, this.params.fogNear, this.params.fogFar);
+    // this.scene.background = this.params.fogColor
 
+    // debug
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder('Fog')
-
-      this.debugFolder.add(this.params, "fogNear", 6, 12).onChange(val => {
-        this.scene.fog.near = val
+      // helper
+      this.debugFolder = this.debug.ui.addFolder('Scene')
+      this.debugFolder.add(this.params, 'helper').onChange(val => {
+        val ? this.scene.add(this.gridHelper) : this.scene.remove(this.gridHelper)
       })
-      this.debugFolder.add(this.params, "fogFar", 12, 20).onChange(val => {
-        this.scene.fog.far = val
-      });
+
+      // fog
+      this.debugFolder = this.debug.ui.addFolder('Fog')
+      this.debugFolder.add(this.params, "fogNear", 1, 12)
+      .onChange(val => this.scene.fog.near = val)
+      this.debugFolder.add(this.params, "fogFar", 12, 30)
+      .onChange(val => this.scene.fog.far = val);
     }
-  }
-  update = () => {
-    this.experience.update()
   }
 }

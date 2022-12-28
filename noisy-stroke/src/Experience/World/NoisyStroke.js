@@ -31,9 +31,6 @@ export default class NoisyStroke {
         uProgress: { value: 0},
         uNoiseTexture: { value: this.resources.items.noiseTexture},
         uColor: { value: new THREE.Color('#b87333') },
-        fogColor:    { type: "c", value: this.scene.fog.color },
-        fogNear:     { type: "f", value: this.scene.fog.near },
-        fogFar:      { type: "f", value: this.scene.fog.far }
       },
       lights: true,
       fog: true,
@@ -61,7 +58,7 @@ export default class NoisyStroke {
 
     // face
     const face = this.resources.items.oldFace.scene
-    face.scale.setScalar(2)
+    face.scale.setScalar(3)
     face.position.set(0, 0.5, 0)
     face.receiveShadow = face.castShadow = true
 

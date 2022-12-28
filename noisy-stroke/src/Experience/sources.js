@@ -2,7 +2,7 @@ export default [
   {
     name: "noiseTexture",
     type: "texture",
-    path: "assets/textures/noise.png",
+    path: "assets/textures/pnoise.png",
     source: "http://krazeike.com/home/post/noise-textures"
   },
   {

@@ -35,7 +35,7 @@ export default class NoisyStroke {
 
     // debug
     if (this.debug.active) {
-      this.debug.ui.add(this.setting, "progress", 0, 1, 0.01)
+      this.debug.ui.add(this.setting, "progress", 0, 1, 0.0008)
     }
   }
   setModels = () => {
@@ -53,19 +53,22 @@ export default class NoisyStroke {
 
     // face
     const face = this.resources.items.oldFace.scene
-    // face.scale.setScalar(1/1.5)
     face.scale.setScalar(2)
     face.position.set(0, -0.5, 0)
+
     face.traverse(child => {
       if (child.material) {
         child.material = this.material
+      }
+      if(child.geometry) {
+        // child.geometry.center()
       }
     })
     this.scene.add(face)
   }
   setObject = () => {
-    const geometry = new THREE.SphereGeometry(2, 64, 64)
-    // const geometry = new THREE.BoxGeometry(1, 1, 1, 10, 10, 10)
+    // const geometry = new THREE.SphereGeometry(2, 64, 64)
+    const geometry = new THREE.BoxGeometry(1, 1, 1, 10, 10, 10)
 
     // sphere
     this.sphere = new THREE.Mesh(geometry, this.material)

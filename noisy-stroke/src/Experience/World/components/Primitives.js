@@ -5,7 +5,7 @@ import Torus from './Torus';
 import Cone from './Cone';
 import Box from './Box';
 import Cylinder from './Cylinder';
-import {map, radians} from '../../../../../pick-chocolate/src/utils/utils';
+import { map, radians } from '../../../utils/utils';
 
 export default class Primitives {
   constructor(_material) {

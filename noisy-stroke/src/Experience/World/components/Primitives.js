@@ -20,7 +20,6 @@ export default class Primitives {
     this.meshes = []
 
     this.setObjects()
-
     this.animate()
     // window.addEventListener(EVT.CAMERA_ANIMATE_COMPLETED, () => {
     //   this.animate()
@@ -40,7 +39,7 @@ export default class Primitives {
     for(let i=0; i<this.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
-      mesh.speed = Math.random() / 5
+      mesh.speed = Math.random() / 2
 
       /*let xPos = THREE.MathUtils.randFloat(-1, 1);
       let yPos = THREE.MathUtils.randFloat(-50, -10);

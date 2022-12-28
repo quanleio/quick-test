@@ -1,22 +1,15 @@
-uniform float uTime;
-varying vec2 vUv;
 varying vec3 vPosition;
 varying vec2 vScreenSpace;
+varying vec3 vViewDiection;
 varying vec3 vNormal;
 
 void main() {
-    /*vUv = uv;
     vPosition = position;
     vNormal = normalize(mat3(modelMatrix)*normal);
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+    vec3 worldPosition = (modelMatrix * vec4( position, 1.)).xyz;
+    vViewDiection = normalize(worldPosition - cameraPosition);
 
-    vScreenSpace = gl_Position.xy/gl_Position.w;
-    */
-
-    vUv = uv;
-    vPosition = position;
-    vNormal = normalize(mat3(modelMatrix)*normal);
     gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.);
 
     // Get the screen coordinate to render the object

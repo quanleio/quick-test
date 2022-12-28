@@ -1,13 +1,16 @@
 uniform float uTime;
 uniform float uProgress;
 uniform sampler2D uNoiseTexture;
-uniform vec4 resolution;
-varying vec2 vUv;
 varying vec2 vScreenSpace;
+varying vec3 vViewDiection;
 varying vec3 vPosition;
 varying vec3 vNormal;
 
-// Noise: https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+// Description : Custom noise
+//      Author : Yuri Artiukh
+//     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
+//    Tutorial : https://youtu.be/_qJdpSr3HkM
+//
 float threshold(float edge0, float edge1, float x) {
     return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
 }
@@ -33,54 +36,31 @@ float noise (in vec3 x) {
                         hash(i+vec3(1,1,1)),f.x),f.y),f.z);
 }
 
-float rand (float n) { return fract(sin(n) * 43758.5453123);}
+/*float rand (float n) { return fract(sin(n) * 43758.5453123);}
 
 float noise (float p) {
     float fl = floor(p);
     float fc = fract(p);
 
     return mix(rand(fl), rand(fl + 1.0), fc);
-}
+}*/
 
 void main() {
-/*
-    // light value can be negative some points so we *0.5 and + 0.5 to make it positive
-    float light = dot(vNormal, normalize(vec3(1.))) * 0.5 + 0.5;
 
-    float ttt = texture2D(uNoiseTexture, 0.5*(vScreenSpace + 1.)).r;
+    // light value can be negative at some points so we *0.5 and + 0.5 to make it positive
+    float light = dot(vNormal, normalize(vec3(1.))); // * 0.5 + 0.5;
 
-    // strokes
-    float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 700.); // from -1 to 1
+    float ttt = texture2D(uNoiseTexture, .5 * (vScreenSpace + 1.)).r;
 
-    float smallnoise = noise(500.*vec3(vScreenSpace, 1.));
-    float bignoise = noise(5.*vec3(vScreenSpace, uTime/4.)); // from 0 to 1
+    float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 1000.);  // from -1 to 1
 
-    stroke += (smallnoise*2. - 1.) + (bignoise*2. - 1.); // from -1 to 1
+    float smallnoise = noise(500. * vec3(vScreenSpace, 1.));
+    float bignoise = noise(5. * vec3(vScreenSpace, uTime/4.));
 
-//    light += (bignoise*2. - 1.)*light;
-
-    stroke = 1.- smoothstep(1.*light-0.2, 1.*light+0.2, stroke);
-
-    float temp = uProgress;
-    float distanceFromCenter = length(vScreenSpace);
-    temp = smoothstep(temp - 0.05, temp, distanceFromCenter);
-
-    gl_FragColor = vec4(vScreenSpace, 0., 1.);
-    gl_FragColor = vec4(vNormal, 1.);
-    gl_FragColor = vec4(vec3(stroke), 1.);
-    gl_FragColor = vec4(vec3(distanceFromCenter), 1.);
-    gl_FragColor = vec4(vec3(temp), 1.);
-//    gl_FragColor = vec4(vec3(noise(100. * vec3(vScreenSpace, 1.))), 1.);
-*/
-
-    float light = dot(vNormal, normalize(vec3(1.)));
-
-    float ttt = texture2D(uNoiseTexture, 0.5*(vScreenSpace + 1.)).r;
-
-    float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 700.);
-
-    float smallnoise = noise(500.*vec3(vScreenSpace, 1.));
-    float bignoise = noise(5.*vec3(vScreenSpace, uTime/4.));
+    // For 3D effect, the edge of the object should be
+    // darker
+    float fresnel = 1. - dot(vNormal, -vViewDiection);
+    fresnel = fresnel*fresnel*fresnel;
 
     stroke += (smallnoise*2. -1.) + (bignoise*2. - 1.);
 
@@ -93,9 +73,9 @@ void main() {
     float distanceFromCenter = length(vScreenSpace);
     temp = smoothstep(temp - 0.005, temp, distanceFromCenter);
 
-    float finalLook = mix(stroke1, stroke, temp);
+    float finalLook = mix(stroke, stroke1, temp);
     gl_FragColor = vec4(vec3(finalLook), 1.);
-
+//    gl_FragColor = vec4(vec3(fresnel), 1.);
 //    gl_FragColor = vec4(vScreenSpace, 0., 1.);
 //    gl_FragColor = vec4(vNormal, 1.);
 //    gl_FragColor = vec4(vec3(distanceFromCenter), 1.);

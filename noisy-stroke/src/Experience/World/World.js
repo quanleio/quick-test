@@ -1,5 +1,5 @@
 import Experience from "../Experience.js"
-import NoisySphere from './NoisySphere';
+import NoisyStroke from './NoisyStroke';
 
 export default class World {
   constructor() {
@@ -10,10 +10,10 @@ export default class World {
 
     // Wait for resources
     this.resources.on("ready", () => {
-      this.noisySphere = new NoisySphere()
+      this.noisyStroke = new NoisyStroke()
     })
   }
   update() {
-    if (this.noisySphere) this.noisySphere.update()
+    if (this.noisyStroke) this.noisyStroke.update()
   }
 }

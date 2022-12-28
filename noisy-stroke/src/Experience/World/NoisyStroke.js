@@ -25,10 +25,18 @@ export default class NoisyStroke {
       },
       side: THREE.DoubleSide,
       uniforms: {
+        ...THREE.UniformsLib.lights,
+        ...THREE.UniformsLib.fog,
         uTime: { value: 0 },
         uProgress: { value: 0},
         uNoiseTexture: { value: this.resources.items.noiseTexture},
+        uColor: { value: new THREE.Color('#b87333') },
+        fogColor:    { type: "c", value: this.scene.fog.color },
+        fogNear:     { type: "f", value: this.scene.fog.near },
+        fogFar:      { type: "f", value: this.scene.fog.far }
       },
+      lights: true,
+      fog: true,
       vertexShader: vertexShader,
       fragmentShader: fragmentShader
     })
@@ -54,25 +62,32 @@ export default class NoisyStroke {
     // face
     const face = this.resources.items.oldFace.scene
     face.scale.setScalar(2)
-    face.position.set(0, -0.5, 0)
+    face.position.set(0, 0.5, 0)
+    face.receiveShadow = face.castShadow = true
 
     face.traverse(child => {
       if (child.material) {
         child.material = this.material
       }
       if(child.geometry) {
-        // child.geometry.center()
+        child.geometry.center()
       }
     })
     this.scene.add(face)
   }
   setObject = () => {
     // const geometry = new THREE.SphereGeometry(2, 64, 64)
-    const geometry = new THREE.BoxGeometry(1, 1, 1, 10, 10, 10)
+    const geometry = new THREE.BoxGeometry(3, 3, 3, 10, 10, 10)
 
     // sphere
     this.sphere = new THREE.Mesh(geometry, this.material)
     // this.scene.add(this.sphere)
+
+    const cube = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
+      color: 'white'
+    }))
+    cube.position.x = 5
+    this.scene.add(cube)
   }
   update = () => {
     // this.sphere.rotation.x = performance.now() / 2000

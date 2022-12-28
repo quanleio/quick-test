@@ -1,50 +1,62 @@
+import * as THREE from 'three'
 import Experience from './Experience'
 import Debug from '../utils/Debug';
+import {hexToRgb} from '../../../pick-chocolate/src/utils/utils';
 
 export default class Environment {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
+    this.debug = this.experience.debug
+
+    this.params = {
+      ambientColor: 0xFF7F00,
+      directionalColor: 0x111111,
+      fogColor: 0xeeeeee,
+      fogNear: 4.,
+      fogFar: 15.
+    };
+
+    this.addLights()
 
     // Wait for resources
     this.resources.on("ready", () => {
       this.setEnv()
     });
 
-    // if (this.debug.active) {
-      // this.debugFolder = this.debug.ui.addFolder('Fog')
-    // }
+  }
+  addLights = () => {
+    const ambientLight = new THREE.AmbientLight(this.params.ambientColor, 1.);
+    this.scene.add(ambientLight);
 
+    const dirLight = new THREE.DirectionalLight(this.params.directionalColor,  1.5);
+    dirLight.position.set(4, 4, 4);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 4096;
+    dirLight.shadow.mapSize.height = 4096;
+    dirLight.shadow.camera.near = 2;
+    dirLight.shadow.camera.far = 15;
+    this.scene.add(dirLight);
   }
   setEnv = () => {
-    // this.scene.background = new THREE.Color(0xa5c9a5)
-    this.scene.background = this.resources.items.sceneBackground
+    // test
+    this.scene.add(new THREE.GridHelper(20, 20, 0x007f7f, 0x007f7f));
+    // this.scene.background = this.params.fogColor
+    // this.scene.background = this.resources.items.bgTexture
 
-    /*const intensity = 1;
-    const light = new THREE.DirectionalLight(0xFFFFFF, intensity);
-    light.position.set(-1, 2, 4);
-    this.scene.add(light);
-
-    const near = 1;
-    const far = 2
-    const color = 'lightblue';
-    this.scene.fog = new THREE.Fog(color, near, far);
-    this.scene.background = new THREE.Color(color);
+    this.scene.fog = new THREE.Fog(this.params.fogColor, this.params.fogNear, this.params.fogFar);
 
     if (this.debug.active) {
-      const fogGUIHelper = new FogGUIHelper(this.scene.fog, this.scene.background)
-      this.debugFolder.add(fogGUIHelper, 'near', near, 10000).onChange(val => {
+      this.debugFolder = this.debug.ui.addFolder('Fog')
+
+      this.debugFolder.add(this.params, "fogNear", 6, 12).onChange(val => {
         this.scene.fog.near = val
       })
-      this.debugFolder.add(fogGUIHelper, 'far', far, 10000).onChange(val => {
+      this.debugFolder.add(this.params, "fogFar", 12, 20).onChange(val => {
         this.scene.fog.far = val
-      })
-      this.debugFolder.addColor(fogGUIHelper, 'color').onChange(val => {
-        this.scene.fog.color.set(val);
-        this.scene.background.set(val);
-      })
-    }*/
+      });
+    }
   }
   update = () => {
     this.experience.update()

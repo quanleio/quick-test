@@ -1,6 +1,11 @@
+#include <common>
+#include <lights_pars_begin>
+#include <fog_pars_fragment>
+
 uniform float uTime;
 uniform float uProgress;
 uniform sampler2D uNoiseTexture;
+uniform vec3 uColor;
 varying vec2 vScreenSpace;
 varying vec3 vViewDiection;
 varying vec3 vPosition;
@@ -46,6 +51,10 @@ float noise (float p) {
 }*/
 
 void main() {
+    // get effect from scene lights
+    float NdotL = dot(vNormal, directionalLights[0].direction);
+    float lightIntensity = smoothstep(0.0, 0.01, NdotL);
+    vec3 directionalLight = directionalLights[0].color * lightIntensity;
 
     // light value can be negative at some points so we *0.5 and + 0.5 to make it positive
     float light = dot(vNormal, normalize(vec3(1.))) * 0.5 + 0.5;
@@ -60,7 +69,7 @@ void main() {
 
     float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 1000.);  // from -1 to 1
     stroke += (smallnoise * 2. - 1.) + (bignoise * 2. - 1.);
-    stroke = 1. - smoothstep(1. * light - .2, 1. * light + .2, stroke) - 1. * fresnel; // make stroke darker in the edge
+    stroke = 1. - smoothstep(1. * light - .2, 1. * light + .2, stroke) - 1.6 * fresnel; // make stroke darker in the edge
 
     // animate light based on bignoise
     // light += (bignoise * 2. - 1.) * light;
@@ -68,7 +77,7 @@ void main() {
     float stroke1 = 1. - smoothstep(2. * light - 2., 2. * light + 2., stroke);
 
     // make smooth transition
-    // distort the noise texture with uProgress
+    // distort the noise texture with uProgressa
     float ttt = texture2D(uNoiseTexture, .5 * (vScreenSpace + 1.)).r; // get one channel of texture
     float temp = uProgress;
     temp += (2. * ttt - 1.) * .2;
@@ -76,14 +85,7 @@ void main() {
     temp = smoothstep(temp - 0.0008, temp, distanceFromCenter);
 
     float finalLook = mix(stroke1, stroke, temp);
-    gl_FragColor = vec4(vec3(finalLook), 1.);
-
-//    gl_FragColor = vec4(vec3(fresnel), 1.);
-//    gl_FragColor = vec4(vScreenSpace, 0., 1.);
-//    gl_FragColor = vec4(vNormal, 1.);
-//    gl_FragColor = vec4(vec3(distanceFromCenter), 1.);
-//    gl_FragColor = vec4(vec3(temp), 1.);
-//    gl_FragColor = vec4(vec3(progress), 1.);
-//    gl_FragColor = vec4(vec3(light), 1.);
-//    gl_FragColor = vec4(vec3(bignoise), 1.);
+     gl_FragColor = vec4(vec3(finalLook), 1.);
+     #include <fog_fragment>
+//    gl_FragColor = vec4(mix(vec3(finalLook), vec3(uColor*(directionalLight + ambientLightColor)), 0.1), 1.);
 }

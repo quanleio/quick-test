@@ -85,7 +85,9 @@ void main() {
     temp = smoothstep(temp - 0.0008, temp, distanceFromCenter);
 
     float finalLook = mix(stroke1, stroke, temp);
-//     gl_FragColor = vec4(vec3(finalLook), 1.);
-         gl_FragColor = vec4(mix(vec3(finalLook), vec3(uColor*(directionalLight + ambientLightColor)), 0.1), 1.);
-     #include <fog_fragment>
+    // gl_FragColor = vec4(vec3(finalLook), 1.); // without light effect
+    gl_FragColor = vec4(mix(vec3(finalLook), vec3(uColor*(directionalLight + ambientLightColor)), 0.1), 1.);
+
+    // This must be added by the end of main()
+    #include <fog_fragment>
 }

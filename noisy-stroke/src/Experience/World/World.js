@@ -1,5 +1,7 @@
 import Experience from "../Experience.js"
 import NoisyStroke from './NoisyStroke';
+import Primitives from './components/Primitives';
+import ModelSet from './components/ModelSet';
 
 export default class World {
   constructor() {
@@ -11,9 +13,14 @@ export default class World {
     // Wait for resources
     this.resources.on("ready", () => {
       this.noisyStroke = new NoisyStroke()
+
+      this.primitives = new Primitives(this.noisyStroke.material)
+      this.modelSet = new ModelSet(this.noisyStroke.material)
     })
   }
   update() {
     if (this.noisyStroke) this.noisyStroke.update()
+    if (this.primitives) this.primitives.update()
+    // if (this.modelSet) this.modelSet.update()
   }
 }

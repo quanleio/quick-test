@@ -23,6 +23,4 @@ void main() {
     // The color of object will stay the same position
     // when we zoom-in and out.
     vScreenSpace = gl_Position.xy/gl_Position.w;
-
-
 }

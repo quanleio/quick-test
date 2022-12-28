@@ -15,8 +15,6 @@ export default class NoisyStroke {
     }
 
     this.setMaterial()
-    this.setObject()
-    this.setModels()
   }
   setMaterial = () => {
     this.material = new THREE.ShaderMaterial({
@@ -43,54 +41,8 @@ export default class NoisyStroke {
       this.debug.ui.add(this.setting, "progress", 0, 1, 0.0008)
     }
   }
-  setModels = () => {
-    // fox
-    const fox = this.resources.items.foxModel.scene
-    fox.scale.setScalar(1/45)
-    fox.position.set(0, -.7, 0)
-    fox.rotation.y = Math.PI/180 * -30
-    fox.traverse(child => {
-      if (child.material) {
-        child.material = this.material
-      }
-    })
-    // this.scene.add(fox)
-
-    // face
-    const face = this.resources.items.oldFace.scene
-    face.scale.setScalar(3)
-    face.position.set(0, 0.5, 0)
-    face.receiveShadow = face.castShadow = true
-
-    face.traverse(child => {
-      if (child.material) {
-        child.material = this.material
-      }
-      if(child.geometry) {
-        child.geometry.center()
-      }
-    })
-    this.scene.add(face)
-  }
-  setObject = () => {
-    // const geometry = new THREE.SphereGeometry(2, 64, 64)
-    const geometry = new THREE.BoxGeometry(3, 3, 3, 10, 10, 10)
-
-    // sphere
-    this.sphere = new THREE.Mesh(geometry, this.material)
-    // this.scene.add(this.sphere)
-
-    const cube = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
-      color: 'white'
-    }))
-    cube.position.x = 5
-    this.scene.add(cube)
-  }
   update = () => {
-    // this.sphere.rotation.x = performance.now() / 2000
-    // this.sphere.rotation.y = performance.now() / 2000
-
-    this.material.uniforms.uTime.value = performance.now() / 2000
-    this.material.uniforms.uProgress.value = this.setting.progress
+    // this.material.uniforms.uTime.value = performance.now() / 2000 // update in component's material
+    // this.material.uniforms.uProgress.value = this.setting.progress // for debug gui only
   }
 }

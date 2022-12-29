@@ -16,14 +16,14 @@ export default class World {
       this.noisyStroke = new NoisyStroke()
 
       this.cameraPath = new CameraPath()
-      this.primitives = new Primitives(this.noisyStroke.material)
-      this.modelSet = new ModelSet(this.noisyStroke.material)
+      // this.primitives = new Primitives(this.noisyStroke.material)
+      // this.modelSet = new ModelSet(this.noisyStroke.material)
     })
   }
   update() {
     if (this.noisyStroke) this.noisyStroke.update()
     if (this.cameraPath) this.cameraPath.update()
-    if (this.primitives) this.primitives.update()
-    if (this.modelSet) this.modelSet.update()
+    // if (this.primitives) this.primitives.update()
+    // if (this.modelSet) this.modelSet.update()
   }
 }

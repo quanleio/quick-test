@@ -28,7 +28,7 @@ export default class NoisyStroke {
         uTime: { value: 0 },
         uProgress: { value: 0},
         uNoiseTexture: { value: this.resources.items.noiseTexture},
-        uColor: { value: new THREE.Color('#b87333') },
+        uColor: { value: new THREE.Color(0xB6CAED) },
       },
       lights: true,
       fog: true,

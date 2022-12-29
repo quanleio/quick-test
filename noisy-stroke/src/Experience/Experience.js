@@ -6,7 +6,6 @@ import Renderer from "./Renderer.js"
 import World from "./World/World.js"
 import Resources from "../utils/Resources.js"
 import Stats from "../utils/Stats.js"
-
 import sources from "./sources.js"
 import Environment from './Environment'
 import Mouse from '../utils/Mouse';
@@ -31,6 +30,8 @@ export default class Experience {
     document.body.appendChild(_canvas)
     this.canvas = _canvas
 
+    this.createDOM()
+
     /**Setup Classes */
     this.debug = new Debug()
     this.stats = new Stats()
@@ -47,6 +48,28 @@ export default class Experience {
 
     this.sizes.on("resize", () => this.resize())
     this.time.on("tick", () => this.update())
+  }
+
+  createDOM = () => {
+    const section_1 = document.createElement('section')
+    section_1.classList.add('section-one')
+    document.body.appendChild(section_1)
+
+    const section_2 = document.createElement('section')
+    section_2.classList.add('section-two')
+    document.body.appendChild(section_2)
+
+    const section_3 = document.createElement('section')
+    section_3.classList.add('section-three')
+    document.body.appendChild(section_3)
+
+    const section_4 = document.createElement('section')
+    section_4.classList.add('section-four')
+    document.body.appendChild(section_4)
+
+    const section_5 = document.createElement('section')
+    section_5.classList.add('section-five')
+    document.body.appendChild(section_5)
   }
 
   resize() {

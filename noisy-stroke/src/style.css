@@ -1,12 +1,46 @@
 body {
-  overflow-x: hidden;
   overflow-y: scroll;
-  padding: 0;
+  overflow-x: hidden;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100%;
+}
+
+#experience {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 999;
+}
+
+section {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.section-one {
+  background-color: tomato;
+}
+
+.section-two {
+  background-color: steelblue;
+}
+
+.section-three {
+  background-color: crimson;
+}
+
+.section-four {
+  background-color: lime;
+}
+
+.section-five {
+  background-color: grey;
 }
 
 /*

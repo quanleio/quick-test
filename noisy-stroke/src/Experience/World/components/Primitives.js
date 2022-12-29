@@ -34,6 +34,7 @@ export default class Primitives {
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
     this.groupMesh.position.set(0, -50, 0)
+    // this.groupMesh.scale.setScalar(2) // test
     this.scene.add(this.groupMesh)
 
     for(let i=0; i<this.count; i++) {

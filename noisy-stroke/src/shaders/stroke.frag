@@ -69,9 +69,9 @@ void main() {
 
     float stroke = cos((vScreenSpace.x - vScreenSpace.y) * 1000.);  // from -1 to 1
     stroke += (smallnoise * 2. - 1.) + (bignoise * 2. - 1.);
-    stroke = 1. - smoothstep(1. * light - .2, 1. * light + .2, stroke) - 1.6 * fresnel; // make stroke darker in the edge
+     stroke = 1. - smoothstep(1. * light - .2, 1. * light + .2, stroke) - 1.6 * fresnel; // make stroke darker in the edge
 
-    // animate light based on bignoise
+    // animate light bouncing based on bignoise
     // light += (bignoise * 2. - 1.) * light;
 
     float stroke1 = 1. - smoothstep(2. * light - 2., 2. * light + 2., stroke);
@@ -85,7 +85,8 @@ void main() {
     temp = smoothstep(temp - 0.0008, temp, distanceFromCenter);
 
     float finalLook = mix(stroke1, stroke, temp);
-    // gl_FragColor = vec4(vec3(finalLook), 1.); // without light effect
+//     gl_FragColor = vec4(vec3(finalLook), 1.); // without light effect
+//     gl_FragColor = vec4(vec3(stroke), 1.); // without light effect
     gl_FragColor = vec4(mix(vec3(finalLook), vec3(uColor*(directionalLight + ambientLightColor)), 0.1), 1.);
 
     // This must be added by the end of main()

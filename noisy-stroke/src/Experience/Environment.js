@@ -10,9 +10,9 @@ export default class Environment {
 
     this.params = {
       helper: true,
-      ambientColor: 0xFF7F00,
+      ambientColor: 0xB6CAED,
       directionalColor: 0x111111,
-      fogColor: 0xeeeeee,
+      fogColor: 0xeeeeee, //0x007f7f
       fogNear: 6,
       fogFar: 20.
     };
@@ -35,7 +35,7 @@ export default class Environment {
   }
   setEnvironment = () => {
     // helper
-    this.gridHelper = new THREE.GridHelper(20, 20, 0x007f7f, 0x007f7f)
+    this.gridHelper = new THREE.GridHelper(20, 20, 0x8e8e8e, 0x8e8e8e)
     this.scene.add(this.gridHelper)
 
     this.scene.fog = new THREE.Fog(this.params.fogColor, this.params.fogNear, this.params.fogFar);

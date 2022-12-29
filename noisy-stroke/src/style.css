@@ -24,7 +24,7 @@ section {
 }
 
 .section-one {
-  background-color: tomato;
+  background-color: crimson;
 }
 
 .section-two {
@@ -32,7 +32,7 @@ section {
 }
 
 .section-three {
-  background-color: crimson;
+  background-color: #92c7a3;
 }
 
 .section-four {
@@ -48,7 +48,7 @@ section {
 }
 
 .section-seven {
-  background-color: #92c7a3;
+  background-color: black;
 }
 
 /*

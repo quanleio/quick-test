@@ -70,7 +70,8 @@ export default class CameraPath {
     startPoint.position.set(this.camera.position.x, 0, this.camera.position.z)
     this.scene.add(startPoint)
     this.targets.push(startPoint.position)
-    for(let i=0; i<this.points.length; i+=5) {
+
+    for (let i = this.points.length - 1; i >= 0; i -= 5) {
       const vec = this.points[i]
       const point = new THREE.Mesh(geo, mat)
       point.position.copy(vec)
@@ -110,17 +111,17 @@ export default class CameraPath {
     //   immediateRender: false,
     //   ease: "power1.inOut"
     // })
+    console.log(this.targets)
     let car_anim_tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".section-one",
         start: "top top",
         endTrigger: ".section-seven",
         end: "bottom bottom",
-        markers: true,
+        markers: false,
         scrub: 1,
       }
     });
-    console.log(this.groups)
     /*for(let i=0; i<this.groups.length; i++) {
       car_anim_tl
       .to(this.camera.position, {
@@ -131,16 +132,10 @@ export default class CameraPath {
     }*/
     car_anim_tl
     .to(this.camera.position, {
-      x: this.groups[0].position.x,
-      z: this.groups[0].position.z,
-      onUpdate: () => {
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
       x: this.groups[1].position.x,
       z: this.groups[1].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[1].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -148,6 +143,7 @@ export default class CameraPath {
       x: this.groups[2].position.x,
       z: this.groups[2].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[2].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -155,6 +151,7 @@ export default class CameraPath {
       x: this.groups[3].position.x,
       z: this.groups[3].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[3].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -162,6 +159,7 @@ export default class CameraPath {
       x: this.groups[4].position.x,
       z: this.groups[4].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[4].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -169,6 +167,7 @@ export default class CameraPath {
       x: this.groups[5].position.x,
       z: this.groups[5].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[5].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -176,6 +175,7 @@ export default class CameraPath {
       x: this.groups[6].position.x,
       z: this.groups[6].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[6].position)
         this.camera.updateProjectionMatrix()
       }
     })
@@ -183,10 +183,11 @@ export default class CameraPath {
       x: this.groups[0].position.x,
       z: this.groups[0].position.z,
       onUpdate: () => {
+        this.camera.lookAt(this.groups[0].position)
         this.camera.updateProjectionMatrix()
       }
     })
-    //.to("#experience", { opacity: 0 })
+    .to("#experience", { opacity: 0 })
   }
   makeCameraTarget = () => {
     const geometry1 = new THREE.BoxGeometry( 1, 1, 2 );

@@ -2,6 +2,10 @@ import * as THREE from 'three'
 import Experience from '../Experience'
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Box from './components/Box';
+import Torus from './components/Torus';
+import Cone from './components/Cone';
+import Cylinder from './components/Cylinder';
 
 export default class CameraPath {
   constructor() {
@@ -28,51 +32,16 @@ export default class CameraPath {
     this.scrollY = 0;
     this.percentage = 0
     this.maxHeight = 1200
+    this.groups = []
+    this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
 
     this.makePath()
     this.addObject()
-    // this.makeCameraTarget()
-    // window.addEventListener('wheel', this.wheelHandler)
-
     this.animate()
   }
-  addObject = ()=> {
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshNormalMaterial();
-    this.box = new THREE.Mesh(geometry, material);
-    this.box.scale.set(1.0, 1.0, 1.0);
-    this.box.position.set(0.0, 0.0, 0.0);
-    this.scene.add(this.box);
-  }
-  animate = () => {
-    gsap.registerPlugin(ScrollTrigger)
-
-    ScrollTrigger.defaults({
-      immediateRender: false,
-      ease: "power1.inOut"
-    })
-    let car_anim_tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".section-one",
-        start: "top top",
-        endTrigger: ".section-five",
-        end: "bottom bottom",
-        markers: false,
-        scrub: true,
-      }
-    });
-    car_anim_tl
-    .to(this.box.rotation, { y: 4.79 })
-    .to(this.camera.position, { x: -0.1 })
-    .to(this.box.rotation, { z: 1.6 })
-    .to(this.box.rotation, { z: 0.02, y: 3.1 }, "simultaneously")
-    .to(this.camera.position, { x: 0.16 }, "simultaneously")
-    .to("#experience", { opacity: 0, scale: 0 }, "simultaneously");
-  }
   makePath = () => {
-    // const geo = new THREE.SphereGeometry(1/4, 32, 32)
-    const geo = new THREE.CylinderGeometry(1/4, 1/4, 10, 32)
-    const mat = new THREE.MeshBasicMaterial({ color: 0xe32b2b})
+    const geo = new THREE.SphereGeometry(0.25, 32, 32)
+    const mat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0})
 
     /*for(let i=0; i<this.count; i++) {
       const point = new THREE.Mesh(geo, mat)
@@ -96,7 +65,7 @@ export default class CameraPath {
     this.tube = new THREE.Mesh( geometry, material );
     this.scene.add( this.tube );
 
-    // make sphere target
+    // make target points
     const startPoint = new THREE.Mesh(geo, mat)
     startPoint.position.set(this.camera.position.x, 0, this.camera.position.z)
     this.scene.add(startPoint)
@@ -108,6 +77,116 @@ export default class CameraPath {
       this.scene.add(point)
       this.targets.push(point.position)
     }
+  }
+  getRandomGeometry = () => {
+    return this.geometries[Math.floor(Math.random() * Math.floor(this.geometries.length))];
+  }
+  getMesh = (geometry, material) => {
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.castShadow = mesh.receiveShadow = true
+
+    return mesh
+  }
+  addObject = ()=> {
+    const material = new THREE.MeshNormalMaterial();
+
+    for(let i=0; i<this.targets.length; i++) {
+      const vec = this.targets[i]
+      const group = new THREE.Object3D()
+      group.position.copy(vec)
+      this.scene.add(group)
+      this.groups.push(group)
+
+      const geo = this.getRandomGeometry()
+      const mesh = this.getMesh(geo.geometry, material)
+      group.add(mesh)
+    }
+  }
+  animate = () => {
+    const center = new THREE.Vector3(0, 0, 0)
+    gsap.registerPlugin(ScrollTrigger)
+
+    // ScrollTrigger.defaults({
+    //   immediateRender: false,
+    //   ease: "power1.inOut"
+    // })
+    let car_anim_tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section-one",
+        start: "top top",
+        endTrigger: ".section-seven",
+        end: "bottom bottom",
+        markers: true,
+        scrub: 1,
+      }
+    });
+    console.log(this.groups)
+    /*for(let i=0; i<this.groups.length; i++) {
+      car_anim_tl
+      .to(this.camera.position, {
+        x: this.groups[i].position.x,
+        y: this.groups[i].position.y + 4,
+        z: this.groups[i].position.z,
+      })
+    }*/
+    car_anim_tl
+    .to(this.camera.position, {
+      x: this.groups[0].position.x,
+      z: this.groups[0].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[1].position.x,
+      z: this.groups[1].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[2].position.x,
+      z: this.groups[2].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[3].position.x,
+      z: this.groups[3].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[4].position.x,
+      z: this.groups[4].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[5].position.x,
+      z: this.groups[5].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[6].position.x,
+      z: this.groups[6].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    .to(this.camera.position, {
+      x: this.groups[0].position.x,
+      z: this.groups[0].position.z,
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+      }
+    })
+    //.to("#experience", { opacity: 0 })
   }
   makeCameraTarget = () => {
     const geometry1 = new THREE.BoxGeometry( 1, 1, 2 );
@@ -199,7 +278,6 @@ export default class CameraPath {
     this.lookTarget.position.set(pos3.x, pos3.y, pos3.z);
 
     this.camera.lookAt(this.cameraTarget.position);
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     this.cameraTargetlook.lookAt(this.lookTarget.position);
     this.cameraTargetlook.rotateOnAxis( new THREE.Vector3(0,1,0), Math.PI * -0.5);

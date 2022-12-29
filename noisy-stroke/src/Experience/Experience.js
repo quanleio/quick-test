@@ -70,6 +70,14 @@ export default class Experience {
     const section_5 = document.createElement('section')
     section_5.classList.add('section-five')
     document.body.appendChild(section_5)
+
+    const section_6 = document.createElement('section')
+    section_6.classList.add('section-six')
+    document.body.appendChild(section_6)
+
+    const section_7 = document.createElement('section')
+    section_7.classList.add('section-seven')
+    document.body.appendChild(section_7)
   }
 
   resize() {

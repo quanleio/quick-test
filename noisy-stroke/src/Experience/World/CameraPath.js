@@ -6,6 +6,7 @@ import Box from './components/Box';
 import Torus from './components/Torus';
 import Cone from './components/Cone';
 import Cylinder from './components/Cylinder';
+import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry';
 
 export default class CameraPath {
   constructor() {
@@ -15,7 +16,7 @@ export default class CameraPath {
 
     this.clock = new THREE.Clock()
     this.cameraPathPosition = 0.1*100
-    this.count = 30
+    this.count = 10
     this.points = []
     this.targets = []
     this.params = {
@@ -43,21 +44,14 @@ export default class CameraPath {
     const geo = new THREE.SphereGeometry(0.25, 32, 32)
     const mat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0})
 
-    /*for(let i=0; i<this.count; i++) {
-      const point = new THREE.Mesh(geo, mat)
-
-      let xPos = THREE.MathUtils.randFloat(-10, 10)
-      let yPos = 0
-      let zPos = THREE.MathUtils.randFloat(3, -10);
-      point.position.set(xPos, yPos, zPos)
-
-      this.scene.add(point)
-      this.points.push(point.position)
-    }*/
-    // this.points.push(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z))
-    for (let i = 0; i < this.count; i++) {
+    /*for (let i = 0; i < this.count; i++) {
       let r = (i * Math.PI * 3) / this.count
       this.points.push(new THREE.Vector3(Math.sin(r) * 6, 0, i-24)) // move the start point forward the camera ( in case of 30)
+    }*/
+
+    for (let i = this.count; i >=0; i--) {
+      let r = (i * Math.PI * 3) / this.count
+      this.points.push(new THREE.Vector3(Math.sin(r)*2, 0, i-5))
     }
     const path = new THREE.CatmullRomCurve3(this.points)
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed );
@@ -66,12 +60,19 @@ export default class CameraPath {
     this.scene.add( this.tube );
 
     // make target points
-    const startPoint = new THREE.Mesh(geo, mat)
-    startPoint.position.set(this.camera.position.x, 0, this.camera.position.z)
-    this.scene.add(startPoint)
-    this.targets.push(startPoint.position)
+    // const startPoint = new THREE.Mesh(geo, mat)
+    // startPoint.position.set(this.camera.position.x, 0, this.camera.position.z)
+    // this.scene.add(startPoint)
+    // this.targets.push(startPoint.position)
 
-    for (let i = this.points.length - 1; i >= 0; i -= 5) {
+    /*for (let i = this.points.length - 1; i >= 0; i -= 5) {
+      const vec = this.points[i]
+      const point = new THREE.Mesh(geo, mat)
+      point.position.copy(vec)
+      this.scene.add(point)
+      this.targets.push(point.position)
+    }*/
+    for(let i=0; i<this.points.length; i+=2) {
       const vec = this.points[i]
       const point = new THREE.Mesh(geo, mat)
       point.position.copy(vec)
@@ -91,7 +92,8 @@ export default class CameraPath {
   addObject = ()=> {
     const material = new THREE.MeshNormalMaterial();
 
-    for(let i=0; i<this.targets.length; i++) {
+    console.log('targets: ', this.targets)
+    /*for(let i=0; i<this.targets.length; i++) {
       const vec = this.targets[i]
       const group = new THREE.Object3D()
       group.position.copy(vec)
@@ -101,17 +103,60 @@ export default class CameraPath {
       const geo = this.getRandomGeometry()
       const mesh = this.getMesh(geo.geometry, material)
       group.add(mesh)
+    }*/
+    for(let i=0; i<this.targets.length; i++) {
+      const vec = this.targets[i]
+      const group = new THREE.Object3D()
+      group.position.copy(vec)
+      this.scene.add(group)
+      this.groups.push(group)
+
+      // const geo = this.getRandomGeometry()
+      // const mesh = this.getMesh(geo.geometry, material)
+      // group.add(mesh)
     }
+
+    // index=0, z=5
+    const boxGeo = new RoundedBoxGeometry(.7, .7, .7, 1, 0.1)
+    const box = new THREE.Mesh(boxGeo, material)
+    this.groups[0].add(box)
+
+    // index=1, z=3
+    const torusGeo = new THREE.TorusGeometry(0.35, 0.14, 32, 200)
+    const torus = new THREE.Mesh(torusGeo, material)
+    this.groups[1].add(torus)
+
+    // index=2, z=1
+    const coneGeo = new THREE.ConeGeometry(0.4, .6, 32)
+    const cone = new THREE.Mesh(coneGeo, material)
+    this.groups[2].add(cone)
+
+    // index=3, z=-1
+    const cylinderGeo = new THREE.CylinderGeometry(.3, .3, .6, 64)
+    const cylinder = new THREE.Mesh(cylinderGeo, material)
+    this.groups[3].add(cylinder)
+
+    // index=4, z=-3
+    const sphereGeo = new THREE.SphereGeometry(.3, 32, 32)
+    const sphere = new THREE.Mesh(sphereGeo, material)
+    this.groups[4].add(sphere)
+
+    // index=5, z=-5
+    const dodecGeo = new THREE.DodecahedronGeometry(.3, 0)
+    const dodec = new THREE.Mesh(dodecGeo, material)
+    this.groups[5].add(dodec)
+
   }
   animate = () => {
+    let index=0
     const center = new THREE.Vector3(0, 0, 0)
     gsap.registerPlugin(ScrollTrigger)
 
-    // ScrollTrigger.defaults({
-    //   immediateRender: false,
-    //   ease: "power1.inOut"
-    // })
-    console.log(this.targets)
+    ScrollTrigger.defaults({
+      immediateRender: true,
+      ease: "power1.inOut"
+    })
+
     let car_anim_tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".section-one",
@@ -122,72 +167,85 @@ export default class CameraPath {
         scrub: 1,
       }
     });
-    /*for(let i=0; i<this.groups.length; i++) {
+    for(let i=0; i<this.groups.length; i++) {
       car_anim_tl
       .to(this.camera.position, {
         x: this.groups[i].position.x,
-        y: this.groups[i].position.y + 4,
+        y: this.groups[i].position.y+1,
         z: this.groups[i].position.z,
+        onComplete:() => {
+          console.log('moved: ', this.groups[i].position)
+        }
       })
-    }*/
-    car_anim_tl
-    .to(this.camera.position, {
-      x: this.groups[1].position.x,
-      z: this.groups[1].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[1].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[2].position.x,
-      z: this.groups[2].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[2].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[3].position.x,
-      z: this.groups[3].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[3].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[4].position.x,
-      z: this.groups[4].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[4].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[5].position.x,
-      z: this.groups[5].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[5].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[6].position.x,
-      z: this.groups[6].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[6].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to(this.camera.position, {
-      x: this.groups[0].position.x,
-      z: this.groups[0].position.z,
-      onUpdate: () => {
-        this.camera.lookAt(this.groups[0].position)
-        this.camera.updateProjectionMatrix()
-      }
-    })
-    .to("#experience", { opacity: 0 })
+    }
+    // car_anim_tl
+    // .to(this.camera.position, {
+    //   x: this.groups[index].position.x,
+    //   z: this.groups[index].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[index].position)
+    //   }
+    // })
+    // .to(this.camera.position, {
+    //   x: this.groups[index+1].position.x,
+    //   z: this.groups[index+1].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index+1].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[index+1].position)
+    //   }
+    // })
+    // .to(this.camera.position, {
+    //   x: this.groups[index+2].position.x,
+    //   z: this.groups[index+2].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index+2].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[3].position)
+    //   }
+    // })
+    // .to(this.camera.position, {
+    //   x: this.groups[index+3].position.x,
+    //   z: this.groups[index+3].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index+3].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[index+3].position)
+    //   }
+    // })
+    // .to(this.camera.position, {
+    //   x: this.groups[index+4].position.x,
+    //   z: this.groups[index+4].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index+4].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[index+4].position)
+    //   }
+    // })
+    // .to(this.camera.position, {
+    //   x: this.groups[index+5].position.x,
+    //   z: this.groups[index+5].position.z,
+    //   onUpdate: () => {
+    //     // this.camera.lookAt(this.groups[index+5].position)
+    //     // this.camera.updateProjectionMatrix()
+    //   },
+    //   onComplete:() => {
+    //     console.log('moved: ', this.groups[index+5].position)
+    //   }
+    // })
+    // .to("#experience", { opacity: 0 })
   }
   makeCameraTarget = () => {
     const geometry1 = new THREE.BoxGeometry( 1, 1, 2 );

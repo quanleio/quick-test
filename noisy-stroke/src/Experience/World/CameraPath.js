@@ -7,6 +7,7 @@ import Torus from './components/Torus';
 import Cone from './components/Cone';
 import Cylinder from './components/Cylinder';
 import {map, radians} from '../../utils/utils';
+import {EVT} from '../../../../grain-effect/src/utils/contains';
 
 export default class CameraPath {
   constructor() {
@@ -18,8 +19,7 @@ export default class CameraPath {
 
     this.clock = new THREE.Clock()
     this.count = 100
-    this.points = []
-    this.targets = []
+    this.totalPoints = []
     this.params = {
       pathSegments: 512,
       radius: 0.05,
@@ -27,85 +27,92 @@ export default class CameraPath {
       closed: false,
       scale: 10,
     }
-    this.groups = []
+    this.targetGroups = []
+    this.temp = []
     this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
+    this.index = 0
 
-    this.position = new THREE.Vector3()
-    this.quaternion = new THREE.Quaternion()
-    this.scale = new THREE.Vector3()
+    // this.position = new THREE.Vector3()
+    // this.quaternion = new THREE.Quaternion()
+    // this.scale = new THREE.Vector3()
 
     this.makePath()
+    this.initControl()
     this.makeCameraTarget()
-    this.animate()
-    // window.addEventListener('scroll', this.onScrollHandler, false)
+
+    // this.onCameraControl()
+
+    this.supportOffset = window.pageYOffset !== undefined
+    this.lastKnownPos = 0
+    this.currYPos = null
+    window.addEventListener('wheel', this.onScrollHandler, false)
+
+    this.animating = false
+    this.isGoingUp = false
+    this.isGoingDown = false
+
   }
   makePath = () => {
     for (let i = this.count; i >=0; i--) {
       let r = (i * Math.PI * 3) / this.count
-      this.points.push(new THREE.Vector3(Math.sin(r)*10, 0, i-95)) // => make sure first point has z=0
+      this.totalPoints.push(new THREE.Vector3(Math.sin(r)*10, 0, i-95))
     }
-    const path = new THREE.CatmullRomCurve3(this.points)
+    const path = new THREE.CatmullRomCurve3(this.totalPoints)
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed );
     const material = new THREE.MeshBasicMaterial( { color: 0xfff700, wireframe: true } );
     this.tube = new THREE.Mesh( geometry, material );
     this.scene.add( this.tube );
 
-    // for(let i=0; i<this.points.length; i+=5) {
-    for(let i=0; i<this.points.length; i++) {
-      const vec = this.points[i]
-      this.targets.push(vec)
-    }
-    console.log('this.points: ', this.points)
-  }
-  getRandomGeometry = () => {
-    return this.geometries[Math.floor(Math.random() * Math.floor(this.geometries.length))];
-  }
-  getMesh = (geometry, material) => {
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.castShadow = mesh.receiveShadow = true
+    for(let i=0; i<this.totalPoints.length; i++) {
+      const vec = this.totalPoints[i]
 
-    return mesh
+      const point = new THREE.Mesh(new THREE.IcosahedronGeometry(.1, 0), new THREE.MeshNormalMaterial())
+      point.position.copy(vec)
+      this.scene.add(point)
+    }
+  }
+  initControl = () => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    // set not render immediately and reset trigger at the first time.
+    ScrollTrigger.defaults({ immediateRender: false })
+    ScrollTrigger.clearScrollMemory();
+    window.history.scrollRestoration = "manual";
+
+    this.camera_timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section-1",
+        start: "top top",
+        endTrigger: ".section-7",
+        end: "bottom bottom",
+        markers: true,
+        scrub: .1,
+        once: true
+      }
+    })
   }
   makeCameraTarget = ()=> {
-    // target look
-    // this.targetLook = new THREE.Mesh(
-    //     new THREE.BoxGeometry(.3, .3, 1),
-    //     new THREE.MeshNormalMaterial({ wireframe: true}))
-    // this.camera.add(this.targetLook)
-    // this.targetLook.position.z = 0
-    // this.camera.lookAt(0, 0, 0)
-    // this.targetLookBB = new THREE.Box3().setFromObject(this.targetLook)
-
-    // reset controls
-    // this.controls.target.copy( new THREE.Vector3(0, 1, -1000) )
-    // this.controls.update()
-
-    const geometry1 = new THREE.BoxGeometry( 1, 1, 2 );
-    const  material1 = new  THREE.MeshBasicMaterial({
-      color:0x333333,
-      side:THREE.DoubleSide,
-    })
     this.cameraTarget = new THREE.Object3D()
-    this.lookTarget = new THREE.Object3D;
-    this.cameraTargetlook = new THREE.Mesh(geometry1,material1);
-    // this.scene.add(this.cameraTargetlook);
+    this.lookTarget = new THREE.Object3D()
 
     //
     const material = new THREE.MeshBasicMaterial({
-      transparent: true, opacity: 1,
+      transparent: true,
+      opacity: 1,
       color: 'red',
       side:THREE.DoubleSide,
-    });
-    for(let i=0; i<this.targets.length; i++) {
-      const vec = this.targets[i]
+    })
+
+    for(let i=0; i<this.totalPoints.length; i+=15) {
+      const vec = this.totalPoints[i]
       const group = new THREE.Object3D()
+      group.name = 'Index_'+i
       group.position.copy(vec)
       this.scene.add(group)
-      this.groups.push(group)
+      this.targetGroups.push(group)
 
       const geo = this.getRandomGeometry()
-      const mesh = this.getMesh(geo.geometry, material.clone())
-      mesh.name = 'Index_'+i
+      const mesh = this.getMesh(geo.geometry, material)
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
 
       mesh.initialRotation = {
@@ -116,42 +123,93 @@ export default class CameraPath {
       group.add(mesh)
     }
   }
-  animate = () => {
-    gsap.registerPlugin(ScrollTrigger)
+  onScrollHandler = (event) => {
+    if (this.animating) return
+    // this.animating = true
+    // let difference = 0
+    // this.lastKnownPos = this.currYPos;
+    // this.currYPos = this.supportOffset ? window.pageYOffset : document.body.scrollTop;
+    // let scrollDir = this.lastKnownPos > this.currYPos ? 'up' : 'down';
+    // difference = this.lastKnownPos - this.currYPos
+    // console.log(`${scrollDir}, lastKnownPos: ${this.lastKnownPos}, difference: ${difference}`)
 
-    // set not render immediately and reset trigger at the first time.
-    ScrollTrigger.defaults({ immediateRender: false })
-    ScrollTrigger.clearScrollMemory();
-    window.history.scrollRestoration = "manual";
+    if (event.deltaY < 0) {
+      this.animating = true
 
-    let camera_anim_tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".section-one",
-        start: "top top",
-        endTrigger: ".section-seven",
-        end: "bottom bottom",
-        markers: true,
-        scrub: 1,
+      if(this.index < this.targetGroups.length-1) {
+        this.index++
+        this.isGoingUp = true
       }
-    })
 
-    for(let i=0; i<this.groups.length; i++) {
-      let group = this.groups[i]
-      camera_anim_tl
+      console.log('scrolling up: ', this.index);
+
+      let start = this.targetGroups[this.index].position
+      gsap.to(this.camera.position, {
+        duration: 1.6,
+        x: start.x,
+        y: start.y+1,
+        z: start.z+4,
+        ease: "power1.easeInOut",
+        onUpdate: () => {
+          this.controls.target.set(start.x, start.y+1, start.z)
+          this.controls.update()
+        },
+        onComplete: () => {
+          // if(this.index < this.targetGroups.length-1) {
+          //   this.index++
+          //   this.isGoingUp = true
+          // }
+          this.animating = false
+        }
+      })
+    }
+    else if (event.deltaY > 0)  {
+      this.animating = true
+      if(this.index > 0) {
+        this.index--
+        this.isGoingDown = true
+      }
+      console.log('scrolling down: ', this.index);
+
+      let start = this.targetGroups[this.index].position
+      gsap.to(this.camera.position, {
+        duration: 1.6,
+        x: start.x,
+        y: start.y+1,
+        z: start.z+4,
+        ease: "power1.easeInOut",
+        onUpdate: () => {
+          // this.controls.target.set(start.x, start.y+1, start.z)
+          // this.controls.update()
+        },
+        onComplete: () => {
+          // if(this.index > 0) {
+          //   // this.index--
+          //   this.isGoingDown = true
+          // }
+          this.animating = false
+        }
+      })
+    }
+
+  }
+  onCameraControl = () => {
+    for(let i=0; i<this.targetGroups.length; i++) {
+      let group = this.targetGroups[i]
+      this.camera_timeline
       .to(this.camera.position, {
         x: group.position.x,
         y: group.position.y+1,
         z: group.position.z,
         onUpdate: () => {
           // this.controls.target.copy( group.position )
-          // this.controls.target.set(this.camera.position.x, this.camera.position.y, this.camera.position.z-0.0001)
-          // this.controls.target.set(group.position.x, group.position.y+1, group.position.z)
-          // this.controls.update()
+          this.controls.target.set(group.position.x, group.position.y+1, group.position.z)
+          this.controls.update()
         },
         onComplete:() => {
           if (i===6) {
             console.log('onComplete')
-            camera_anim_tl.to("#experience", { opacity: 0 }, "simultaneously")
+            this.camera_timeline.to("#experience", { opacity: 0 }, "simultaneously")
           }
         }
       })
@@ -192,41 +250,32 @@ export default class CameraPath {
     //   ease: "power1.inOut",
     // })
 
-
-  }
-  onScrollHandler = () => {
-    // this.scrollY = window.scrollY
-    // this.camera.position.z = -this.scrollY / this.sizes.height * 5
-
-    // const st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
-    // if (st > this.lastScrollTop){
-    //   console.log('down')
-    // } else {
-    //   console.log('upscroll')
-    // }
-    // this.lastScrollTop = st <= 0 ? 0 : st;
-
-    this.updateCameraAlongPath()
   }
   updateCameraAlongPath = () => {
-    const time = this.clock.getElapsedTime();
-    const looptime = 50; //20
-    const t = (time % looptime)/ looptime;
-    const t2 = ((time +0.1)% looptime) / looptime;
-    const  t3 = ((time +0.101)% looptime) / looptime;
+    const time = this.clock.getElapsedTime()
+    const looptime = 20
+    const t = (time % looptime) / looptime
+    const t2 = ((time +0.1)% looptime) / looptime
+    const t3 = ((time +0.101)% looptime) / looptime
 
-    const pos = this.tube.geometry.parameters.path.getPointAt(t);
-    const pos2 = this.tube.geometry.parameters.path.getPointAt(t2);
-    const pos3 = this.tube.geometry.parameters.path.getPointAt(t3);
-    this.camera.position.set(pos.x, pos.y +1, pos.z);
-    this.cameraTarget.position.set(pos2.x, pos2.y +1, pos2.z);
-    this.cameraTargetlook.position.set(pos2.x, pos2.y +3, pos2.z);
-    this.lookTarget.position.set(pos3.x, pos3.y +3, pos3.z);
+    const pos = this.tube.geometry.parameters.path.getPointAt(t)
+    const pos2 = this.tube.geometry.parameters.path.getPointAt(t2)
+    const pos3 = this.tube.geometry.parameters.path.getPointAt(t3)
+    console.log(pos)
 
-    this.camera.lookAt(this.cameraTarget.position);
+    this.camera.position.set(pos.x, pos.y +1, pos.z)
+    this.cameraTarget.position.set(pos2.x, pos2.y +1, pos2.z)
+    // this.lookTarget.position.set(pos3.x, pos3.y +3, pos3.z)
+    this.camera.lookAt(this.cameraTarget.position)
+  }
+  getRandomGeometry = () => {
+    return this.geometries[Math.floor(Math.random() * Math.floor(this.geometries.length))]
+  }
+  getMesh = (geometry, material) => {
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.castShadow = mesh.receiveShadow = true
 
-    // this.cameraTargetlook.lookAt(this.lookTarget.position);
-    // this.cameraTargetlook.rotateOnAxis( new THREE.Vector3(0,1,0), Math.PI * -0.5);
+    return mesh
   }
   update = () => {
     // this.updateCameraAlongPath()

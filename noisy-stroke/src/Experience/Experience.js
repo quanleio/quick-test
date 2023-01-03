@@ -51,33 +51,23 @@ export default class Experience {
   }
 
   createDOM = () => {
-    const section_1 = document.createElement('section')
-    section_1.classList.add('section-one')
-    document.body.appendChild(section_1)
+    /*const rightWrapper = document.createElement('div')
+    rightWrapper.classList.add('rightWrapper')
+    document.body.appendChild(rightWrapper)
 
-    const section_2 = document.createElement('section')
-    section_2.classList.add('section-two')
-    document.body.appendChild(section_2)
+    for(let i=1;i<5; i++) {
+      const page = document.createElement('div')
+      page.innerHTML = i
+      page.classList.add('pageNum')
+      rightWrapper.appendChild(page)
+    }*/
 
-    const section_3 = document.createElement('section')
-    section_3.classList.add('section-three')
-    document.body.appendChild(section_3)
-
-    const section_4 = document.createElement('section')
-    section_4.classList.add('section-four')
-    document.body.appendChild(section_4)
-
-    const section_5 = document.createElement('section')
-    section_5.classList.add('section-five')
-    document.body.appendChild(section_5)
-
-    const section_6 = document.createElement('section')
-    section_6.classList.add('section-six')
-    document.body.appendChild(section_6)
-
-    const section_7 = document.createElement('section')
-    section_7.classList.add('section-seven')
-    document.body.appendChild(section_7)
+    //
+    for(let i=1; i<10; i++) {
+      const section = document.createElement('section')
+      section.classList.add(`section-${i}`)
+      document.body.appendChild(section)
+    }
   }
 
   resize() {

@@ -13,7 +13,7 @@ export default class Camera {
     this.canvas = this.experience.canvas
 
     this.setInstance()
-    // this.setControls()
+    this.setControls()
     this.transform()
   }
   setInstance() {
@@ -23,8 +23,8 @@ export default class Camera {
       0.01,
       10000
     )
-    this.instance.position.set(0, 0, 7); // 0 2 7
-    // this.instance.position.set(20, 10, 30);
+    // this.instance.position.set(0, 0, 7); // 0 2 7
+    this.instance.position.set(20, 10, 30);
     this.scene.add(this.instance)
   }
   setControls() {
@@ -68,6 +68,6 @@ export default class Camera {
     this.instance.updateProjectionMatrix()
   }
   update() {
-    // this.controls.update()
+    this.controls.update()
   }
 }

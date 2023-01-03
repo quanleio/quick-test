@@ -23,34 +23,6 @@ section {
   position: relative;
 }
 
-.section-one {
-  background-color: crimson;
-}
-
-.section-two {
-  background-color: steelblue;
-}
-
-.section-three {
-  background-color: #92c7a3;
-}
-
-.section-four {
-  background-color: lime;
-}
-
-.section-five {
-  background-color: grey;
-}
-
-.section-six {
-  background-color: pink;
-}
-
-.section-seven {
-  background-color: black;
-}
-
 /*
 h1 {
   font-size: 3.2em;

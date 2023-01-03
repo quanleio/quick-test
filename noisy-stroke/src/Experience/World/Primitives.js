@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import Experience from '../../Experience'
-import Torus from './Torus';
-import Cone from './Cone';
-import Box from './Box';
-import Cylinder from './Cylinder';
-import { map, radians } from '../../../utils/utils';
+import Experience from '../Experience'
+import Torus from '../World/components/Torus'
+import Cone from '../World/components/Cone';
+import Box from '../World/components/Box';
+import Cylinder from '../World/components/Cylinder';
+import { map, radians } from '../../utils/utils';
 
 export default class Primitives {
   constructor(_material) {

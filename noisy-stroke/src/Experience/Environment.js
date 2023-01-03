@@ -12,7 +12,7 @@ export default class Environment {
       helper: true,
       ambientColor: 0xB6CAED,
       directionalColor: 0x111111,
-      fogColor: 0xeeeeee, //0x007f7f
+      fogColor: 0xeeeeee, //0x007f7f,
       fogNear: 6,
       fogFar: 20.
     };

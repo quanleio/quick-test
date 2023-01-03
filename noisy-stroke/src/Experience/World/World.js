@@ -1,6 +1,6 @@
 import Experience from "../Experience.js"
 import NoisyStroke from './NoisyStroke';
-import Primitives from './components/Primitives';
+import Primitives from './Primitives';
 import ModelSet from './components/ModelSet';
 import CameraPath from './CameraPath';
 

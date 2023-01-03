@@ -20,6 +20,7 @@ export default class Renderer {
     })
 
     // this.instance.setClearColor(0xeeeeee, 1)
+    this.instance.setClearColor(0xdde8eb, 1);
     this.instance.physicallyCorrectLights = true
     this.instance.outputEncoding = THREE.sRGBEncoding
     this.instance.toneMapping = THREE.ACESFilmicToneMapping

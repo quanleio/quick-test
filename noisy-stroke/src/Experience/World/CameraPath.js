@@ -7,7 +7,6 @@ import Torus from './components/Torus';
 import Cone from './components/Cone';
 import Cylinder from './components/Cylinder';
 import {map, radians} from '../../utils/utils';
-import {EVT} from '../../../../grain-effect/src/utils/contains';
 
 export default class CameraPath {
   constructor() {
@@ -32,9 +31,14 @@ export default class CameraPath {
     this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
     this.index = 0
 
-    // this.position = new THREE.Vector3()
-    // this.quaternion = new THREE.Quaternion()
-    // this.scale = new THREE.Vector3()
+    this.direction = new THREE.Vector3()
+    this.binormal = new THREE.Vector3()
+    this.normal = new THREE.Vector3()
+    this.lookAt = new THREE.Vector3()
+
+    this.loopTime = 5
+    this.pathProgress = 0
+    this.currentPathPosition = new THREE.Vector3()
 
     this.makePath()
     this.initControl()
@@ -50,7 +54,6 @@ export default class CameraPath {
     this.animating = false
     this.isGoingUp = false
     this.isGoingDown = false
-
   }
   makePath = () => {
     for (let i = this.count; i >=0; i--) {
@@ -61,14 +64,14 @@ export default class CameraPath {
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed );
     const material = new THREE.MeshBasicMaterial( { color: 0xfff700, wireframe: true } );
     this.tube = new THREE.Mesh( geometry, material );
-    this.scene.add( this.tube );
+    this.scene.add( this.tube ); // hide it
 
     for(let i=0; i<this.totalPoints.length; i++) {
       const vec = this.totalPoints[i]
 
       const point = new THREE.Mesh(new THREE.IcosahedronGeometry(.1, 0), new THREE.MeshNormalMaterial())
       point.position.copy(vec)
-      this.scene.add(point)
+      // this.scene.add(point) // hide it
     }
   }
   initControl = () => {
@@ -113,6 +116,8 @@ export default class CameraPath {
 
       const geo = this.getRandomGeometry()
       const mesh = this.getMesh(geo.geometry, material)
+      mesh.position.y = -10
+      mesh.scale.setScalar(0)
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
 
       mesh.initialRotation = {
@@ -125,13 +130,7 @@ export default class CameraPath {
   }
   onScrollHandler = (event) => {
     if (this.animating) return
-    // this.animating = true
-    // let difference = 0
-    // this.lastKnownPos = this.currYPos;
-    // this.currYPos = this.supportOffset ? window.pageYOffset : document.body.scrollTop;
-    // let scrollDir = this.lastKnownPos > this.currYPos ? 'up' : 'down';
-    // difference = this.lastKnownPos - this.currYPos
-    // console.log(`${scrollDir}, lastKnownPos: ${this.lastKnownPos}, difference: ${difference}`)
+    this.controls.enabled = false
 
     if (event.deltaY < 0) {
       this.animating = true
@@ -140,57 +139,66 @@ export default class CameraPath {
         this.index++
         this.isGoingUp = true
       }
-
       console.log('scrolling up: ', this.index);
+      const targetPos = this.targetGroups[this.index].position
+      this.controls.target.set(targetPos.x, targetPos.y + 1, targetPos.z)
 
-      let start = this.targetGroups[this.index].position
-      gsap.to(this.camera.position, {
+      gsap.to(this, {
+        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
         duration: 1.6,
-        x: start.x,
-        y: start.y+1,
-        z: start.z+4,
-        ease: "power1.easeInOut",
         onUpdate: () => {
-          this.controls.target.set(start.x, start.y+1, start.z)
-          this.controls.update()
+          this.updateCameraAlongPath()
         },
         onComplete: () => {
-          // if(this.index < this.targetGroups.length-1) {
-          //   this.index++
-          //   this.isGoingUp = true
-          // }
           this.animating = false
+          this.controls.enabled = true
         }
       })
-    }
-    else if (event.deltaY > 0)  {
-      this.animating = true
-      if(this.index > 0) {
-        this.index--
-        this.isGoingDown = true
-      }
-      console.log('scrolling down: ', this.index);
 
-      let start = this.targetGroups[this.index].position
-      gsap.to(this.camera.position, {
-        duration: 1.6,
-        x: start.x,
-        y: start.y+1,
-        z: start.z+4,
-        ease: "power1.easeInOut",
-        onUpdate: () => {
-          // this.controls.target.set(start.x, start.y+1, start.z)
-          // this.controls.update()
-        },
-        onComplete: () => {
-          // if(this.index > 0) {
-          //   // this.index--
-          //   this.isGoingDown = true
-          // }
-          this.animating = false
-        }
-      })
+      // let start = this.targetGroups[this.index].position
+      // gsap.to(this.camera.position, {
+      //   duration: 1.6,
+      //   x: start.x,
+      //   y: start.y+1,
+      //   z: start.z+4,
+      //   ease: "power1.easeInOut",
+      //   onUpdate: () => {
+      //     this.controls.target.set(start.x, start.y+1, start.z)
+      //     this.controls.update()
+      //   },
+      //   onComplete: () => {
+      //     this.animating = false
+      //     console.log('onComplete')
+      //     //this.animateGroupMesh(this.targetGroups[this.index])
+      //   }
+      // })
+      this.animateGroupMesh(this.targetGroups[this.index])
     }
+    // else if (event.deltaY > 0)  {
+    //   this.animating = true
+    //   if(this.index > 0) {
+    //     this.index--
+    //     this.isGoingDown = true
+    //   }
+    //   console.log('scrolling down: ', this.index);
+    //
+    //   let start = this.targetGroups[this.index].position
+    //   gsap.to(this.camera.position, {
+    //     duration: 1.6,
+    //     x: start.x,
+    //     y: start.y+1,
+    //     z: start.z+4,
+    //     ease: "power1.easeInOut",
+    //     onUpdate: () => {
+    //       // don't update controls!
+    //       // this.controls.target.set(start.x, start.y+1, start.z)
+    //       // this.controls.update()
+    //     },
+    //     onComplete: () => {
+    //       this.animating = false
+    //     }
+    //   })
+    // }
 
   }
   onCameraControl = () => {
@@ -215,58 +223,48 @@ export default class CameraPath {
       })
     }
   }
-  detectCollisionCubes = (object1, object2) => {
-    object1.geometry.computeBoundingBox(); // not needed if its already calculated
-    object2.geometry.computeBoundingBox();
-    object1.updateMatrixWorld();
-    object2.updateMatrixWorld();
-
-    const box1 = object1.geometry.boundingBox.clone();
-    box1.applyMatrix4(object1.matrixWorld);
-
-    const box2 = object2.geometry.boundingBox.clone();
-    box2.applyMatrix4(object2.matrixWorld);
-
-    return box1.intersectsBox(box2);
-  }
   animateGroupMesh = (group) => {
+    const tl = gsap.timeline()
     const mesh = group.children[0]
 
-    gsap.to(mesh.position, {
-      duration: 0.7,
-      y: 1.0,
-      ease: "power3.in"
+    tl.to(mesh.position, {
+      duration: 1.5,
+      y: 1,
+      ease: "back.inOut(1.7)"
+    })
+    .to(mesh.scale, {
+      duration: 1.0,
+      x: 1.2,
+      y: 1.2,
+      z: 1.2,
+      ease: "Expo.easeOut"
     })
     gsap.to(mesh.rotation, {
-      duration: 1.5,
+      duration: 2.2,
       x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
       y: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.y),
       z: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.z),
-      ease: "power3.in"
+      ease: "back.inOut(0.7)",
     })
-    // gsap.to(mesh.material, {
-    //   duration: 0.2,
-    //   opacity: 1,
-    //   ease: "power1.inOut",
-    // })
-
   }
   updateCameraAlongPath = () => {
-    const time = this.clock.getElapsedTime()
-    const looptime = 20
-    const t = (time % looptime) / looptime
-    const t2 = ((time +0.1)% looptime) / looptime
-    const t3 = ((time +0.101)% looptime) / looptime
+    const time = this.pathProgress // 0 ~ this.loopTime
+    // const time = this.clock.getElapsedTime()
 
-    const pos = this.tube.geometry.parameters.path.getPointAt(t)
+    const t = (time % this.loopTime) / this.loopTime // 0 ~ 1
+    const t2 = ((time + 0.1)% this.loopTime) / this.loopTime
+    const t3 = ((time + 0.101)% this.loopTime) / this.loopTime
+
+    const pos = this.tube.geometry.parameters.path.getPointAt(t) //time
     const pos2 = this.tube.geometry.parameters.path.getPointAt(t2)
     const pos3 = this.tube.geometry.parameters.path.getPointAt(t3)
-    console.log(pos)
 
     this.camera.position.set(pos.x, pos.y +1, pos.z)
     this.cameraTarget.position.set(pos2.x, pos2.y +1, pos2.z)
-    // this.lookTarget.position.set(pos3.x, pos3.y +3, pos3.z)
+    this.lookTarget.position.set(pos3.x, pos3.y +3, pos3.z)
     this.camera.lookAt(this.cameraTarget.position)
+
+    // this.currentPathPosition.copy(pos)
   }
   getRandomGeometry = () => {
     return this.geometries[Math.floor(Math.random() * Math.floor(this.geometries.length))]

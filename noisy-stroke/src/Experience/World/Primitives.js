@@ -29,7 +29,6 @@ export default class Primitives {
   }
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
-
     for(let i=0; i<this.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
@@ -42,7 +41,7 @@ export default class Primitives {
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
       mesh.scale.setScalar(0)
 
-      mesh.initialRotation = {
+      mesh.userData.initialRotation = {
         x: mesh.rotation.x,
         y: mesh.rotation.y,
         z: mesh.rotation.z,
@@ -51,13 +50,16 @@ export default class Primitives {
       this.meshes.push(mesh)
     }
   }
+  makeClone = () => {
+    return this.groupMesh.clone()
+  }
   animate = (_group) => {
     const tl = gsap.timeline()
 
     tl.to(_group.position, {
       duration: 1.5,
       y: 2.5,
-      ease: "back.inOut(4)",
+      ease: "back.inOut(0.7)",
       onComplete: () => {
         this.isCompleted = true
       }
@@ -65,7 +67,15 @@ export default class Primitives {
     for(let i=0; i<_group.children.length; i++) {
       let mesh = _group.children[i]
 
-      const scaleFactor = THREE.MathUtils.randFloat(.5, 1.2)
+      gsap.to(mesh.position, {
+        duration: 1.5,
+        y: THREE.MathUtils.randFloat(-1, 2),
+        ease: "back.inOut(0.7)",
+        onComplete: () => {
+          this.isCompleted = true
+        }
+      })
+      const scaleFactor = THREE.MathUtils.randFloat(.5, 1.)
       gsap.to(mesh.scale, {
         duration: 1.0,
         x: scaleFactor,
@@ -75,9 +85,9 @@ export default class Primitives {
       })
       gsap.to(mesh.rotation, {
         duration: 3.,
-        x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
-        y: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.y),
-        z: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.z),
+        x: map(mesh.position.y, -1, 1, radians(45), mesh.userData.initialRotation.x),
+        y: map(mesh.position.y, -1, 1, radians(-90), mesh.userData.initialRotation.y),
+        z: map(mesh.position.y, -1, 1, radians(90), mesh.userData.initialRotation.z),
         ease: "back.inOut(0.7)",
       })
     }

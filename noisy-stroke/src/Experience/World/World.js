@@ -21,7 +21,6 @@ export default class World {
     })
   }
   update() {
-    if (this.primitives) this.primitives.update()
     if (this.cameraPath) this.cameraPath.update()
     // if (this.modelSet) this.modelSet.update()
   }

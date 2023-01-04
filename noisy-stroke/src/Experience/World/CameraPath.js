@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import Experience from '../Experience'
 import gsap from "gsap"
 import Primitives from './Primitives';
+import index from 'three/examples/jsm/libs/lottie_canvas.module';
 
 export default class CameraPath {
   constructor(_primitives) {
@@ -32,6 +33,7 @@ export default class CameraPath {
       y: 2,
       z: 0,
     }
+    this.currentTargetGroup = null
 
     this.makePath()
     this.transformCamera()
@@ -128,7 +130,8 @@ export default class CameraPath {
       })
 
       // animate target groups
-      this.primitives.show(this.targetGroups[this.index])
+      this.currentTargetGroup = this.targetGroups[this.index]
+      this.primitives.show(this.currentTargetGroup)
       setTimeout(() => {
         this.primitives.hide([this.targetGroups[this.index-1], this.targetGroups[this.index+1]])
       }, 500)
@@ -155,7 +158,8 @@ export default class CameraPath {
       })
 
       // animate target groups
-      this.primitives.show(this.targetGroups[this.index])
+      this.currentTargetGroup = this.targetGroups[this.index]
+      this.primitives.show( this.currentTargetGroup )
       this.primitives.hide([this.targetGroups[this.index-1], this.targetGroups[this.index+1]])
     }
   }
@@ -176,5 +180,11 @@ export default class CameraPath {
     this.lookTarget.position.set(pos3.x, pos3.y+1, pos3.z)
     this.camera.lookAt(this.cameraTarget.position)
   }
-  update = () => {}
+  update = () => {
+    if(this.currentTargetGroup) {
+      this.primitives.update(this.currentTargetGroup)
+    }
+
+    //if (this.primitives) this.primitives.update()
+  }
 }

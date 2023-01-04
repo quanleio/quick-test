@@ -37,9 +37,9 @@ export default class NoisyStroke {
     })
 
     // debug
-    if (this.debug.active) {
-      this.debug.ui.add(this.setting, "progress", 0, 1, 0.0008)
-    }
+    // if (this.debug.active) {
+    //   this.debug.ui.add(this.setting, "progress", 0, 1, 0.0008)
+    // }
   }
   update = () => {
     // this.material.uniforms.uTime.value = performance.now() / 2000 // update in component's material

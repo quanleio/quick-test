@@ -36,7 +36,6 @@ export default class Primitives {
     for(let i=0; i<this.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
-      mesh.speed = Math.random() / 2
 
       let xPos = THREE.MathUtils.randFloat(-2, 1);
       let yPos = THREE.MathUtils.randFloat(-1, 1);
@@ -45,10 +44,14 @@ export default class Primitives {
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
       mesh.scale.setScalar(0)
 
-      mesh.userData.initialRotation = {
-        x: mesh.rotation.x,
-        y: mesh.rotation.y,
-        z: mesh.rotation.z,
+      mesh.userData = {
+        initialRotation: {
+          x: mesh.rotation.x,
+          y: mesh.rotation.y,
+          z: mesh.rotation.z,
+        },
+        speed: Math.random()/2,
+        isCompleted: false
       }
       this.groupMesh.add(mesh)
       this.meshes.push(mesh)
@@ -64,9 +67,6 @@ export default class Primitives {
       duration: 1.5,
       y: 2.5,
       ease: "back.inOut(0.7)",
-      onComplete: () => {
-        this.isCompleted = true
-      }
     })
     for(let i=0; i<_group.children.length; i++) {
       let mesh = _group.children[i]
@@ -76,7 +76,11 @@ export default class Primitives {
         y: THREE.MathUtils.randFloat(-1, 2),
         ease: "back.inOut(0.7)",
         onComplete: () => {
-          this.isCompleted = true
+          mesh.material.uniforms.uProgress.value = 0
+          mesh.material.uniforms.uTime.value = 0
+          mesh.material.uniforms.needsUpdate = true
+
+          mesh.userData.isCompleted = true
         }
       })
       const scaleFactor = THREE.MathUtils.randFloat(.2, 0.8)
@@ -106,7 +110,6 @@ export default class Primitives {
         duration: 1.2,
         y: -10,
         ease: "back.inOut(0.7)",
-        onComplete: () => {}
       })
       for(let i=0; i<group.children.length; i++) {
         let mesh = group.children[i]
@@ -116,7 +119,11 @@ export default class Primitives {
           y: THREE.MathUtils.randFloat(-1, 1),
           ease: "back.inOut(0.7)",
           onComplete: () => {
-            this.isCompleted = true
+            mesh.userData.isCompleted = false
+
+            mesh.material.uniforms.uProgress.value = 0
+            mesh.material.uniforms.uTime.value = 0
+            mesh.material.uniforms.needsUpdate = true
           }
         })
         gsap.to(mesh.scale, {
@@ -135,20 +142,34 @@ export default class Primitives {
         })
       }
     }
-
   }
-  update = () => {
-    for(let i=0; i<this.meshes.length; i++) {
+  update = (_currentTargetGroup) => {
+    /*for(let i=0; i<this.meshes.length; i++) {
       let mesh = this.meshes[i]
 
       mesh.material.uniforms.uTime.value = performance.now() / 1000
       let val = mesh.material.uniforms.uProgress.value
+
       if (this.isCompleted) {
         if (val >= 0 && val < 1.0) {
-          // mesh.material.uniforms.uProgress.value = this.clock.getElapsedTime() * 0.2
           mesh.material.uniforms.uProgress.value = this.clock.getElapsedTime() * mesh.speed // random speed for each mesh
+        }
+      } else mesh.material.uniforms.uProgress.value = 0
+    }*/
+
+    for(let i=0; i<_currentTargetGroup.children.length; i++) {
+      const mesh = _currentTargetGroup.children[i]
+
+      mesh.material.uniforms.uTime.value = performance.now() / 1000
+      let val = mesh.material.uniforms.uProgress.value
+
+      if (mesh.userData.isCompleted) {
+        if (val >= 0 && val < 1.0) {
+          mesh.material.uniforms.uProgress.value = this.clock.getElapsedTime() * mesh.userData.speed
         }
       }
     }
+
+
   }
 }

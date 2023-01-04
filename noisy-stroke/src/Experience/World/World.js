@@ -15,7 +15,7 @@ export default class World {
     this.resources.on("ready", () => {
       this.noisyStroke = new NoisyStroke()
 
-      this.cameraPath = new CameraPath()
+      this.cameraPath = new CameraPath(this.noisyStroke.material)
       // this.primitives = new Primitives(this.noisyStroke.material)
       // this.modelSet = new ModelSet(this.noisyStroke.material)
     })

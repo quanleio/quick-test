@@ -9,36 +9,28 @@ import Cylinder from './components/Cylinder'
 import {map, radians} from '../../utils/utils'
 
 export default class CameraPath {
-  constructor() {
+  constructor(_material) {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
     this.controls = this.experience.camera.controls
-    this.sizes = this.experience.sizes
+    this.resources = this.experience.resources
+    this.noiseMaterial = _material
 
-    this.clock = new THREE.Clock()
     this.count = 100
     this.totalPoints = []
     this.params = {
-      pathSegments: 256,
-      radius: 3, //2.5
+      pathSegments: 512,
+      radius: 3,
       radiusSegments: 20,
       closed: false,
       scale: 20,
     }
     this.targetGroups = []
-    this.temp = []
     this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
     this.index = 0
-
-    this.direction = new THREE.Vector3()
-    this.binormal = new THREE.Vector3()
-    this.normal = new THREE.Vector3()
-    this.lookAt = new THREE.Vector3()
-
-    this.loopTime = 5
+    this.loopTime = 20
     this.pathProgress = 0
-    this.currentPathPosition = new THREE.Vector3()
     this.animating = false
     this.isGoingUp = false
     this.isGoingDown = false
@@ -56,8 +48,13 @@ export default class CameraPath {
       this.totalPoints.push(new THREE.Vector3(Math.sin(r)*10, 0, i-95))
     }
     const path = new THREE.CatmullRomCurve3(this.totalPoints)
+    const material = new THREE.MeshBasicMaterial( {
+      color: 0x000000,//0x007f7f,
+      wireframe: true,
+      transparent: true,
+      opacity: .3
+    })
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed )
-    const material = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true } )
     this.tube = new THREE.Mesh( geometry, material )
     this.tube.position.set(0, -1.8, 0)
     this.scene.add( this.tube )
@@ -76,41 +73,18 @@ export default class CameraPath {
       y: 1.8,
       z: 15,
       ease: "power1.easeInOut",
-      onUpdate: () => {},
-      onComplete: () => {}
-    })
-  }
-  initControl = () => {
-    gsap.registerPlugin(ScrollTrigger)
-
-    // set not render immediately and reset trigger at the first time.
-    ScrollTrigger.defaults({ immediateRender: false })
-    ScrollTrigger.clearScrollMemory();
-    window.history.scrollRestoration = "manual";
-
-    this.camera_timeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".section-1",
-        start: "top top",
-        endTrigger: ".section-7",
-        end: "bottom bottom",
-        markers: true,
-        scrub: .1,
-        once: true
+      onUpdate: () => {
+        this.camera.updateProjectionMatrix()
+        this.controls.update()
+      },
+      onComplete: () => {
+        this.controls.enabled = false
       }
     })
   }
   makeCameraTarget = ()=> {
     this.cameraTarget = new THREE.Object3D()
     this.lookTarget = new THREE.Object3D()
-
-    //
-    const material = new THREE.MeshBasicMaterial({
-      transparent: true,
-      opacity: 1,
-      color: 'red',
-      side:THREE.DoubleSide,
-    })
 
     for(let i=0; i<this.totalPoints.length; i+=15) {
       const vec = this.totalPoints[i]
@@ -120,8 +94,9 @@ export default class CameraPath {
       this.scene.add(group)
       this.targetGroups.push(group)
 
+      // add random mesh into group
       const geo = this.getRandomGeometry()
-      const mesh = this.getMesh(geo.geometry, material)
+      const mesh = this.getMesh(geo.geometry, this.noiseMaterial)
       mesh.position.y = -10
       mesh.scale.setScalar(0)
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
@@ -135,8 +110,10 @@ export default class CameraPath {
     }
   }
   onScrollHandler = (event) => {
+    event.preventDefault()
+
     if (this.animating) return
-    this.controls.enabled = false
+    // this.controls.enabled = false
 
     if (event.deltaY < 0) {
       this.animating = true
@@ -146,18 +123,21 @@ export default class CameraPath {
         this.isGoingUp = true
       }
       console.log('scrolling up: ', this.index);
-      const targetPos = this.targetGroups[this.index].position
-      this.controls.target.set(targetPos.x, targetPos.y + 1, targetPos.z)
+      // const targetPos = this.targetGroups[this.index].position
+      // this.controls.target.set(targetPos.x, targetPos.y + 1, targetPos.z)
 
       gsap.to(this, {
         pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
-        duration: 1.6,
+        duration: 2.2,
+        ease: "power1.easeInOut",
         onUpdate: () => {
           this.updateCameraAlongPath()
+          const targetPos = this.targetGroups[this.index].position
+          this.controls.target.set(targetPos.x, targetPos.y + 1.8, targetPos.z)
+          this.controls.update()
         },
         onComplete: () => {
           this.animating = false
-          this.controls.enabled = true
         }
       })
       this.animateGroupMesh(this.targetGroups[this.index])
@@ -176,13 +156,13 @@ export default class CameraPath {
 
       gsap.to(this, {
         pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
-        duration: 1.6,
+        duration: 2.2,
+        ease: "power1.easeInOut",
         onUpdate: () => {
           this.updateCameraAlongPath()
         },
         onComplete: () => {
           this.animating = false
-          this.controls.enabled = true
         }
       })
     }
@@ -249,28 +229,6 @@ export default class CameraPath {
       })
     }
   }*/
-  onCameraControl = () => {
-    for(let i=0; i<this.targetGroups.length; i++) {
-      let group = this.targetGroups[i]
-      this.camera_timeline
-      .to(this.camera.position, {
-        x: group.position.x,
-        y: group.position.y+1,
-        z: group.position.z,
-        onUpdate: () => {
-          // this.controls.target.copy( group.position )
-          this.controls.target.set(group.position.x, group.position.y+1, group.position.z)
-          this.controls.update()
-        },
-        onComplete:() => {
-          if (i===6) {
-            console.log('onComplete')
-            this.camera_timeline.to("#experience", { opacity: 0 }, "simultaneously")
-          }
-        }
-      })
-    }
-  }
   animateGroupMesh = (group) => {
     const tl = gsap.timeline()
     const mesh = group.children[0]

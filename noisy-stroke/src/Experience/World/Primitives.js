@@ -21,9 +21,6 @@ export default class Primitives {
 
     this.setObjects()
     this.animate()
-    // window.addEventListener(EVT.CAMERA_ANIMATE_COMPLETED, () => {
-    //   this.animate()
-    // })
   }
   getMesh = (geometry, material) => {
     const mesh = new THREE.Mesh(geometry, material)
@@ -68,15 +65,6 @@ export default class Primitives {
   }
   animate = () => {
     const tl = gsap.timeline()
-    /*tl.to(this.sphere.position, {
-      duration: 2.,
-      y: 0,
-      ease: "back.inOut(0.7)",
-      onComplete: () => {
-        this.isCompleted = true
-      }
-    })*/
-
     tl.to(this.groupMesh.position, {
       duration: 1.8,
       y: 0,

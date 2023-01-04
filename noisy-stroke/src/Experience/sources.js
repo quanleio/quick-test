@@ -12,6 +12,12 @@ export default [
     source: ""
   },
   {
+    name: "roadTexture",
+    type: "texture",
+    path: "assets/textures/aerial_asphalt_01_rough_1k.jpg",
+    source: "https://polyhaven.com/a/aerial_asphalt_01"
+  },
+  {
     name: "foxModel",
     type: "gltfModel",
     path: "assets/models/Fox/Fox.gltf",

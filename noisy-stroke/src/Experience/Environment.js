@@ -34,20 +34,18 @@ export default class Environment {
     this.scene.add(dirLight);
   }
   setEnvironment = () => {
-    // helper
-    this.gridHelper = new THREE.GridHelper(20, 20, 0x8e8e8e, 0x8e8e8e)
-    this.scene.add(this.gridHelper)
-
     this.scene.fog = new THREE.Fog(this.params.fogColor, this.params.fogNear, this.params.fogFar);
     // this.scene.background = this.params.fogColor
 
     // debug
     if (this.debug.active) {
       // helper
-      this.debugFolder = this.debug.ui.addFolder('Scene')
+      /*this.debugFolder = this.debug.ui.addFolder('Scene')
       this.debugFolder.add(this.params, 'helper').onChange(val => {
         val ? this.scene.add(this.gridHelper) : this.scene.remove(this.gridHelper)
-      })
+      })*/
+      this.gridHelper = new THREE.GridHelper(20, 20, 0x8e8e8e, 0x8e8e8e)
+      this.scene.add(this.gridHelper)
 
       // fog
       this.debugFolder = this.debug.ui.addFolder('Fog')

@@ -1,12 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../Experience'
 import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Box from './components/Box'
-import Torus from './components/Torus'
-import Cone from './components/Cone'
-import Cylinder from './components/Cylinder'
-import {map, radians} from '../../utils/utils'
+import Primitives from './Primitives';
 
 export default class CameraPath {
   constructor(_material) {
@@ -14,7 +9,6 @@ export default class CameraPath {
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
     this.controls = this.experience.camera.controls
-    this.resources = this.experience.resources
     this.noiseMaterial = _material
 
     this.count = 100
@@ -27,9 +21,8 @@ export default class CameraPath {
       scale: 20,
     }
     this.targetGroups = []
-    this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
     this.index = 0
-    this.loopTime = 20
+    this.loopTime = 10
     this.pathProgress = 0
     this.animating = false
     this.isGoingUp = false
@@ -37,7 +30,7 @@ export default class CameraPath {
 
     this.makePath()
     this.transformCamera()
-    this.makeCameraTarget()
+    this.setCameraTarget()
 
     window.addEventListener('wheel', this.onScrollHandler, false)
   }
@@ -52,7 +45,7 @@ export default class CameraPath {
       color: 0x000000,//0x007f7f,
       wireframe: true,
       transparent: true,
-      opacity: .3
+      opacity: .1
     })
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed )
     this.tube = new THREE.Mesh( geometry, material )
@@ -82,14 +75,14 @@ export default class CameraPath {
       }
     })
   }
-  makeCameraTarget = ()=> {
+  setCameraTarget = ()=> {
     this.cameraTarget = new THREE.Object3D()
     this.lookTarget = new THREE.Object3D()
 
     for(let i=0; i<this.totalPoints.length; i+=15) {
       const vec = this.totalPoints[i]
-      const group = new THREE.Object3D()
-      group.name = 'Index_'+i
+      /*const group = new THREE.Object3D()
+      group.name = 'targetGroups_'+i
       group.position.copy(vec)
       this.scene.add(group)
       this.targetGroups.push(group)
@@ -106,7 +99,16 @@ export default class CameraPath {
         y: mesh.rotation.y,
         z: mesh.rotation.z,
       }
-      group.add(mesh)
+      group.add(mesh)*/
+
+      this.primitives = new Primitives(this.noiseMaterial)
+      const targetGroup = this.primitives.groupMesh
+      targetGroup.name = 'targetGroups_'+i
+
+      const xFactor = THREE.MathUtils.randFloat(-8, 8)
+      targetGroup.position.set(vec.x+xFactor, 0, vec.z)
+      this.scene.add(targetGroup)
+      this.targetGroups.push(targetGroup)
     }
   }
   onScrollHandler = (event) => {
@@ -123,8 +125,9 @@ export default class CameraPath {
         this.isGoingUp = true
       }
       console.log('scrolling up: ', this.index);
-      // const targetPos = this.targetGroups[this.index].position
-      // this.controls.target.set(targetPos.x, targetPos.y + 1, targetPos.z)
+      /*const targetPos = this.targetGroups[this.index].position
+      this.controls.target.set(targetPos.x, targetPos.y + 1, targetPos.z)
+      this.controls.update()*/
 
       gsap.to(this, {
         pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
@@ -133,14 +136,14 @@ export default class CameraPath {
         onUpdate: () => {
           this.updateCameraAlongPath()
           const targetPos = this.targetGroups[this.index].position
-          this.controls.target.set(targetPos.x, targetPos.y + 1.8, targetPos.z)
+          this.controls.target.set(targetPos.x, targetPos.y, targetPos.z+2)
           this.controls.update()
         },
         onComplete: () => {
           this.animating = false
         }
       })
-      this.animateGroupMesh(this.targetGroups[this.index])
+      this.animateTargetGroup(this.targetGroups[this.index])
     }
     else if (event.deltaY > 0)  {
       this.animating = true
@@ -167,91 +170,8 @@ export default class CameraPath {
       })
     }
   }
-  /**
-   * BACKUP
-   * @param event
-   */
-  /*onScrollHandler = (event) => {
-    if (this.animating) return
-    this.controls.enabled = false
-
-    if (event.deltaY < 0) {
-      this.animating = true
-
-      if(this.index < this.targetGroups.length-1) {
-        this.index++
-        this.isGoingUp = true
-      }
-      console.log('scrolling up: ', this.index);
-
-      let start = this.targetGroups[this.index].position
-      gsap.to(this.camera.position, {
-        duration: 1.6,
-        x: start.x,
-        y: start.y+1,
-        z: start.z+4,
-        ease: "power1.easeInOut",
-        onUpdate: () => {
-          this.controls.target.set(start.x, start.y+1, start.z)
-          this.controls.update()
-        },
-        onComplete: () => {
-          this.animating = false
-          console.log('onComplete')
-          //this.animateGroupMesh(this.targetGroups[this.index])
-        }
-      })
-      this.animateGroupMesh(this.targetGroups[this.index])
-    }
-    else if (event.deltaY > 0)  {
-      this.animating = true
-      if(this.index > 0) {
-        this.index--
-        this.isGoingDown = true
-      }
-      console.log('scrolling down: ', this.index);
-
-      let start = this.targetGroups[this.index].position
-      gsap.to(this.camera.position, {
-        duration: 1.6,
-        x: start.x,
-        y: start.y+1,
-        z: start.z+4,
-        ease: "power1.easeInOut",
-        onUpdate: () => {
-          // don't update controls!
-          // this.controls.target.set(start.x, start.y+1, start.z)
-          // this.controls.update()
-        },
-        onComplete: () => {
-          this.animating = false
-        }
-      })
-    }
-  }*/
-  animateGroupMesh = (group) => {
-    const tl = gsap.timeline()
-    const mesh = group.children[0]
-
-    tl.to(mesh.position, {
-      duration: 1.5,
-      y: 1,
-      ease: "back.inOut(1.7)"
-    })
-    .to(mesh.scale, {
-      duration: 1.0,
-      x: 1.2,
-      y: 1.2,
-      z: 1.2,
-      ease: "Expo.easeOut"
-    })
-    gsap.to(mesh.rotation, {
-      duration: 2.2,
-      x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
-      y: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.y),
-      z: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.z),
-      ease: "back.inOut(0.7)",
-    })
+  animateTargetGroup = (group) => {
+    this.primitives.animate(group)
   }
   updateCameraAlongPath = () => {
     const time = this.pathProgress // 0 ~ this.loopTime
@@ -270,16 +190,7 @@ export default class CameraPath {
     this.lookTarget.position.set(pos3.x, pos3.y+1.8, pos3.z)
     this.camera.lookAt(this.cameraTarget.position)
   }
-  getRandomGeometry = () => {
-    return this.geometries[Math.floor(Math.random() * Math.floor(this.geometries.length))]
-  }
-  getMesh = (geometry, material) => {
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.castShadow = mesh.receiveShadow = true
-
-    return mesh
-  }
   update = () => {
-    // this.updateCameraAlongPath()
+    this.primitives.update()
   }
 }

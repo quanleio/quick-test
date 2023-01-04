@@ -18,6 +18,9 @@ export default class Primitives {
     this.isCompleted = false
     this.count = 5
     this.meshes = []
+    this.params = {
+      targetGroupY: -10,
+    }
 
     this.setObjects()
   }
@@ -29,6 +32,7 @@ export default class Primitives {
   }
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
+    this.groupMesh.position.y = this.params.targetGroupY
     for(let i=0; i<this.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
@@ -53,7 +57,7 @@ export default class Primitives {
   makeClone = () => {
     return this.groupMesh.clone()
   }
-  animate = (_group) => {
+  show = (_group) => {
     const tl = gsap.timeline()
 
     tl.to(_group.position, {
@@ -75,7 +79,7 @@ export default class Primitives {
           this.isCompleted = true
         }
       })
-      const scaleFactor = THREE.MathUtils.randFloat(.2, 0.6)
+      const scaleFactor = THREE.MathUtils.randFloat(.2, 0.8)
       gsap.to(mesh.scale, {
         duration: 1.5,
         x: scaleFactor,
@@ -91,6 +95,47 @@ export default class Primitives {
         ease: "back.inOut(0.7)",
       })
     }
+  }
+  hide = (_groups) => {
+    const tl = gsap.timeline()
+
+    for(let i=0; i<_groups.length; i++) {
+      const group = _groups[i]
+
+      tl.to(group.position, {
+        duration: 1.2,
+        y: -10,
+        ease: "back.inOut(0.7)",
+        onComplete: () => {}
+      })
+      for(let i=0; i<group.children.length; i++) {
+        let mesh = group.children[i]
+
+        gsap.to(mesh.position, {
+          duration: 1.5,
+          y: THREE.MathUtils.randFloat(-1, 1),
+          ease: "back.inOut(0.7)",
+          onComplete: () => {
+            this.isCompleted = true
+          }
+        })
+        gsap.to(mesh.scale, {
+          duration: 1.5,
+          x: 0,
+          y: 0,
+          z: 0,
+          ease: "Expo.easeOut"
+        })
+        gsap.to(mesh.rotation, {
+          duration: 3.,
+          x: mesh.userData.initialRotation.x,
+          y: mesh.userData.initialRotation.y,
+          z: mesh.userData.initialRotation.z,
+          ease: "back.inOut(0.7)",
+        })
+      }
+    }
+
   }
   update = () => {
     for(let i=0; i<this.meshes.length; i++) {

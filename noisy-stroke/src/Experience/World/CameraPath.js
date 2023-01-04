@@ -56,12 +56,13 @@ export default class CameraPath {
     this.tube.position.set(0, -2, 0)
     this.scene.add( this.tube )
 
-    for(let i=0; i<this.totalPoints.length; i++) {
+    // hide this!
+    /*for(let i=0; i<this.totalPoints.length; i++) {
       const vec = this.totalPoints[i]
       const point = new THREE.Mesh(new THREE.IcosahedronGeometry(.1, 0), new THREE.MeshNormalMaterial())
       point.position.copy(vec)
-      this.scene.add(point) // hide it
-    }
+      this.scene.add(point)
+    }*/
   }
   transformCamera = () => {
     gsap.to(this.camera.position, {
@@ -89,8 +90,9 @@ export default class CameraPath {
 
       const targetGroup = this.primitives.makeClone()
       targetGroup.name = 'targetGroups_'+i
-      const xFactor = THREE.MathUtils.randFloat(-6, 6)
-      targetGroup.position.set(vec.x+xFactor, -10, vec.z)
+      const xFactor = THREE.MathUtils.randFloat(-4, 4)
+      targetGroup.position.x = vec.x+xFactor
+      targetGroup.position.z = vec.z
       this.scene.add(targetGroup)
       this.targetGroups.push(targetGroup)
     }
@@ -113,7 +115,7 @@ export default class CameraPath {
       // this.controls.target.set(targetPos.x, targetPos.y, targetPos.z+2)
 
       gsap.to(this, {
-        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.5,
+        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 1.0,
         duration: 2.2,
         onUpdate: () => {
           this.updateCameraAlongPath()
@@ -124,7 +126,12 @@ export default class CameraPath {
           this.animating = false
         }
       })
-      this.animateTargetGroup(this.targetGroups[this.index])
+
+      // animate target groups
+      this.primitives.show(this.targetGroups[this.index])
+      setTimeout(() => {
+        this.primitives.hide([this.targetGroups[this.index-1], this.targetGroups[this.index+1]])
+      }, 500)
     }
     else if (event.deltaY > 0)  {
       this.animating = true
@@ -135,7 +142,7 @@ export default class CameraPath {
       console.log('scrolling down: ', this.index)
 
       gsap.to(this, {
-        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
+        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 1.0,
         duration: 2.2,
         onUpdate: () => {
           this.updateCameraAlongPath()
@@ -146,10 +153,11 @@ export default class CameraPath {
           this.animating = false
         }
       })
+
+      // animate target groups
+      this.primitives.show(this.targetGroups[this.index])
+      this.primitives.hide([this.targetGroups[this.index-1], this.targetGroups[this.index+1]])
     }
-  }
-  animateTargetGroup = (group) => {
-    this.primitives.animate(group)
   }
   updateCameraAlongPath = () => {
     const time = this.pathProgress // 0 ~ this.loopTime

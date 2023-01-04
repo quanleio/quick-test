@@ -14,11 +14,11 @@ export default class Camera {
 
     this.setInstance()
     this.setControls()
-    this.transform()
+    // this.transform()
   }
   setInstance() {
     this.instance = new THREE.PerspectiveCamera(
-      75,
+      45, //30,
       this.sizes.width / this.sizes.height,
       0.01,
       10000
@@ -30,10 +30,10 @@ export default class Camera {
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enabled = true
-    this.controls.autoRotate = false
-    this.controls.enableDamping = true
-    this.controls.enableZoom = false
-    this.controls.enablePan = false
+    // this.controls.autoRotate = false
+    // this.controls.enableDamping = true
+    // this.controls.enableZoom = false
+    // this.controls.enablePan = false
 
     /*if (this.debug.active) {
       this.debugFolder = this.debug.ui.addFolder('Camera')
@@ -58,7 +58,7 @@ export default class Camera {
       },
       onComplete: () => {
         // this.controls.enabled = true
-        this.instance.lookAt(0, 0, 0)
+        // this.instance.lookAt(0, 0, 0)
         window.dispatchEvent(new Event(EVT.CAMERA_ANIMATE_COMPLETED))
       }
     })

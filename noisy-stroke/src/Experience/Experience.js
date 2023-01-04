@@ -30,7 +30,7 @@ export default class Experience {
     document.body.appendChild(_canvas)
     this.canvas = _canvas
 
-    this.createDOM()
+    // this.createDOM()
 
     /**Setup Classes */
     this.debug = new Debug()

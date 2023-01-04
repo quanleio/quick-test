@@ -34,8 +34,8 @@ export default class Primitives {
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
       mesh.speed = Math.random() / 2
 
-      let xPos = THREE.MathUtils.randFloat(-3, 3);
-      let yPos = THREE.MathUtils.randFloat(-2, 2);
+      let xPos = THREE.MathUtils.randFloat(-2, 1);
+      let yPos = THREE.MathUtils.randFloat(-1, 1);
       let zPos = THREE.MathUtils.randFloat(-3, 1);
       mesh.position.set(xPos, yPos, zPos)
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
@@ -75,9 +75,9 @@ export default class Primitives {
           this.isCompleted = true
         }
       })
-      const scaleFactor = THREE.MathUtils.randFloat(.5, 1.)
+      const scaleFactor = THREE.MathUtils.randFloat(.2, 0.6)
       gsap.to(mesh.scale, {
-        duration: 1.0,
+        duration: 1.5,
         x: scaleFactor,
         y: scaleFactor,
         z: scaleFactor,

@@ -27,6 +27,11 @@ export default class CameraPath {
     this.animating = false
     this.isGoingUp = false
     this.isGoingDown = false
+    this.cameraEndPoint = {
+      x: 0,
+      y: 2,
+      z: 0,
+    }
 
     this.makePath()
     this.transformCamera()
@@ -35,10 +40,9 @@ export default class CameraPath {
     window.addEventListener('wheel', this.onScrollHandler, false)
   }
   makePath = () => {
-    this.totalPoints.push(new THREE.Vector3(-8, 0, 15))
     for (let i = this.count; i >=0; i--) {
-      let r = (i * Math.PI * 3) / this.count
-      this.totalPoints.push(new THREE.Vector3(Math.sin(r)*8, 0, i-95))
+      let r = (i * Math.PI * 2) / this.count
+      this.totalPoints.push(new THREE.Vector3(Math.sin(r)*8, 0, i-100))
     }
     const path = new THREE.CatmullRomCurve3(this.totalPoints)
     const material = new THREE.MeshBasicMaterial( {
@@ -49,22 +53,22 @@ export default class CameraPath {
     })
     const geometry = new THREE.TubeGeometry( path, this.params.pathSegments, this.params.radius, this.params.radiusSegments, this.params.closed )
     this.tube = new THREE.Mesh( geometry, material )
-    this.tube.position.set(0, -1.8, 0)
+    this.tube.position.set(0, -2, 0)
     this.scene.add( this.tube )
 
-    /*for(let i=0; i<this.totalPoints.length; i++) {
+    for(let i=0; i<this.totalPoints.length; i++) {
       const vec = this.totalPoints[i]
       const point = new THREE.Mesh(new THREE.IcosahedronGeometry(.1, 0), new THREE.MeshNormalMaterial())
       point.position.copy(vec)
       this.scene.add(point) // hide it
-    }*/
+    }
   }
   transformCamera = () => {
     gsap.to(this.camera.position, {
       duration: 1.6,
-      x: -8,
-      y: 2,
-      z: 15,
+      x: this.cameraEndPoint.x,
+      y: this.cameraEndPoint.y,
+      z: this.cameraEndPoint.z,
       ease: "power1.easeInOut",
       onUpdate: () => {
         this.camera.updateProjectionMatrix()
@@ -85,8 +89,8 @@ export default class CameraPath {
 
       const targetGroup = this.primitives.makeClone()
       targetGroup.name = 'targetGroups_'+i
-      const xFactor = THREE.MathUtils.randFloat(-8, 8)
-      targetGroup.position.set(vec.x, -10, vec.z)
+      const xFactor = THREE.MathUtils.randFloat(-6, 6)
+      targetGroup.position.set(vec.x+xFactor, -10, vec.z)
       this.scene.add(targetGroup)
       this.targetGroups.push(targetGroup)
     }
@@ -109,7 +113,7 @@ export default class CameraPath {
       // this.controls.target.set(targetPos.x, targetPos.y, targetPos.z+2)
 
       gsap.to(this, {
-        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
+        pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.5,
         duration: 2.2,
         onUpdate: () => {
           this.updateCameraAlongPath()
@@ -130,16 +134,13 @@ export default class CameraPath {
       }
       console.log('scrolling down: ', this.index)
 
-      // don't update controls!
-      // const targetPos = this.targetGroups[this.index].position
-      // this.controls.target.set(targetPos.x, targetPos.y+1, targetPos.z)
-
       gsap.to(this, {
         pathProgress: this.loopTime * (this.index * 15 / this.totalPoints.length) - 0.1,
         duration: 2.2,
-        // ease: "power1.easeInOut",
         onUpdate: () => {
           this.updateCameraAlongPath()
+          this.controls.target.copy(this.camera.position)
+          this.controls.update()
         },
         onComplete: () => {
           this.animating = false

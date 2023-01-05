@@ -98,7 +98,6 @@ export default class Primitives {
     }
   }
   hide = (_groups) => {
-    console.log('hide: ', _groups)
     const tl = gsap.timeline()
 
     for(let i=0; i<_groups.length; i++) {

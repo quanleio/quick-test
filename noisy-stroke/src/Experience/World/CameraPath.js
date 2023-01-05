@@ -80,11 +80,10 @@ export default class CameraPath {
       },
       onComplete: () => {
         this.controls.enabled = false
-
-        // show first target group
-        this.primitives.show(this.currentTargetGroup)
       }
     })
+    // show first target group
+    this.primitives.show(this.currentTargetGroup)
   }
   setCameraTarget = ()=> {
     this.cameraTarget = new THREE.Object3D()
@@ -151,13 +150,15 @@ export default class CameraPath {
       }
 
     }
-    else if (event.deltaY > 0)  {
+    else if (event.deltaY >=1 )  {
+      console.log(event.deltaY)
       this.animating = true
+
       if(this.params.index > 0) {
         this.params.index--
         this.isGoingDown = true
       }
-      console.log('scrolling down: ', this.params.index)
+      // console.log('scrolling down: ', this.params.index)
 
       gsap.to(this.params, {
         pathProgress: this.params.loopTime * (this.params.index * 15 / this.totalPoints.length) - 1.0,

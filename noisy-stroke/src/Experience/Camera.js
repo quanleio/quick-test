@@ -59,7 +59,7 @@ export default class Camera {
       onComplete: () => {
         // this.controls.enabled = true
         // this.instance.lookAt(0, 0, 0)
-        window.dispatchEvent(new Event(EVT.CAMERA_ANIMATE_COMPLETED))
+        // window.dispatchEvent(new Event(EVT.CAMERA_ANIMATE_COMPLETED))
       }
     })
   }

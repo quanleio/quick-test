@@ -6,6 +6,7 @@ import Cone from '../World/components/Cone';
 import Box from '../World/components/Box';
 import Cylinder from '../World/components/Cylinder';
 import { map, radians } from '../../utils/utils';
+import { randFloat} from 'three/src/math/MathUtils'
 
 export default class Primitives {
   constructor(_material) {
@@ -15,11 +16,12 @@ export default class Primitives {
     this.noiseMaterial = _material
 
     this.geometries = [new Box(), new Torus(), new Cone(), new Cylinder()]
-    this.isCompleted = false
-    this.count = 5
     this.meshes = []
     this.params = {
+      count: 5,
       targetGroupY: -10,
+      delta: 0,
+      isRunning: false
     }
 
     this.setObjects()
@@ -33,7 +35,7 @@ export default class Primitives {
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
     this.groupMesh.position.y = this.params.targetGroupY
-    for(let i=0; i<this.count; i++) {
+    for(let i=0; i<this.params.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
 
@@ -50,8 +52,8 @@ export default class Primitives {
           y: mesh.rotation.y,
           z: mesh.rotation.z,
         },
-        speed: Math.random()/2,
-        isCompleted: false
+        isCompleted: false,
+        speed: Math.random() + randFloat(800, 1200), // Math.random()/3,
       }
       this.groupMesh.add(mesh)
       this.meshes.push(mesh)
@@ -64,7 +66,7 @@ export default class Primitives {
     const tl = gsap.timeline()
 
     tl.to(_group.position, {
-      duration: 1.5,
+      duration: 2.5,
       y: 2.5,
       ease: "back.inOut(0.7)",
     })
@@ -72,35 +74,31 @@ export default class Primitives {
       let mesh = _group.children[i]
 
       gsap.to(mesh.position, {
-        duration: 1.5,
-        y: THREE.MathUtils.randFloat(-1, 2),
-        ease: "back.inOut(0.7)",
-        onComplete: () => {
-          mesh.material.uniforms.uProgress.value = 0
-          mesh.material.uniforms.uTime.value = 0
-          mesh.material.uniforms.needsUpdate = true
-
-          mesh.userData.isCompleted = true
-        }
+        duration: 1.0,
+        y: THREE.MathUtils.randFloat(-2, 2),
+        ease: "back.inOut(4)",
+        onComplete: () => mesh.userData.isCompleted = true
       })
-      const scaleFactor = THREE.MathUtils.randFloat(.2, 0.8)
+      const scaleFactor = THREE.MathUtils.randFloat(.3, 1.3)
       gsap.to(mesh.scale, {
-        duration: 1.5,
         x: scaleFactor,
         y: scaleFactor,
         z: scaleFactor,
         ease: "Expo.easeOut"
       })
       gsap.to(mesh.rotation, {
-        duration: 3.,
-        x: map(mesh.position.y, -1, 1, radians(45), mesh.userData.initialRotation.x),
-        y: map(mesh.position.y, -1, 1, radians(-90), mesh.userData.initialRotation.y),
-        z: map(mesh.position.y, -1, 1, radians(90), mesh.userData.initialRotation.z),
-        ease: "back.inOut(0.7)",
+          duration: 3.5,
+          x: map(mesh.position.y, -1, 1, radians(45), mesh.userData.initialRotation.x),
+          y: map(mesh.position.y, -1, 1, radians(-90), mesh.userData.initialRotation.y),
+          z: map(mesh.position.y, -1, 1, radians(90), mesh.userData.initialRotation.z),
+          ease: "back.inOut(0.7)",
       })
+
+      this.params.isRunning = true
     }
   }
   hide = (_groups) => {
+    console.log('hide: ', _groups)
     const tl = gsap.timeline()
 
     for(let i=0; i<_groups.length; i++) {
@@ -115,30 +113,23 @@ export default class Primitives {
         let mesh = group.children[i]
 
         gsap.to(mesh.position, {
-          duration: 1.5,
-          y: THREE.MathUtils.randFloat(-1, 1),
-          ease: "back.inOut(0.7)",
-          onComplete: () => {
-            mesh.userData.isCompleted = false
-
-            mesh.material.uniforms.uProgress.value = 0
-            mesh.material.uniforms.uTime.value = 0
-            mesh.material.uniforms.needsUpdate = true
-          }
+          duration: 1.0,
+          y: THREE.MathUtils.randFloat(-2, 2),
+          ease: "back.inOut(4)",
+          onComplete: () => mesh.userData.isCompleted = false
         })
         gsap.to(mesh.scale, {
-          duration: 1.5,
           x: 0,
           y: 0,
           z: 0,
           ease: "Expo.easeOut"
         })
         gsap.to(mesh.rotation, {
-          duration: 3.,
-          x: mesh.userData.initialRotation.x,
-          y: mesh.userData.initialRotation.y,
-          z: mesh.userData.initialRotation.z,
-          ease: "back.inOut(0.7)",
+            duration: 3.5,
+            x: mesh.userData.initialRotation.x,
+            y: mesh.userData.initialRotation.y,
+            z: mesh.userData.initialRotation.z,
+            ease: "back.inOut(0.7)",
         })
       }
     }
@@ -160,16 +151,17 @@ export default class Primitives {
     for(let i=0; i<_currentTargetGroup.children.length; i++) {
       const mesh = _currentTargetGroup.children[i]
 
+      if (this.params.isRunning) {
+        mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, (0.5 + Math.sin(performance.now() / mesh.userData.speed)) * 0.8, 0.5)
+      }
+
       mesh.material.uniforms.uTime.value = performance.now() / 1000
       let val = mesh.material.uniforms.uProgress.value
 
       if (mesh.userData.isCompleted) {
-        if (val >= 0 && val < 1.0) {
-          mesh.material.uniforms.uProgress.value = this.clock.getElapsedTime() * mesh.userData.speed
-        }
+        mesh.material.uniforms.uProgress.value =
+            THREE.MathUtils.lerp(val, (0.5 + Math.sin(performance.now() / mesh.userData.speed)) * 0.5, 0.5)
       }
     }
-
-
   }
 }

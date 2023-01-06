@@ -88,8 +88,14 @@ export default class CameraTarget {
     if (this.params.index > 0 && this.params.index < 6) {
       arr.push(this.targetGroups[this.params.index-1])
       arr.push(this.targetGroups[this.params.index+1])
-      this.hide(arr)
     }
+    else if (this.params.index === 0) {
+      arr.push(this.targetGroups[this.params.index+1])
+    }
+    else if (this.params.index === 6) {
+      arr.push(this.targetGroups[this.params.index-1])
+    }
+    this.hide(arr)
   }
   onScrollDown = () => {
     if(this.params.index > 0) {
@@ -120,8 +126,14 @@ export default class CameraTarget {
     if (this.params.index > 0 && this.params.index < 6) {
       arr.push(this.targetGroups[this.params.index-1])
       arr.push(this.targetGroups[this.params.index+1])
-      this.hide(arr)
     }
+    else if (this.params.index === 0) {
+      arr.push(this.targetGroups[this.params.index+1])
+    }
+    else if (this.params.index === 6) {
+      arr.push(this.targetGroups[this.params.index-1])
+    }
+    this.hide(arr)
   }
   show = () => {
     // play animation for primitives and models

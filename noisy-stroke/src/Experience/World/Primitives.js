@@ -37,7 +37,6 @@ export default class Primitives {
     this.groupMesh.name = 'Primitivies'
     this.groupMesh.position.y = this.params.targetGroupY
 
-    console.log(this.geometries)
     for(let i=0; i<this.params.count; i++) {
       // const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const geo = this.geometries[Math.floor(Math.random()*this.geometries.length)];

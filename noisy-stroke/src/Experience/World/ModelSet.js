@@ -160,7 +160,7 @@ export default class ModelSet {
 
       model.traverse(child => {
         if (child.material) {
-          child.material.uniforms.uTime.value = performance.now() / 1000
+          child.material.uniforms.uTime.value = performance.now() / 1200
 
           let val = child.material.uniforms.uProgress.value
 

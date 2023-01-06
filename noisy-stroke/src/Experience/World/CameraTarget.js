@@ -24,10 +24,11 @@ export default class CameraTarget {
     this.params = {
       count: 100,
       loopTime: 10,
-      index: 0,
+      index: 1,
       pathProgress: 0,
       targetGroupY: -10,
     }
+    this.ready = false
 
     this.setTargets()
 
@@ -48,7 +49,7 @@ export default class CameraTarget {
       targetGroup.add(this.primitiveGroup)
       targetGroup.add(this.modelGroup)
       targetGroup.name = 'targetGroups_'+i
-      const xFactor = THREE.MathUtils.randFloat(-2, 2)
+      const xFactor = THREE.MathUtils.randFloat(-4, 4)
       targetGroup.position.set(vec.x + xFactor, vec.y, vec.z)
 
       this.scene.add(targetGroup)
@@ -56,7 +57,7 @@ export default class CameraTarget {
     }
 
     // init: start at 1 and ignore 0
-    this.currentTargetGroup = this.targetGroups[0]
+    this.currentTargetGroup = this.targetGroups[1]
   }
   onScrollUp = () => {
     if(this.params.index < this.targetGroups.length-1) {
@@ -124,15 +125,15 @@ export default class CameraTarget {
   }
   show = () => {
     // play animation for primitives and models
-    console.log('show: ', this.currentTargetGroup)
     this.primitives.show(this.currentTargetGroup.children[0])
-    this.modelSet.show(this.currentTargetGroup.children[1])
+    // this.modelSet.show(this.currentTargetGroup.children[1])
   }
   hide = (arr) => {
+    console.log('hide: ', arr)
     // play animation for primitives and models
     arr.forEach(tg => {
       this.primitives.hide(tg.children)
-      this.modelSet.hide(tg.children)
+      // this.modelSet.hide(tg.children)
     })
   }
   /*setTargets = () => {
@@ -162,7 +163,7 @@ export default class CameraTarget {
   update = () => {
     if(this.currentTargetGroup) {
       this.primitives.update(this.currentTargetGroup.children[0])
-      this.modelSet.update(this.currentTargetGroup.children[1])
+      // this.modelSet.update(this.currentTargetGroup.children[1])
     }
   }
 }

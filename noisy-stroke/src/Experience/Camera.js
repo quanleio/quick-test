@@ -36,7 +36,7 @@ export default class Camera {
     this.makePath()
     this.transformCamera()
 
-    window.addEventListener('wheel', this.onScrollHandler, false)
+    window.addEventListener(EVT.ON_WHEEL, this.onScrollHandler, false)
   }
   setInstance() {
     this.instance = new THREE.PerspectiveCamera(
@@ -52,10 +52,10 @@ export default class Camera {
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enabled = true
-    // this.controls.autoRotate = false
-    // this.controls.enableDamping = true
-    // this.controls.enableZoom = false
-    // this.controls.enablePan = false
+    this.controls.autoRotate = false
+    this.controls.enableDamping = true
+    this.controls.enableZoom = false
+    this.controls.enablePan = false
   }
   makePath = () => {
     this.cameraTarget = new THREE.Object3D()

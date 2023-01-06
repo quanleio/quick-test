@@ -37,8 +37,10 @@ export default class Primitives {
     this.groupMesh.name = 'Primitivies'
     this.groupMesh.position.y = this.params.targetGroupY
 
+    console.log(this.geometries)
     for(let i=0; i<this.params.count; i++) {
-      const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
+      // const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
+      const geo = this.geometries[Math.floor(Math.random()*this.geometries.length)];
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
 
       let xPos = THREE.MathUtils.randFloat(-2, 2);
@@ -149,7 +151,7 @@ export default class Primitives {
         mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, (0.5 + Math.sin(performance.now() / mesh.userData.speed)) * 0.8, 0.5)
       }
 
-      mesh.material.uniforms.uTime.value = performance.now() / 1000
+      mesh.material.uniforms.uTime.value = performance.now() / 1200
       let val = mesh.material.uniforms.uProgress.value
 
       if (mesh.userData.isCompleted) {

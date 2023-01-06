@@ -16,7 +16,6 @@ export default class World {
       this.noisyStroke = new NoisyStroke()
       const noiseMaterial = this.noisyStroke.material
 
-      // this.modelSet = new ModelSet(this.noisyStroke.material)
       this.target = new CameraTarget(points, noiseMaterial)
     })
   }

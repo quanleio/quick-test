@@ -49,7 +49,7 @@ export default class ModelSet {
           z: model.rotation.z,
         },
         isCompleted: false,
-        speed: Math.random() + randFloat(800, 2000),
+        speed: Math.random() + randFloat(1000, 2000),
       }
 
       this.groupModel.add(model)

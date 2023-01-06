@@ -24,66 +24,39 @@ export default class CameraTarget {
     this.params = {
       count: 100,
       loopTime: 10,
-      index: 1,
+      index: 0,
       pathProgress: 0,
       targetGroupY: -10,
     }
 
     this.setTargets()
 
-    window.addEventListener(EVT.CAMERA_ANIMATE_COMPLETED, this.showFirstGroup, false)
+    window.addEventListener(EVT.CAMERA_ANIMATE_COMPLETED, this.show, false)
     window.addEventListener(EVT.SCROLL_UP, this.onScrollUp, false)
     window.addEventListener(EVT.SCROLL_DOWN, this.onScrollDown, false)
   }
-  /*setTargets = () => {
+  setTargets = () => {
     for(let i=0; i<this.totalPoints.length; i+=15) {
       const vec = this.totalPoints[i]
 
-      // 1 targetGroup: 5 random primitives + 2 models
+      // shapes + models
       const targetGroup = new THREE.Object3D()
-      this.primitiveGroup = this.getPrimitives()
-      targetGroup.add(this.primitiveGroup)
 
-      // const targetGroup = this.getPrimitives() // this is object3D
+      this.primitiveGroup = this.getPrimitives()
       this.modelGroup = this.getModels()
-      // models.children.forEach(md => targetGroup.children.push(md))
+
+      targetGroup.add(this.primitiveGroup)
       targetGroup.add(this.modelGroup)
       targetGroup.name = 'targetGroups_'+i
+      const xFactor = THREE.MathUtils.randFloat(-2, 2)
+      targetGroup.position.set(vec.x + xFactor, vec.y, vec.z)
 
-      const xFactor = THREE.MathUtils.randFloat(-4, 4)
-      targetGroup.position.set(vec.x+xFactor, this.params.targetGroupY, vec.z)
       this.scene.add(targetGroup)
       this.targetGroups.push(targetGroup)
     }
 
-    // init
-    this.currentTargetGroup = this.targetGroups[this.params.index]
-    // console.log(this.currentTargetGroup.children)
-  }*/
-  setTargets = () => {
-    this.primitiveGroup = this.getPrimitives()
-    this.primitiveGroup.position.z = -15
-
-    this.modelGroup = this.getModels()
-    this.modelGroup.position.z =-15
-
-    for(let i=0; i<this.totalPoints.length; i+=15) {
-      const vec = this.totalPoints[i]
-
-      const targetGroup = new THREE.Object3D()
-      targetGroup.children.push(this.primitiveGroup)
-      targetGroup.children.push(this.modelGroup)
-
-      targetGroup.name = 'targetGroups_'+i
-      const xFactor = THREE.MathUtils.randFloat(-4, 4)
-      targetGroup.position.set(vec.x+xFactor, this.params.targetGroupY, vec.z)
-      this.scene.add(targetGroup)
-      this.targetGroups.push(targetGroup)
-    }
-
-    // init
-    this.currentTargetGroup = this.targetGroups[this.params.index]
-    console.log('this.currentTargetGroup: ', this.currentTargetGroup)
+    // init: start at 1 and ignore 0
+    this.currentTargetGroup = this.targetGroups[0]
   }
   /*setTargets = () => {
     this.primitiveGroup = this.getPrimitives()
@@ -116,6 +89,7 @@ export default class CameraTarget {
     }
     console.log('scrolling up: ', this.params.index);
 
+    // animate camera
     gsap.to(this.params, {
       pathProgress: this.params.loopTime * (this.params.index * 15 / this.totalPoints.length) - 1.0,
       duration: 2.2,
@@ -131,13 +105,13 @@ export default class CameraTarget {
 
     // animate target groups
     this.currentTargetGroup = this.targetGroups[this.params.index]
-    this.primitives.show(this.currentTargetGroup)
+    this.show()
 
-    let arr = []
+    let arr = [] // contain targetGroup object
     if (this.params.index > 0 && this.params.index < 6) {
       arr.push(this.targetGroups[this.params.index-1])
       arr.push(this.targetGroups[this.params.index+1])
-      this.primitives.hide(arr)
+      this.hide(arr)
     }
   }
   onScrollDown = () => {
@@ -147,6 +121,7 @@ export default class CameraTarget {
     }
     console.log('scrolling down: ', this.params.index)
 
+    // animate camera
     gsap.to(this.params, {
       pathProgress: this.params.loopTime * (this.params.index * 15 / this.totalPoints.length) - 1.0,
       duration: 2.2,
@@ -162,24 +137,27 @@ export default class CameraTarget {
 
     // animate target groups
     this.currentTargetGroup = this.targetGroups[this.params.index]
-    this.primitives.show( this.currentTargetGroup )
+    this.show()
 
-    let arr = []
+    let arr = [] // contain targetGroup object
     if (this.params.index > 0 && this.params.index < 6) {
       arr.push(this.targetGroups[this.params.index-1])
       arr.push(this.targetGroups[this.params.index+1])
-      this.primitives.hide(arr)
+      this.hide(arr)
     }
   }
-  showFirstGroup = () => {
-    // this.primitives.show(this.currentTargetGroup)
-    this.primitives.show(this.primitiveGroup)
-    this.modelSet.show(this.modelGroup)
+  show = () => {
+    // play animation for primitives and models
+    console.log('show: ', this.currentTargetGroup)
+    this.primitives.show(this.currentTargetGroup.children[0])
+  }
+  hide = (arr) => {
+    // play animation for primitives and models
+    arr.forEach(tg => this.primitives.hide(tg.children))
   }
   update = () => {
     if(this.currentTargetGroup) {
-      // this.primitives.update(this.currentTargetGroup)
-      // this.primitives.update(this.primitiveGroup)
+      this.primitives.update(this.currentTargetGroup.children[0])
     }
   }
 }

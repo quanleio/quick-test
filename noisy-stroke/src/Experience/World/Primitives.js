@@ -11,6 +11,7 @@ import { randFloat} from 'three/src/math/MathUtils'
 export default class Primitives {
   constructor(_material) {
     this.experience = new Experience()
+    this.scene = this.experience.scene
     this.controls = this.experience.camera.controls
     this.clock = new THREE.Clock()
     this.noiseMaterial = _material
@@ -34,12 +35,13 @@ export default class Primitives {
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
     this.groupMesh.name = 'Primitivies'
+    this.groupMesh.position.y = this.params.targetGroupY
 
     for(let i=0; i<this.params.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
 
-      let xPos = THREE.MathUtils.randFloat(-4, 6);
+      let xPos = THREE.MathUtils.randFloat(-2, 2);
       let yPos = THREE.MathUtils.randFloat(-2, 4);
       let zPos = THREE.MathUtils.randFloat(-3, 1);
       mesh.position.set(xPos, yPos, zPos)
@@ -63,7 +65,6 @@ export default class Primitives {
     return this.groupMesh.clone()
   }
   show = (_group) => {
-    console.log('show: ', _group)
     const tl = gsap.timeline()
 
     tl.to(_group.position, {
@@ -74,19 +75,24 @@ export default class Primitives {
     for(let i=0; i<_group.children.length; i++) {
       let mesh = _group.children[i]
 
-      gsap.to(mesh.position, {
-        duration: 2.0,
-        y: THREE.MathUtils.randFloat(-2, 2),
-        ease: "back.inOut(4)",
-        onComplete: () => mesh.userData.isCompleted = true
-      })
+      // gsap.to(mesh.position, {
+      //   duration: 2.0,
+      //   y: THREE.MathUtils.randFloat(-2, 2),
+      //   ease: "back.inOut(4)",
+      //   onComplete: () => {
+      //     mesh.userData.isCompleted = true
+      //   }
+      // })
       const scaleFactor = THREE.MathUtils.randFloat(.3, 1.3)
       gsap.to(mesh.scale, {
         duration: 2.0,
         x: scaleFactor,
         y: scaleFactor,
         z: scaleFactor,
-        ease: "Expo.easeOut"
+        ease: "Expo.easeOut",
+        onComplete: () => {
+          mesh.userData.isCompleted = true
+        }
       })
       gsap.to(mesh.rotation, {
           duration: 3.5,
@@ -113,17 +119,19 @@ export default class Primitives {
       for(let i=0; i<group.children.length; i++) {
         let mesh = group.children[i]
 
-        gsap.to(mesh.position, {
-          duration: 1.0,
-          y: THREE.MathUtils.randFloat(-2, 2),
-          ease: "back.inOut(4)",
-          onComplete: () => mesh.userData.isCompleted = false
-        })
+        // gsap.to(mesh.position, {
+        //   duration: 1.0,
+        //   y: THREE.MathUtils.randFloat(-2, 2),
+        //   ease: "back.inOut(4)",
+        //   onComplete: () => mesh.userData.isCompleted = false
+        // })
         gsap.to(mesh.scale, {
+          duration: 2.0,
           x: 0,
           y: 0,
           z: 0,
-          ease: "Expo.easeOut"
+          ease: "Expo.easeOut",
+          onComplete: () => mesh.userData.isCompleted = false
         })
         gsap.to(mesh.rotation, {
             duration: 3.5,

@@ -5,6 +5,7 @@ const path = require('path');
 module.exports = {
   mode: "development",
   name: "noisy-stroke",
+  devtool: 'eval-source-map',
   entry: {
     app: ["./src/index.js"],
   },

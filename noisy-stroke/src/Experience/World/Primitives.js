@@ -20,7 +20,6 @@ export default class Primitives {
     this.params = {
       count: 5,
       targetGroupY: -10,
-      delta: 0,
       isRunning: false
     }
 
@@ -34,13 +33,14 @@ export default class Primitives {
   }
   setObjects = () => {
     this.groupMesh = new THREE.Object3D()
-    this.groupMesh.position.y = this.params.targetGroupY
+    this.groupMesh.name = 'Primitivies'
+
     for(let i=0; i<this.params.count; i++) {
       const geo = this.geometries[Math.floor(Math.random() * 3 + 1)]
       const mesh = this.getMesh(geo.geometry, this.noiseMaterial.clone())
 
-      let xPos = THREE.MathUtils.randFloat(-2, 1);
-      let yPos = THREE.MathUtils.randFloat(-1, 1);
+      let xPos = THREE.MathUtils.randFloat(-4, 6);
+      let yPos = THREE.MathUtils.randFloat(-2, 4);
       let zPos = THREE.MathUtils.randFloat(-3, 1);
       mesh.position.set(xPos, yPos, zPos)
       mesh.rotation.set(geo.rotationX, geo.rotationY, geo.rotationZ)
@@ -63,6 +63,7 @@ export default class Primitives {
     return this.groupMesh.clone()
   }
   show = (_group) => {
+    console.log('show: ', _group)
     const tl = gsap.timeline()
 
     tl.to(_group.position, {
@@ -74,13 +75,14 @@ export default class Primitives {
       let mesh = _group.children[i]
 
       gsap.to(mesh.position, {
-        duration: 1.0,
+        duration: 2.0,
         y: THREE.MathUtils.randFloat(-2, 2),
         ease: "back.inOut(4)",
         onComplete: () => mesh.userData.isCompleted = true
       })
       const scaleFactor = THREE.MathUtils.randFloat(.3, 1.3)
       gsap.to(mesh.scale, {
+        duration: 2.0,
         x: scaleFactor,
         y: scaleFactor,
         z: scaleFactor,
@@ -134,19 +136,6 @@ export default class Primitives {
     }
   }
   update = (_currentTargetGroup) => {
-    /*for(let i=0; i<this.meshes.length; i++) {
-      let mesh = this.meshes[i]
-
-      mesh.material.uniforms.uTime.value = performance.now() / 1000
-      let val = mesh.material.uniforms.uProgress.value
-
-      if (this.isCompleted) {
-        if (val >= 0 && val < 1.0) {
-          mesh.material.uniforms.uProgress.value = this.clock.getElapsedTime() * mesh.speed // random speed for each mesh
-        }
-      } else mesh.material.uniforms.uProgress.value = 0
-    }*/
-
     for(let i=0; i<_currentTargetGroup.children.length; i++) {
       const mesh = _currentTargetGroup.children[i]
 

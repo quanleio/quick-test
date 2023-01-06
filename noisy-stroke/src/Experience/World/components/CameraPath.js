@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../Experience'
 import gsap from "gsap"
+import { EVT } from '../../utils/contains';
 
 export default class CameraPath {
   constructor(_primitives) {
@@ -8,7 +9,7 @@ export default class CameraPath {
     this.scene = this.experience.scene
     this.camera = this.experience.camera.instance
     this.controls = this.experience.camera.controls
-    this.primitives = _primitives
+    // this.primitives = _primitives
 
     this.totalPoints = []
     this.targetGroups = []
@@ -16,6 +17,8 @@ export default class CameraPath {
     this.isGoingUp = false
     this.isGoingDown = false
     this.currentTargetGroup = null
+    this.cameraTarget = new THREE.Object3D()
+    this.lookTarget = new THREE.Object3D()
     this.params = {
       count: 100,
       loopTime: 10,
@@ -35,9 +38,9 @@ export default class CameraPath {
       }
     }
 
-    this.makePath()
-    this.setCameraTarget()
-    this.transformCamera()
+    // this.makePath()
+    // this.setCameraTarget()
+    // this.transformCamera()
 
     window.addEventListener('wheel', this.onScrollHandler, false)
   }
@@ -82,17 +85,16 @@ export default class CameraPath {
         this.controls.enabled = false
       }
     })
+
     // show first target group
-    this.primitives.show(this.currentTargetGroup)
+    window.dispatchEvent(new Event(EVT.CAMERA_ANIMATE_COMPLETED))
+    // this.primitives.show(this.currentTargetGroup)
   }
-  setCameraTarget = ()=> {
+  /*setCameraTarget = ()=> {
     this.cameraTarget = new THREE.Object3D()
     this.lookTarget = new THREE.Object3D()
 
-    // this.totalPoints = this.totalPoints.slice(15, this.totalPoints.length)
-    // for(let i=0; i<this.totalPoints.length; i+=15) {
     for(let i=0; i<this.totalPoints.length; i+=15) {
-    // for(let i=10; i<this.totalPoints.length; i+=15) { // go back in z-index to 10 unit
       const vec = this.totalPoints[i]
 
       const targetGroup = this.primitives.makeClone()
@@ -104,10 +106,9 @@ export default class CameraPath {
       this.targetGroups.push(targetGroup)
     }
 
-    console.log(this.targetGroups)
     // init
     this.currentTargetGroup = this.targetGroups[this.params.index]
-  }
+  }*/
   onScrollHandler = (event) => {
     // event.preventDefault()
 
@@ -148,10 +149,8 @@ export default class CameraPath {
         arr.push(this.targetGroups[this.params.index+1])
         this.primitives.hide(arr)
       }
-
     }
     else if (event.deltaY >=1 )  {
-      console.log(event.deltaY)
       this.animating = true
 
       if(this.params.index > 0) {

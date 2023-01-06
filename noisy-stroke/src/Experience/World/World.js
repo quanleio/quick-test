@@ -1,27 +1,26 @@
 import Experience from "../Experience.js"
 import NoisyStroke from './NoisyStroke';
-import ModelSet from './components/ModelSet';
-import CameraPath from './CameraPath';
-import Primitives from './Primitives';
+import CameraTarget from './CameraTarget';
 
 export default class World {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
-    this.debug = this.experience.debug
+    this.camera = this.experience.camera
     this.resources = this.experience.resources
+
+    const points = this.camera.points
 
     // Wait for resources
     this.resources.on("ready", () => {
       this.noisyStroke = new NoisyStroke()
+      const noiseMaterial = this.noisyStroke.material
 
-      this.primitives = new Primitives(this.noisyStroke.material)
-      this.cameraPath = new CameraPath(this.primitives)
       // this.modelSet = new ModelSet(this.noisyStroke.material)
+      this.target = new CameraTarget(points, noiseMaterial)
     })
   }
   update() {
-    if (this.cameraPath) this.cameraPath.update()
-    // if (this.modelSet) this.modelSet.update()
+    if (this.target) this.target.update()
   }
 }

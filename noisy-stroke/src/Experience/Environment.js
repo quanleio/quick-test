@@ -10,7 +10,7 @@ export default class Environment {
 
     this.params = {
       helper: true,
-      ambientColor: 0xB6CAED,
+      ambientColor: 0xff7f80, //0xB6CAED,
       directionalColor: 0x111111,
       fogColor: 0xeeeeee, //0x007f7f,
       fogNear: 6,

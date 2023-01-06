@@ -58,30 +58,6 @@ export default class CameraTarget {
     // init: start at 1 and ignore 0
     this.currentTargetGroup = this.targetGroups[0]
   }
-  /*setTargets = () => {
-    this.primitiveGroup = this.getPrimitives()
-    this.primitiveGroup.position.z = -15
-
-    for(let i=0; i<this.totalPoints.length; i+=15) {
-      const vec = this.totalPoints[i]
-
-      const targetGroup = this.primitives.makeClone()
-      targetGroup.name = 'targetGroups_'+i
-      const xFactor = THREE.MathUtils.randFloat(-4, 4)
-      targetGroup.position.set(vec.x+xFactor, this.params.targetGroupY, vec.z)
-      this.scene.add(targetGroup)
-      this.targetGroups.push(targetGroup)
-    }
-
-    // init
-    this.currentTargetGroup = this.targetGroups[this.params.index]
-  }*/
-  getPrimitives = () => {
-    return this.primitives.makeClone()
-  }
-  getModels = () => {
-    return this.modelSet.makeClone()
-  }
   onScrollUp = () => {
     if(this.params.index < this.targetGroups.length-1) {
       this.params.index++
@@ -150,14 +126,43 @@ export default class CameraTarget {
     // play animation for primitives and models
     console.log('show: ', this.currentTargetGroup)
     this.primitives.show(this.currentTargetGroup.children[0])
+    this.modelSet.show(this.currentTargetGroup.children[1])
   }
   hide = (arr) => {
     // play animation for primitives and models
-    arr.forEach(tg => this.primitives.hide(tg.children))
+    arr.forEach(tg => {
+      this.primitives.hide(tg.children)
+      this.modelSet.hide(tg.children)
+    })
+  }
+  /*setTargets = () => {
+    this.primitiveGroup = this.getPrimitives()
+    this.primitiveGroup.position.z = -15
+
+    for(let i=0; i<this.totalPoints.length; i+=15) {
+      const vec = this.totalPoints[i]
+
+      const targetGroup = this.primitives.makeClone()
+      targetGroup.name = 'targetGroups_'+i
+      const xFactor = THREE.MathUtils.randFloat(-4, 4)
+      targetGroup.position.set(vec.x+xFactor, this.params.targetGroupY, vec.z)
+      this.scene.add(targetGroup)
+      this.targetGroups.push(targetGroup)
+    }
+
+    // init
+    this.currentTargetGroup = this.targetGroups[this.params.index]
+  }*/
+  getPrimitives = () => {
+    return this.primitives.makeClone()
+  }
+  getModels = () => {
+    return this.modelSet.makeClone()
   }
   update = () => {
     if(this.currentTargetGroup) {
       this.primitives.update(this.currentTargetGroup.children[0])
+      this.modelSet.update(this.currentTargetGroup.children[1])
     }
   }
 }

@@ -55,7 +55,7 @@ export default class Primitives {
           z: mesh.rotation.z,
         },
         isCompleted: false,
-        speed: Math.random() + randFloat(800, 1200), // Math.random()/3,
+        speed: Math.random() + randFloat(1000, 1500),
       }
       this.groupMesh.add(mesh)
       this.meshes.push(mesh)
@@ -90,9 +90,7 @@ export default class Primitives {
         y: scaleFactor,
         z: scaleFactor,
         ease: "Expo.easeOut",
-        onComplete: () => {
-          mesh.userData.isCompleted = true
-        }
+        onComplete: () => mesh.userData.isCompleted = true
       })
       gsap.to(mesh.rotation, {
           duration: 3.5,
@@ -113,7 +111,7 @@ export default class Primitives {
 
       tl.to(group.position, {
         duration: 1.2,
-        y: -10,
+        y: this.params.targetGroupY,
         ease: "back.inOut(0.7)",
       })
       for(let i=0; i<group.children.length; i++) {

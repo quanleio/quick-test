@@ -15,7 +15,7 @@ export default class Environment {
     });
   }
   addLights = () => {
-    const light1 = new THREE.AmbientLight(0xffffff, 0.3)
+    const light1 = new THREE.AmbientLight(0xffffff, 0.8)
     this.scene.add(light1)
 
     // const light2 = new THREE.DirectionalLight(0xffffff, 0.5)

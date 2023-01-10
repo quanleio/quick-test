@@ -13,5 +13,6 @@
 ## References:
 - [THREE.extendMaterial](https://discourse.threejs.org/t/customdepthmaterial-vertex-shader/45838)
 - [THREE.extendMaterial demo](https://codepen.io/Fyrestar/pen/YzvmLaO)
+- [glsl-rotation-2d](https://gist.github.com/yiwenl/3f804e80d0930e34a0b33359259b556c)
 - Tutorials:
     - [Yuri Artiukh](https://youtu.be/frgmk0Wu76A)

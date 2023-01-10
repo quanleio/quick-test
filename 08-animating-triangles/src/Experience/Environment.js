@@ -18,17 +18,13 @@ export default class Environment {
     const light1 = new THREE.AmbientLight(0xffffff, 0.8)
     this.scene.add(light1)
 
-    // const light2 = new THREE.DirectionalLight(0xffffff, 0.5)
-    // light2.position.set(0.5, 0, 0.866)
-    // this.scene.add(light2)
-
     const light = new THREE.SpotLight(0xffffff, 3, 10, Math.PI/3, 0.3)
     light.position.set(0, 2, 2)
     light.target.position.set(0, 0, 0)
 
     light.castShadow = true
     light.shadow.camera.near = 0.1
-    light.shadow.camera.far = 9
+    light.shadow.camera.far = 2
     light.shadow.bias = 0.0001
     light.shadow.mapSize.width = 2048
     light.shadow.mapSize.height = 2048

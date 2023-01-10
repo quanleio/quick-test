@@ -1,9 +1,6 @@
 uniform float uTime;
-uniform sampler2D texture;
-
 varying vec2 vUv;
 varying vec2 vPosition;
-
 attribute float aRandom;
 
 void main() {

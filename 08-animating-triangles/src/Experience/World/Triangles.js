@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import Experience from '../Experience'
-import vertexShader from '../../shaders/temp.vert'
-import fragmentShader from '../../shaders/temp.frag'
-// import { extendMaterial } from './ExtendMaterial.module';
-import { ExtendedMaterial } from "three-extended-material"
+// import vertexShader from '../../shaders/triangle.vert'
+// import fragmentShader from '../../shaders/triangle.frag'
+import { extendMaterial, CustomMaterial } from './ExtendMaterial';
+// extendMaterial: https://codepen.io/Fyrestar/pen/YzvmLaO
+// https://discourse.threejs.org/t/customdepthmaterial-vertex-shader/45838
 
 export default class Triangles {
   constructor() {
@@ -12,10 +13,14 @@ export default class Triangles {
     this.resources = this.experience.resources
     this.debug = this.experience.debug
 
+    this.params = {
+      progress: 0
+    }
+
+    this.addFloor()
     this.setObject()
   }
-  setObject = () => {
-    //
+  addFloor = () => {
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(15, 15, 100, 100),
         new THREE.MeshStandardMaterial({
@@ -28,7 +33,8 @@ export default class Triangles {
     floor.castShadow = false
     floor.receiveShadow = true
     this.scene.add(floor)
-
+  }
+  setObject = () => {
     //
     /*this.material = new THREE.ShaderMaterial({
       uniforms:  {
@@ -39,57 +45,32 @@ export default class Triangles {
       side: THREE.DoubleSide,
     })*/
 
-    const triangleExtension = {
-      name: "triangle",
-      uniforms:  {
-        uTime: { value: 0 },
-        progress: { value: 0 },
-      },
-      vertexShader: (shader) => {
-        shader = /*glsl*/ `
+    this.material2 = extendMaterial( THREE.MeshStandardMaterial, {
+      class: CustomMaterial,
+      vertexHeader: `
+        attribute float aRandom;
         uniform float uTime;
         uniform float progress;
-        uniform sampler2D texture;
-        
-        varying vec2 vUv;
-        varying vec2 vPosition;
-        
-        attribute float aRandom;
-      ${shader.replace(
-            "#include <project_vertex>",
-            /*glsl*/ `
-         #include <project_vertex>
-        vUv = uv;
-        vec3 pos = position;
-        pos += progress*aRandom * (0.5*sin(uTime)+0.5) * normal;
-        gl_Position = projectionMatrix *  modelViewMatrix * vec4( pos, 1.);
+      `,
+      vertex: {
+        transformEnd: `
+          transformed += progress*aRandom*(0.5*sin(uTime)+0.5) * normal;
         `
-        )}
-    `;
-        return shader;
       },
-      fragmentShader: (shader) => {
-        shader = `
-        uniform float uTime;
-        uniform sampler2D positionTexture;
-        uniform vec4 resolution;
-        varying vec2 vUv;
-        varying vec2 vPosition;
-      ${shader.replace(
-            "#include <output_fragment>",
-            /*glsl*/ `
-        gl_FragColor = vec4(vUv, 0.0, 1.0);
-        #include <output_fragment>
-        `
-        )}
-    `;
-        return shader;
-      },
-    };
-    this.material2 = new ExtendedMaterial(THREE.MeshStandardMaterial,[triangleExtension],
-        {
-          side: THREE.DoubleSide
-        })
+      uniforms: {
+        roughness: 0.75,
+        uTime: {
+          mixed: true,
+          linked: true,
+          value: 0
+        },
+        progress: {
+          mixed: true,
+          linked: true,
+          value: 0.5
+        }
+      }
+    });
 
     //
     // this.geometry = new THREE.IcosahedronGeometry(1, 3)
@@ -107,26 +88,20 @@ export default class Triangles {
 
     //
     const plane = new THREE.Mesh(this.geometry, this.material2)
-    // plane.customDepthMaterial = new ExtendedMaterial( THREE.MeshDepthMaterial, {
-    //   template: this.material2
-    // });
     plane.castShadow = plane.receiveShadow = true
-
+    plane.customDepthMaterial = extendMaterial( THREE.MeshDepthMaterial, {
+      template: this.material2
+    } );
     this.scene.add(plane)
 
-    //
+    // debug
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder('Triangle')
-      const debugObject = {
-        'progress': 0.5,
-      };
-      this.debugFolder.add(debugObject, "progress", 0, 1, 0.01).onChange(val => {
+      this.debug.ui.add(this.params, "progress", 0, 1, 0.01).onChange(val => {
         this.material2.uniforms.progress.value = val
       });
     }
   }
   update = () => {
     this.material2.uniforms.uTime.value = performance.now() / 1000
-    // this.material.uniforms.uTime.value = performance.now() / 1000
   }
 }

@@ -20,7 +20,7 @@ export default class Camera {
       0.001,
       1000
     )
-    this.instance.position.set(2, 1, 3);
+    this.instance.position.set(3, 3, 3);
     this.scene.add(this.instance)
   }
   setControls() {
@@ -28,7 +28,7 @@ export default class Camera {
     this.controls.enabled = true
     this.controls.autoRotate = false
 
-    if (this.debug.active) {
+    /*if (this.debug.active) {
       this.debugFolder = this.debug.ui.addFolder('Camera')
       const debugObject = {
         'Rotate': this.controls.autoRotate,
@@ -36,7 +36,7 @@ export default class Camera {
       this.debugFolder.add(debugObject, "Rotate").onChange(val => {
         this.controls.autoRotate = val
       });
-    }
+    }*/
   }
   resize() {
     this.instance.aspect = this.sizes.width / this.sizes.height

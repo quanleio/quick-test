@@ -4,8 +4,6 @@ import { randFloat} from 'three/src/math/MathUtils'
 import Experience from '../Experience'
 import { extendMaterial, CustomMaterial } from './ExtendMaterial';
 import {EVT} from '../../utils/contains';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
-import {map, radians} from '../../../../04-noisy-stroke/src/utils/utils';
 // extendMaterial: https://codepen.io/Fyrestar/pen/YzvmLaO
 // https://discourse.threejs.org/t/customdepthmaterial-vertex-shader/45838
 
@@ -308,20 +306,7 @@ export default class Statue {
       ease: "Quad.easeOut",
     })
   }
-  /*tween = (material) => {
-    let progress = material.uniforms.progress
-    const tween0 = new TWEEN.Tween(progress).to({ value: 0 })
-    .onComplete(() => {})
-    .easing( TWEEN.Easing.Quadratic.Out ).duration(3000);
-
-    const tween1 = new TWEEN.Tween(progress).to({ value: 1 })
-    .onComplete(() => {
-      tween0.start()
-    })
-    .easing( TWEEN.Easing.Quadratic.Out ).duration(3000).start();
-  }*/
   update = () => {
-    // TWEEN.update()
     // let val = this.dancerExMaterial.uniforms.progress.value // 0:show ~ 1:hide
     // if (val <= 1) {
     //   this.dancerExMaterial.uniforms.progress.value += 0.01

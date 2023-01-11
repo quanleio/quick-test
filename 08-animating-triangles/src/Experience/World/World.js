@@ -1,8 +1,5 @@
 import Experience from "../Experience.js"
-import Fox from './Fox';
-import Triangles from './Triangles';
-// import vertexShader from '../../shaders/temp.vert'
-// import fragmentShader from '../../shaders/temp.frag'
+import Statue from './Statue';
 
 export default class World {
   constructor() {
@@ -13,10 +10,10 @@ export default class World {
 
     // Wait for resources
     this.resources.on("ready", () => {
-      this.triangle = new Triangles()
+      this.statue = new Statue()
     })
   }
   update() {
-    if (this.triangle) this.triangle.update()
+    if (this.statue) this.statue.update()
   }
 }

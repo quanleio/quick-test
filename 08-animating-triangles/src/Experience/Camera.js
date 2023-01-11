@@ -15,20 +15,20 @@ export default class Camera {
   }
   setInstance() {
     this.instance = new THREE.PerspectiveCamera(
-      70,
+      40,
       this.sizes.width / this.sizes.height,
-      0.001,
+      0.01,
       1000
     )
-    this.instance.position.set(3, 3, 3);
+    this.instance.position.set(2, 2, 2);
     this.scene.add(this.instance)
   }
   setControls() {
     this.controls = new OrbitControls(this.instance, this.canvas)
     this.controls.enabled = true
-    this.controls.autoRotate = false
+    // this.controls.autoRotate = true
 
-    /*if (this.debug.active) {
+    if (this.debug.active) {
       this.debugFolder = this.debug.ui.addFolder('Camera')
       const debugObject = {
         'Rotate': this.controls.autoRotate,
@@ -36,7 +36,7 @@ export default class Camera {
       this.debugFolder.add(debugObject, "Rotate").onChange(val => {
         this.controls.autoRotate = val
       });
-    }*/
+    }
   }
   resize() {
     this.instance.aspect = this.sizes.width / this.sizes.height

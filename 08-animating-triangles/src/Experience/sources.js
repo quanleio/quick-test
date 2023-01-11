@@ -15,8 +15,8 @@ export default [
     path: "assets/models/figure_of_a_dancer.glb",
   },
   {
-    name: "monster",
+    name: "lucy",
     type: "gltfModel",
-    path: "assets/models/kneeling_winged_monster.glb",
+    path: "assets/models/lucy.glb",
   },
 ];

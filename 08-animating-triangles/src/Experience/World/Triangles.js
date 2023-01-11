@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 import Experience from '../Experience'
-// import vertexShader from '../../shaders/triangle.vert'
-// import fragmentShader from '../../shaders/triangle.frag'
 import { extendMaterial, CustomMaterial } from './ExtendMaterial';
 // extendMaterial: https://codepen.io/Fyrestar/pen/YzvmLaO
 // https://discourse.threejs.org/t/customdepthmaterial-vertex-shader/45838
@@ -23,14 +21,16 @@ export default class Triangles {
   }
   addFloor = () => {
     const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(15, 15, 100, 100),
-        new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          side: THREE.DoubleSide
+        new THREE.PlaneGeometry(2000, 2000),
+        new THREE.MeshPhongMaterial({
+          color: 0xe5e1d6, //0x808080
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 1
         })
     )
     floor.rotation.x = -Math.PI*0.5
-    floor.position.y = -2
+    floor.position.y = -0.95
     floor.castShadow = false
     floor.receiveShadow = true
     this.scene.add(floor)
@@ -103,7 +103,7 @@ export default class Triangles {
         }
       }
     });
-    this.material2.uniforms.diffuse.value = new THREE.Color(0xff0000)
+    this.material2.uniforms.diffuse.value = new THREE.Color(0xe5e1d6)
 
     //
     // this.geometry = new THREE.IcosahedronGeometry(1, 10).toNonIndexed()
@@ -111,7 +111,6 @@ export default class Triangles {
 
     // model
     this.model = this.resources.items.dancer.scene
-    this.model.scale.setScalar(2)
     this.scene.add(this.model)
 
     this.model.traverse(child => {

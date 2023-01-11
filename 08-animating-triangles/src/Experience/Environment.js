@@ -97,8 +97,7 @@ export default class Environment {
     setTimeout( this.animateLight, 3000)
   }
   setEnv = () => {
-    // this.scene.background = new THREE.Color(0xB2954D)
-    // this.scene.background = this.resources.items.sceneBg
+    this.scene.background = new THREE.Color(0xe5e1d6)
   }
   update = () => {
     TWEEN.update()

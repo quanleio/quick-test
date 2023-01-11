@@ -1,6 +1,11 @@
 import * as THREE from 'three'
+import { gsap } from 'gsap'
+import { randFloat} from 'three/src/math/MathUtils'
 import Experience from '../Experience'
 import { extendMaterial, CustomMaterial } from './ExtendMaterial';
+import {EVT} from '../../utils/contains';
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
+import {map, radians} from '../../../../04-noisy-stroke/src/utils/utils';
 // extendMaterial: https://codepen.io/Fyrestar/pen/YzvmLaO
 // https://discourse.threejs.org/t/customdepthmaterial-vertex-shader/45838
 
@@ -8,77 +13,116 @@ export default class Statue {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
+    this.camera = this.experience.camera.instance
     this.resources = this.experience.resources
     this.debug = this.experience.debug
 
+    this.currentObject = null
     this.params = {
       uTime: 0,
-      progress: 0
+      progress: 0,
+      isRunning: false,
+      isShow: false,
+      speed: Math.random() + randFloat(1200, 1500)
     }
 
     this.makeExtendMaterial()
     this.addFloor()
-    this.addObject()
+    this.addModels()
+
+    window.addEventListener(EVT.CAMERA_ANIMATE_COMPLETED, () => {
+      this.show(this.dancer, 1, 300.0)
+    })
+    window.addEventListener(EVT.OPEN_STATUE, this.onClickHandler)
+  }
+  onClickHandler = (e) => {
+    switch (e.detail) {
+      case 1:
+        this.hide(this.liberty)
+        this.show(this.dancer, 1, 300.0)
+        break;
+      case 2:
+        this.hide(this.dancer)
+        this.show(this.liberty, 1/20, 20)
+        break;
+    }
   }
   addFloor = () => {
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(2000, 2000),
-        new THREE.MeshPhongMaterial({
-          color: 0xe5e1d6, //0x808080
+        new THREE.MeshLambertMaterial({
+          color: 0xe5e1d6,
           side: THREE.DoubleSide,
           transparent: true,
           opacity: 1
         })
     )
-    floor.rotation.x = -Math.PI*0.5
-    floor.position.y = -0.95
     floor.castShadow = false
     floor.receiveShadow = true
-    this.scene.add(floor)
-  }
-  addObject = () => {
-    this.model = this.resources.items.dancer.scene
-    this.scene.add(this.model)
 
-    this.model.traverse(child => {
+    const floor2 = floor.clone()
+
+    floor.rotation.x = -Math.PI*0.5
+    floor.position.set(0, -0.95, 0)
+    floor2.position.set(0, 0, -100)
+    this.scene.add(floor, floor2)
+  }
+  addModels = () => {
+    this.dancer = this.resources.items.dancer.scene
+    this.dancer.scale.setScalar(1)
+    this.dancer.name = 'Dancer'
+    this.scene.add(this.dancer)
+
+    this.liberty = this.resources.items.liberty.scene
+    this.liberty.position.set(0, -2.75, 0)
+    this.liberty.rotation.set(0, Math.PI/180 * -90, 0)
+    this.liberty.scale.setScalar(0)
+    this.liberty.name = 'Liberty'
+    this.scene.add(this.liberty)
+
+    // dancer
+    this.dancer.traverse(child => {
       child.castShadow = true
 
       if (child.material) {
-        child.material = this.exMaterial
+        child.material = this.dancerExMaterial
         child.customDepthMaterial = extendMaterial( THREE.MeshDepthMaterial, {
-          template: this.exMaterial
+          template: this.dancerExMaterial
         });
       }
 
-      if (child.geometry) this.setGeometry(child)
+      if (child.geometry) {
+        this.setGeometry(child);
+      }
     })
 
-    //
-    // const plane = new THREE.Mesh(this.geometry, this.exMaterial)
-    // plane.castShadow = plane.receiveShadow = true
-    // plane.customDepthMaterial = extendMaterial( THREE.MeshDepthMaterial, {
-    //   template: this.exMaterial
-    // });
-    // this.exMaterial.uniforms.diffuse.value = new THREE.Color(0xff0000)
-    // this.scene.add(plane)
+    // liberty
+    this.liberty.traverse(child => {
+      child.castShadow = true
+
+      if (child.material) {
+        child.material = this.libertyExMaterial
+        child.customDepthMaterial = extendMaterial( THREE.MeshDepthMaterial, {
+          template: this.libertyExMaterial
+        });
+      }
+
+      if (child.geometry) {
+        this.setGeometry(child);
+      }
+    })
+
+    this.currentObject = this.dancer
   }
   makeExtendMaterial = () => {
-    /*this.exMaterial = new THREE.ShaderMaterial({
-      uniforms:  {
-        uTime: { value: 0 },
-      },
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      side: THREE.DoubleSide,
-    })*/
-
-    this.exMaterial = extendMaterial( THREE.MeshStandardMaterial, {
+    const exMaterial = extendMaterial( THREE.MeshStandardMaterial, {
       class: CustomMaterial,
       vertexHeader: `
         attribute float aRandom;
         attribute vec3 aCenter;
         uniform float uTime;
         uniform float progress;
+        uniform float uScale;
         
         mat4 rotationMatrix(vec3 axis, float angle) {
           axis = normalize(axis);
@@ -106,13 +150,13 @@ export default class Statue {
           locprog = progress;
         
           transformed = transformed-aCenter; // normalize
-          transformed += 600.0*normal*aRandom*(locprog);
+          transformed += uScale*normal*aRandom*(locprog);
           
           transformed *= (1.0 - locprog); // scale
           
           transformed += aCenter; // bring back
           
-          transformed = rotate(transformed, vec3(0.0, 1.0, 0.0), aRandom*(locprog)*3.14*4.0); // rotate
+          transformed = rotate(transformed, vec3(0.0, 1.0, 0.0), aRandom*(locprog)*3.14*3.0); // rotate
         `
       },
       uniforms: {
@@ -126,17 +170,26 @@ export default class Statue {
           mixed: true,
           linked: true,
           value: this.params.progress
+        },
+        uScale: {
+          mixed: true,
+          linked: true,
+          value: 0.0
         }
       }
     });
-    this.exMaterial.uniforms.diffuse.value = new THREE.Color(0xe5e1d6)
+    exMaterial.uniforms.diffuse.value = new THREE.Color(0xe5e1d6)
 
     // debug
     if (this.debug.active) {
       this.debug.ui.add(this.params, "progress", 0, 1, 0.01).onChange(val => {
-        this.exMaterial.uniforms.progress.value = val
+        exMaterial.uniforms.progress.value = val
       });
     }
+
+    //
+    this.dancerExMaterial = exMaterial.clone()
+    this.libertyExMaterial = exMaterial.clone()
   }
   setGeometry = (object) => {
     object.geometry = object.geometry.toNonIndexed()
@@ -175,7 +228,103 @@ export default class Statue {
     geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1))
     geometry.setAttribute('aCenter', new THREE.BufferAttribute(centers, 3))
   }
+  show = (object, scaleFactor, uScale) => {
+    const tl = gsap.timeline()
+    tl.to(object.scale, {
+      duration: 2.0,
+      x: scaleFactor,
+      y: scaleFactor,
+      z: scaleFactor,
+      ease: "Expo.easeOut",
+      onComplete: () => {
+        if (object.name === 'Dancer') {
+          this.currentObject = this.dancer
+
+          this.dancerExMaterial.uniforms.uScale.value = uScale
+          this.animate(this.dancerExMaterial)
+        }
+        if (object.name === 'Liberty') {
+          this.currentObject = this.liberty
+
+          this.libertyExMaterial.uniforms.uScale.value = uScale
+          this.animate(this.libertyExMaterial)
+        }
+      }
+    })
+  }
+  hide = (object) => {
+    const tl = gsap.timeline()
+    tl.to(object.scale, {
+      duration: 1.0,
+      x: 0,
+      y: 0,
+      z: 0,
+      ease: "Expo.easeOut",
+      onComplete: () => {
+        // if (object.name === 'Dancer') {
+        //   this.currentObject = this.dancer
+        //
+        //   this.dancerExMaterial.uniforms.uScale.value = uScale
+        //   this.animate(this.dancerExMaterial)
+        // }
+        // if (object.name === 'Liberty') {
+        //   this.currentObject = this.liberty
+        //
+        //   this.libertyExMaterial.uniforms.uScale.value = uScale
+        //   this.animate(this.libertyExMaterial)
+        // }
+      }
+    })
+  }
+  animate = (material) => {
+    let progress = material.uniforms.progress
+
+    const material_tl = gsap.timeline({yoyo: true})
+    const camera_tl = gsap.timeline()
+
+    material_tl.to(progress, {
+      duration: 3.0,
+      value: 0.9999,
+      ease: "Quad.easeOut",
+    })
+    .to(progress, {
+      duration: 3.5,
+      value: 0,
+      ease: "Quad.easeOut",
+    })
+
+    camera_tl.to(this.camera.position, {
+      duration: 3.0,
+      x: -2,
+      y: 3,
+      z: 0,
+      ease: "Quad.easeOut",
+    })
+    .to(this.camera.position, {
+      duration: 3.0,
+      x: 2,
+      y: 2,
+      z: 4,
+      ease: "Quad.easeOut",
+    })
+  }
+  /*tween = (material) => {
+    let progress = material.uniforms.progress
+    const tween0 = new TWEEN.Tween(progress).to({ value: 0 })
+    .onComplete(() => {})
+    .easing( TWEEN.Easing.Quadratic.Out ).duration(3000);
+
+    const tween1 = new TWEEN.Tween(progress).to({ value: 1 })
+    .onComplete(() => {
+      tween0.start()
+    })
+    .easing( TWEEN.Easing.Quadratic.Out ).duration(3000).start();
+  }*/
   update = () => {
-    // this.exMaterial.uniforms.uTime.value = performance.now() / 1000
+    // TWEEN.update()
+    // let val = this.dancerExMaterial.uniforms.progress.value // 0:show ~ 1:hide
+    // if (val <= 1) {
+    //   this.dancerExMaterial.uniforms.progress.value += 0.01
+    // }
   }
 }

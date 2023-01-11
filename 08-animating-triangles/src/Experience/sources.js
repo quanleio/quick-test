@@ -19,4 +19,9 @@ export default [
     type: "gltfModel",
     path: "assets/models/lucy.glb",
   },
+  {
+    name: "liberty",
+    type: "gltfModel",
+    path: "assets/models/statue_of_liberty-v1.glb",
+  },
 ];

@@ -12,6 +12,8 @@ import Environment from './Environment'
 import Mouse from '../utils/Mouse';
 import Debug from '../utils/Debug';
 
+import { EVT } from '../utils/contains';
+
 let instance = null
 
 export default class Experience {
@@ -31,6 +33,8 @@ export default class Experience {
     document.body.appendChild(_canvas)
     this.canvas = _canvas
 
+    this.createDOM()
+
     /**Setup Classes */
     this.debug = new Debug()
     this.stats = new Stats()
@@ -47,6 +51,24 @@ export default class Experience {
 
     this.sizes.on("resize", () => this.resize())
     this.time.on("tick", () => this.update())
+  }
+
+  createDOM = () => {
+    const rightWrapper = document.createElement('div')
+    rightWrapper.classList.add('rightWrapper')
+    document.body.appendChild(rightWrapper)
+
+    for(let i=1;i<3; i++) {
+      const page = document.createElement('div')
+      page.innerHTML = i
+      page.classList.add('pageNum')
+
+      // if (i===1) page.classList.add('active')
+      page.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent(EVT.OPEN_STATUE, { detail: i}))
+      })
+      rightWrapper.appendChild(page)
+    }
   }
 
   resize() {

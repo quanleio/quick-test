@@ -1,4 +1,5 @@
 
 export const EVT = {
-  CAMERA_ANIMATE_COMPLETED: 'camera-animate-completed'
+  CAMERA_ANIMATE_COMPLETED: 'camera-animate-completed',
+  OPEN_STATUE: 'open-statue',
 }
